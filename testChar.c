@@ -173,7 +173,7 @@ void PutString(unsigned char *s){
 }
 
 void GetChar(unsigned char *c){
-	PutString(" Type 1 char: ");
+	//PutString(" Type 1 char: ");
 	while(!RI)
 		;
 	RI=0;
@@ -237,12 +237,10 @@ void main(){
 	unsigned char letter;
 	
 	InitPin(0,0);
-	InitPin(2,0);
 	InitPin(4,0);
 	InitPin(6,0);
 	
 	P00 = 0;
-	P02 = 0;
 	P04 = 0;
 	P06 = 0;
 	
@@ -250,14 +248,25 @@ void main(){
 	//PutString("Testing. \n");
 	while(1){
 		GetChar(&letter);
-		if (letter == 'r' || letter == 'R'){
-			PutString("You pressed R. \r\n");
-			P00 ^= 1;
-		}else if (letter == 't' || letter == 'T'){
-			PutString("And you just pressed T! \r\n");
-			P04 ^= 1;
-		}else {
-			PutString("Character unknown... \r\n");
+		if (letter == '1' || letter == 0x01){
+			P00 = 1;
+			P04 = 0;
+			P06 = 0;
+			PutString("Char: 1 \r\n");
+		}else if (letter == '2' || letter == 0x02){
+			P00 = 0;
+			P04 = 1;
+			P06 = 0;
+			PutString("Char: 2 \r\n");
+		}else if (letter == '3' || letter == 0x03){
+			P00 = 0;
+			P04 = 0;
+			P06 = 1;
+			PutString("Char: 3 \r\n");
+		}else{
+			P00 = 0;
+			P04 = 0;
+			P06 = 0;
 		}
 	}
 	
