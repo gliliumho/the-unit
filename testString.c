@@ -190,17 +190,13 @@ void GetChar(unsigned char *c){
 }
 
 void GetString(unsigned char *s){
-	PutString("Enter 2 letters then ENTER: \r\n");
+	PutString("\r\nEnter 2 letters then ENTER: \r\n");
 	GetChar(s);
-	PutString("1a");
-	while(*s!= 0x70){	//GetChar as long as not ENTER.
-		GetChar(s++);
-		PutString(s);
-		PutString("2");
+	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
+		s++;
+		GetChar(s);
 	}
-	PutString("3a");
 	*s = 0;
-	PutString("3b");
 }
 
 
@@ -250,7 +246,7 @@ void InitRF(void){
 
 void main(){
 	//insert stuff
-	unsigned char letter[10];
+	unsigned char letter[20];
 	
 	InitPin(0,0);
 	InitPin(2,0);
@@ -264,9 +260,12 @@ void main(){
 	
 	InitUART();
 	//PutString("Testing. \n");
+	
 	while(1){
 		GetString(&letter[0]);
+		PutString("You just typed.... '");
 		PutString(&letter[0]);
+		PutString("'\r\n------------------------------");
 		
 //		if (letter[0] == '1'){
 //			PutString("Word starts with '1'.\r\n");
