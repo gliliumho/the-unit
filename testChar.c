@@ -248,21 +248,21 @@ void main(){
 	//PutString("Testing. \n");
 	while(1){
 		GetChar(&letter);
-		if (letter == '1' || letter == 0x01){
-			P00 = 1;
+		if (letter == '2' || letter == 0x02){
+			P00 = 1;	//RED
 			P04 = 0;
-			P06 = 0;
-			PutString("Char: 1 \r\n");
-		}else if (letter == '2' || letter == 0x02){
-			P00 = 0;
-			P04 = 1;
 			P06 = 0;
 			PutString("Char: 2 \r\n");
-		}else if (letter == '3' || letter == 0x03){
+		}else if (letter == '1' || letter == 0x01){
+			P00 = 0;
+			P04 = 1;	//YELLOW
+			P06 = 0;
+			PutString("Char: 1 \r\n");
+		}else if (letter == '0' || letter == 0x00){
 			P00 = 0;
 			P04 = 0;
-			P06 = 1;
-			PutString("Char: 3 \r\n");
+			P06 = 1;	//GREEN
+			PutString("Char: 0 \r\n");
 		}else{
 			P00 = 0;
 			P04 = 0;
