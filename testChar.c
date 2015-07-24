@@ -173,7 +173,6 @@ void PutString(unsigned char *s){
 }
 
 void GetChar(unsigned char *c){
-	//PutString(" Type 1 char: ");
 	while(!RI)
 		;
 	RI=0;
@@ -182,8 +181,10 @@ void GetChar(unsigned char *c){
 
 void GetString(unsigned char *s){
 	GetChar(s);
-	while(*s!= 0x0D)	//GetChar as long as not ENTER.
-		GetChar(s++);
+	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
+		s++;
+		GetChar(s);
+	}
 	*s = 0;
 }
 
@@ -214,8 +215,8 @@ void InitRF(void){
 	//Configure RF
 	RACSN = 0;
 	SpiReadWrite(WRC | 0x03);	   // Write to RF config address 3 (RX payload)
-	SpiReadWrite(0x02);			 // Two byte RX payload width
-	SpiReadWrite(0x02);			 // Two byte TX payload width
+	SpiReadWrite(0x01);			 // One byte RX payload width
+	SpiReadWrite(0x01);			 // One byte TX payload width
 	RACSN = 1;
 
 	RACSN = 0;
@@ -231,21 +232,78 @@ void InitRF(void){
 	
 }
 
+void Transmitter(void){
+	
+	unsigned char letter = 0x00;
+	TXEN = 1;
+	
+	while(1){
+		PutString("Type char: \r\n");
+		GetChar(&letter);
+		PutString("Transmitting letter '");
+		PutChar(letter);
+		PutString("' ....\r\n");
+		
+		TransmitPacket(letter);
+		PutString("Letter transmitted! \r\n---------------------\r\n");
+	}
+	
+}
+
+void Receiver(void){
+	unsigned char letter = 0x00;
+	TXEN = 0;
+	
+	while(1){
+		letter = ReceivePacket();
+		if (letter == '2'){
+			P00 = 1;	//RED
+			P04 = 0;
+			P06 = 0;
+			PutString("Char: 2 \r\n");
+		}else if (letter == '1'){
+			P00 = 0;
+			P04 = 1;	//YELLOW
+			P06 = 0;
+			PutString("Char: 1 \r\n");
+		}else if (letter == '0'){
+			P00 = 0;
+			P04 = 0;
+			P06 = 1;	//GREEN
+			PutString("Char: 0 \r\n");
+		}
+		// else{
+			// P00 = 0;
+			// P04 = 0;
+			// P06 = 0;
+		// }
+	}
+	
+}
+
 
 void main(){
-	//insert stuff
-	unsigned char letter;
 	
 	InitPin(0,0);
+	InitPin(3,1);
 	InitPin(4,0);
+	InitPin(5,1);
 	InitPin(6,0);
 	
-	P00 = 0;
-	P04 = 0;
-	P06 = 0;
+	P00 = 1;
+	P04 = 1;
+	P06 = 1;
 	
 	InitUART();
-	//PutString("Testing. \n");
+	InitRF();
+	
+	if(P03 == 0){
+		Transmitter();
+	} else if (P05 == 0){
+		Receiver();
+	}
+	
+	/*
 	while(1){
 		GetChar(&letter);
 		if (letter == '2' || letter == 0x02){
@@ -269,6 +327,7 @@ void main(){
 			P06 = 0;
 		}
 	}
+	*/
 	
 }
 
