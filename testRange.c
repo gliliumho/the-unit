@@ -64,8 +64,8 @@ void InitPin(unsigned char pinNum, direction){
 			break;
 			
 	}
-}
 
+}
 /* ---SetTXPower() & SetFrequency()------------------------
 ---------------------------------------------
 Currently not used and not working. 
@@ -247,14 +247,17 @@ void Transmitter(void){
 	TXEN = 1;
 	
 	while(1){
-		PutString("Type char: \r\n");
-		GetChar(&letter);
-		PutString("Transmitting letter '");
-		PutChar(letter);
-		PutString("' ....\r\n");
-		
-		TransmitPacket(letter);
-		PutString("Letter transmitted! \r\n---------------------\r\n");
+		unsigned char i;
+		for(i=0;i<=250;i++){
+			letter = i;
+			PutString("\nTransmitting letter '");
+			PutChar(letter);
+			PutString("' ....\r\n");
+			
+			TransmitPacket(letter);
+			PutString("Letter transmitted! \r\n---------------------\r\n");
+			Delay400us(1);
+		}
 	}
 	
 }
@@ -265,38 +268,24 @@ void Receiver(void){
 	
 	while(1){
 		letter = ReceivePacket();
-		if (letter == '2'){
-			P00 = 1;	//RED
-			P04 = 0;
-			P06 = 0;
-			PutString("Char: 2 \r\n");
-		}else if (letter == '1'){
-			P00 = 0;
-			P04 = 1;	//YELLOW
-			P06 = 0;
-			PutString("Char: 1 \r\n");
-		}else if (letter == '0'){
-			P00 = 0;
-			P04 = 0;
-			P06 = 1;	//GREEN
-			PutString("Char: 0 \r\n");
+		if(letter <= 250){
+			P00 = 0;	//Turn on LED1
+			PutString("Character received: ");
+			PutChar(letter);
+			PutString("\r\n");
+		}else{
+			P00 = 1; 	//Turn off LED1
 		}
 	}
 	
 }
 
-
 void main(){
 	
-	InitPin(0,0);
-	InitPin(3,1);
-	InitPin(4,0);
-	InitPin(5,1);
-	InitPin(6,0);
+	InitPin(0,0);	//Initialize P00 for LED1
 	
-	P00 = 1;
-	P04 = 1;
-	P06 = 1;
+	
+	P00 = 1; 		//Initialize with LED1 turned OFF
 	
 	InitUART();
 	InitRF();
@@ -306,34 +295,6 @@ void main(){
 	} else if (P05 == 0){
 		Receiver();
 	}
-	
-	/*---------------------------------------------
-	Same code in Receiver() but takes input from UART instead of RF.
-	-----------------------------------------------
-	while(1){
-		GetChar(&letter);
-		if (letter == '2' || letter == 0x02){
-			P00 = 1;	//RED
-			P04 = 0;
-			P06 = 0;
-			PutString("Char: 2 \r\n");
-		}else if (letter == '1' || letter == 0x01){
-			P00 = 0;
-			P04 = 1;	//YELLOW
-			P06 = 0;
-			PutString("Char: 1 \r\n");
-		}else if (letter == '0' || letter == 0x00){
-			P00 = 0;
-			P04 = 0;
-			P06 = 1;	//GREEN
-			PutString("Char: 0 \r\n");
-		}else{
-			P00 = 0;
-			P04 = 0;
-			P06 = 0;
-		}
-	}
-	*/
 	
 }
 
