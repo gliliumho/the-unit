@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -126,7 +126,7 @@ line level    source
  114   1        while(n--)
  115   1          Delay400us(50);
  116   1      }
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 3   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 3   
 
  117          
  118          unsigned char SpiReadWrite(unsigned char b){
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          void PutChar(unsigned char c){
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 4   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 4   
 
  179   1        while(!TI)
  180   1          ;
@@ -254,7 +254,7 @@ line level    source
  238   1        RACSN = 1;
  239   1      
  240   1        RACSN = 0;
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 5   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 5   
 
  241   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
  242   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
@@ -293,43 +293,51 @@ line level    source
  275   1        
  276   1        while(1){
  277   2          letter = ReceivePacket();
- 278   2          if(letter <= 250){
+ 278   2          if(letter >= 0x30 && letter <= 0x39){
  279   3            P00 = 0;  //Turn on LED1
- 280   3            //PutString("Character received: ");
- 281   3            PutChar(letter);
- 282   3            //PutString("\r\n");
- 283   3          }else{
- 284   3            P00 = 1;  //Turn off LED1
- 285   3          }
- 286   2        }
- 287   1        
- 288   1      }
- 289          
- 290          void main(){
- 291   1        
- 292   1        InitPin(0,0); //Initialize P00 for LED1
- 293   1        InitPin(3,1);
- 294   1        InitPin(5,1);
+ 280   3            
+ 281   3            //PutString("Character received: ");
+ 282   3            
+ 283   3            if(letter == 0x30){
+ 284   4              PutString("\r\n");
+ 285   4            }
+ 286   3            PutChar(letter);
+ 287   3            //PutString("\r\n");
+ 288   3            
+ 289   3            letter = 0x00;
+ 290   3            
+ 291   3          }else{
+ 292   3            P00 = 1;  //Turn off LED1
+ 293   3          }
+ 294   2        }
  295   1        
- 296   1        P00 = 1;    //Initialize with LED1 turned OFF
- 297   1        
- 298   1        InitUART();
- 299   1        InitRF();
- 300   1        
- 301   1        if(P03 == 0){
- 302   2          Transmitter();
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 6   
+ 296   1      }
+ 297          
+ 298          void main(){
+ 299   1        
+ 300   1        InitPin(0,0); //Initialize P00 for LED1
+ 301   1        InitPin(3,1);
+ 302   1        InitPin(5,1);
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:51:26 PAGE 6   
 
- 303   2        } else if (P05 == 0){
- 304   2          Receiver();
- 305   2        }
- 306   1        
- 307   1      }
- 308          
+ 303   1        
+ 304   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 305   1        
+ 306   1        InitUART();
+ 307   1        InitRF();
+ 308   1        
+ 309   1        if(P03 == 0){
+ 310   2          Transmitter();
+ 311   2        } else if (P05 == 0){
+ 312   2          Receiver();
+ 313   2        }
+ 314   1        
+ 315   1      }
+ 316          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    665    ----
+   CODE SIZE        =    681    ----
    CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

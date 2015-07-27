@@ -275,11 +275,19 @@ void Receiver(void){
 	
 	while(1){
 		letter = ReceivePacket();
-		if(letter <= 250){
+		if(letter >= 0x30 && letter <= 0x39){
 			P00 = 0;	//Turn on LED1
+			
 			//PutString("Character received: ");
+			
+			if(letter == 0x30){
+				PutString("\r\n");
+			}
 			PutChar(letter);
 			//PutString("\r\n");
+			
+			letter = 0x00;
+			
 		}else{
 			P00 = 1; 	//Turn off LED1
 		}
