@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -78,254 +78,262 @@ line level    source
   66   2        }
   67   1      
   68   1      }
-  69          /* ---SetTXPower() & SetFrequency()------------------------
-  70          ---------------------------------------------
-  71          Currently not used and not working. 
-  72          ---------------------------------------------
-  73          void SetTXPower(unsigned char powerlevel){
-  74            switch(powerlevel){
-  75              case 0:
-  76                CC &= 0xF3FF;
-  77                break;
-  78              case 1:
-  79                CC &= 0xF7FF;
-  80                CC |= 0x0400;
-  81                break;
-  82              case 2:
-  83                CC &= 0xFBFF;
-  84                CC |= 0x0800;
-  85                break;
-  86              case 3:
-  87                CC |= 0x0C00;
-  88                break;
-  89            }
-  90          }
-  91          
+  69          
+  70          /* ---SetTXPower() & SetFrequency()------------------------
+  71          ---------------------------------------------
+  72          Currently not used and not working. 
+  73          ---------------------------------------------
+  74          void SetTXPower(unsigned char powerlevel){
+  75            switch(powerlevel){
+  76              case 0:
+  77                CC &= 0xF3FF;
+  78                break;
+  79              case 1:
+  80                CC &= 0xF7FF;
+  81                CC |= 0x0400;
+  82                break;
+  83              case 2:
+  84                CC &= 0xFBFF;
+  85                CC |= 0x0800;
+  86                break;
+  87              case 3:
+  88                CC |= 0x0C00;
+  89                break;
+  90            }
+  91          }
   92          
-  93          ------------------------------------------
-  94          Currently not used and not working. 
-  95          ------------------------------------------
-  96          void SetFrequency(unsigned char freq){
-  97            if(freq == 1)
-  98              CC |= 0x0200;
-  99            else
- 100              CC &= 0xFDFF;
- 101          } 
- 102          */
- 103          
- 104          void Delay400us(volatile unsigned char n){
- 105   1        unsigned char i;
- 106   1        while(n--)
- 107   1          for(i=0;i<35;i++)
- 108   1            ;
- 109   1      }
- 110          
- 111          unsigned char SpiReadWrite(unsigned char b){
- 112   1        EXIF &= ~0x20;          // Clear SPI interrupt
- 113   1        SPI_DATA = b;          // Move byte to send to SPI data register
- 114   1        while((EXIF & 0x20) == 0x00)  // Wait until SPI has finished transmitting
- 115   1          ;
- 116   1        return SPI_DATA;
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 3   
+  93          
+  94          ------------------------------------------
+  95          Currently not used and not working. 
+  96          ------------------------------------------
+  97          void SetFrequency(unsigned char freq){
+  98            if(freq == 1)
+  99              CC |= 0x0200;
+ 100            else
+ 101              CC &= 0xFDFF;
+ 102          } 
+ 103          */
+ 104          
+ 105          
+ 106          void Delay400us(volatile unsigned char n){
+ 107   1        unsigned char i;
+ 108   1        while(n--)
+ 109   1          for(i=0;i<35;i++)
+ 110   1            ;
+ 111   1      }
+ 112          
+ 113          void Delay5ms(volatile unsigned char n){
+ 114   1        while(n--)
+ 115   1          Delay400us(50);
+ 116   1      }
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 3   
 
- 117   1      }
- 118          
- 119          void TransmitPacket(unsigned char b){
- 120   1        RACSN = 0;
- 121   1        SpiReadWrite(WTP);
- 122   1        SpiReadWrite(b);
- 123   1        RACSN = 1;
- 124   1        TRX_CE = 1;
- 125   1        Delay400us(1);
- 126   1        TRX_CE = 0;
- 127   1      }
- 128          
- 129          unsigned char ReceivePacket(void){
- 130   1        unsigned char b;
- 131   1      
- 132   1        TRX_CE = 1;
- 133   1      
- 134   1        while(DR == 0)
- 135   1          ;
- 136   1        RACSN = 0;
- 137   1        SpiReadWrite(RRP);
- 138   1        b = SpiReadWrite(0);
- 139   1        RACSN = 1;
- 140   1        TRX_CE = 0;
- 141   1        return b;
- 142   1      }
- 143          
- 144          
- 145          void InitUART(void){
- 146   1        
- 147   1        unsigned char cklf;
- 148   1        
- 149   1        TH1 = 0xE6;           // 9600@16MHz (when T1M=1 and SMOD=1)
- 150   1        CKCON |= 0x10;          // T1M=1 (/4 timer clock)
- 151   1        PCON = 0x80;          // SMOD=1 (double baud rate)
- 152   1        SCON = 0x52;          // Serial mode1, enable receiver
- 153   1        TMOD = 0x20;          // Timer1 8bit auto reload 
- 154   1        TR1 = 1;            // Start timer1
- 155   1        P0_ALT |= 0x06; //select alternative function for P01 and P02
- 156   1        P0_DIR &= 0x02; //P01(RXD) is input
- 157   1        
- 158   1        SPICLK = 0;     //Max SPI clock
- 159   1        SPI_CTRL = 0x02;
- 160   1        
- 161   1        // Switch to 16MHz clock:
- 162   1        RACSN = 0;
- 163   1        SpiReadWrite(RRC | 0x09);
- 164   1        cklf = SpiReadWrite(0) | 0x04;  //XO_DIRECT = 1, follow XO_Frequency
- 165   1        RACSN = 1;
- 166   1        RACSN = 0;
- 167   1        SpiReadWrite(WRC | 0x09);
- 168   1        SpiReadWrite(cklf);
- 169   1        RACSN = 1;
- 170   1      }
- 171          
- 172          void PutChar(unsigned char c){
- 173   1        while(!TI)
- 174   1          ;
- 175   1        TI = 0;
- 176   1        SBUF = c;
- 177   1      }
- 178          
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 4   
+ 117          
+ 118          unsigned char SpiReadWrite(unsigned char b){
+ 119   1        EXIF &= ~0x20;          // Clear SPI interrupt
+ 120   1        SPI_DATA = b;          // Move byte to send to SPI data register
+ 121   1        while((EXIF & 0x20) == 0x00)  // Wait until SPI has finished transmitting
+ 122   1          ;
+ 123   1        return SPI_DATA;
+ 124   1      }
+ 125          
+ 126          void TransmitPacket(unsigned char b){
+ 127   1        RACSN = 0;
+ 128   1        SpiReadWrite(WTP);
+ 129   1        SpiReadWrite(b);
+ 130   1        RACSN = 1;
+ 131   1        TRX_CE = 1;
+ 132   1        Delay400us(1);
+ 133   1        TRX_CE = 0;
+ 134   1      }
+ 135          
+ 136          unsigned char ReceivePacket(void){
+ 137   1        unsigned char b;
+ 138   1      
+ 139   1        TRX_CE = 1;
+ 140   1      
+ 141   1        while(DR == 0)
+ 142   1          ;
+ 143   1        RACSN = 0;
+ 144   1        SpiReadWrite(RRP);
+ 145   1        b = SpiReadWrite(0);
+ 146   1        RACSN = 1;
+ 147   1        TRX_CE = 0;
+ 148   1        return b;
+ 149   1      }
+ 150          
+ 151          void InitUART(void){
+ 152   1        
+ 153   1        unsigned char cklf;
+ 154   1        
+ 155   1        TH1 = 0xE6;           // 9600@16MHz (when T1M=1 and SMOD=1)
+ 156   1        CKCON |= 0x10;          // T1M=1 (/4 timer clock)
+ 157   1        PCON = 0x80;          // SMOD=1 (double baud rate)
+ 158   1        SCON = 0x52;          // Serial mode1, enable receiver
+ 159   1        TMOD = 0x20;          // Timer1 8bit auto reload 
+ 160   1        TR1 = 1;            // Start timer1
+ 161   1        P0_ALT |= 0x06; //select alternative function for P01 and P02
+ 162   1        P0_DIR &= 0x02; //P01(RXD) is input
+ 163   1        
+ 164   1        SPICLK = 0;     //Max SPI clock
+ 165   1        SPI_CTRL = 0x02;
+ 166   1        
+ 167   1        // Switch to 16MHz clock:
+ 168   1        RACSN = 0;
+ 169   1        SpiReadWrite(RRC | 0x09);
+ 170   1        cklf = SpiReadWrite(0) | 0x04;  //XO_DIRECT = 1, follow XO_Frequency
+ 171   1        RACSN = 1;
+ 172   1        RACSN = 0;
+ 173   1        SpiReadWrite(WRC | 0x09);
+ 174   1        SpiReadWrite(cklf);
+ 175   1        RACSN = 1;
+ 176   1      }
+ 177          
+ 178          void PutChar(unsigned char c){
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 4   
 
- 179          void PutString(unsigned char *s){
- 180   1        while(*s != 0)
- 181   1          PutChar(*s++);
- 182   1      }
- 183          
- 184          void GetChar(unsigned char *c){
- 185   1        while(!RI)
- 186   1          ;
- 187   1        RI=0;
- 188   1        *c = SBUF;
- 189   1      }
- 190          
- 191          void GetString(unsigned char *s){
- 192   1        GetChar(s);
- 193   1        while(*s!= 0x0D && *s!= 0x0A){  //GetChar as long as not ENTER.
- 194   2          s++;
- 195   2          GetChar(s);
- 196   2        }
- 197   1        *s = 0;
- 198   1      }
- 199          
- 200          
- 201          void SetAutoRetransmit(unsigned char setting){
- 202   1        
- 203   1        unsigned char tmp;
- 204   1        
- 205   1        RACSN = 0;
- 206   1        SpiReadWrite(RRC | 0x01);       //Read RF config address byte #1
- 207   1        tmp = SpiReadWrite(0) & 0xDF;   //store current RF config and clear off AUTORETRAN bit
- 208   1        RACSN = 1;
+ 179   1        while(!TI)
+ 180   1          ;
+ 181   1        TI = 0;
+ 182   1        SBUF = c;
+ 183   1      }
+ 184          
+ 185          void PutString(unsigned char *s){
+ 186   1        while(*s != 0)
+ 187   1          PutChar(*s++);
+ 188   1      }
+ 189          
+ 190          void GetChar(unsigned char *c){
+ 191   1        while(!RI)
+ 192   1          ;
+ 193   1        RI=0;
+ 194   1        *c = SBUF;
+ 195   1      }
+ 196          
+ 197          void GetString(unsigned char *s){
+ 198   1        GetChar(s);
+ 199   1        while(*s!= 0x0D && *s!= 0x0A){  //GetChar as long as not ENTER.
+ 200   2          s++;
+ 201   2          GetChar(s);
+ 202   2        }
+ 203   1        *s = 0;
+ 204   1      }
+ 205          
+ 206          void SetAutoRetransmit(unsigned char setting){
+ 207   1        
+ 208   1        unsigned char tmp;
  209   1        
  210   1        RACSN = 0;
- 211   1        SpiReadWrite(WRC | 0x01);     //Write RF config at addr byte #1
- 212   1        SpiReadWrite(tmp | (setting <<5));  //change the AUTORETRAN setting
+ 211   1        SpiReadWrite(RRC | 0x01);       //Read RF config address byte #1
+ 212   1        tmp = SpiReadWrite(0) & 0xDF;   //store current RF config and clear off AUTORETRAN bit
  213   1        RACSN = 1;
- 214   1      }
- 215          
- 216          
- 217          void InitRF(void){
- 218   1        
- 219   1        unsigned char tmp;
- 220   1        
- 221   1        SPICLK = 0;           //Max SPI clock
- 222   1        SPI_CTRL = 0x02;
- 223   1        
- 224   1        //Configure RF
- 225   1        RACSN = 0;
- 226   1        SpiReadWrite(WRC | 0x03);    // Write to RF config address 3 (RX payload)
- 227   1        SpiReadWrite(0x01);      // One byte RX payload width
- 228   1        SpiReadWrite(0x01);      // One byte TX payload width
- 229   1        RACSN = 1;
- 230   1      
- 231   1        RACSN = 0;
- 232   1        SpiReadWrite(RRC | 0x01);    // Read RF config address 1
- 233   1        tmp = SpiReadWrite(0) & 0xf1;   // Clear the power and frequency setting bits
- 234   1        RACSN = 1;
- 235   1      
- 236   1        RACSN = 0;
- 237   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
- 238   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
- 239   1        SpiReadWrite(tmp | (POWER <<2) | (HFREQ << 1));
- 240   1        RACSN = 1;
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 5   
+ 214   1        
+ 215   1        RACSN = 0;
+ 216   1        SpiReadWrite(WRC | 0x01);     //Write RF config at addr byte #1
+ 217   1        SpiReadWrite(tmp | (setting <<5));  //change the AUTORETRAN setting
+ 218   1        RACSN = 1;
+ 219   1      }
+ 220          
+ 221          void InitRF(void){
+ 222   1        
+ 223   1        unsigned char tmp;
+ 224   1        
+ 225   1        SPICLK = 0;           //Max SPI clock
+ 226   1        SPI_CTRL = 0x02;
+ 227   1        
+ 228   1        //Configure RF
+ 229   1        RACSN = 0;
+ 230   1        SpiReadWrite(WRC | 0x03);    // Write to RF config address 3 (RX payload)
+ 231   1        SpiReadWrite(0x01);      // One byte RX payload width
+ 232   1        SpiReadWrite(0x01);      // One byte TX payload width
+ 233   1        RACSN = 1;
+ 234   1      
+ 235   1        RACSN = 0;
+ 236   1        SpiReadWrite(RRC | 0x01);    // Read RF config address 1
+ 237   1        tmp = SpiReadWrite(0) & 0xf1;   // Clear the power and frequency setting bits
+ 238   1        RACSN = 1;
+ 239   1      
+ 240   1        RACSN = 0;
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 5   
 
- 241   1        
- 242   1      }
- 243          
- 244          void Transmitter(void){
+ 241   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
+ 242   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
+ 243   1        SpiReadWrite(tmp | (POWER <<2) | (HFREQ << 1));
+ 244   1        RACSN = 1;
  245   1        
- 246   1        unsigned char letter = 0x00;
- 247   1        TXEN = 1;
- 248   1        
- 249   1        while(1){
- 250   2          unsigned char i;
- 251   2          for(i=0;i<=250;i++){
- 252   3            letter = i;
- 253   3            PutString("\nTransmitting letter '");
- 254   3            PutChar(letter);
- 255   3            PutString("' ....\r\n");
- 256   3            
- 257   3            TransmitPacket(letter);
- 258   3            PutString("Letter transmitted! \r\n---------------------\r\n");
- 259   3            Delay400us(1);
- 260   3          }
- 261   2        }
- 262   1        
- 263   1      }
- 264          
- 265          void Receiver(void){
- 266   1        unsigned char letter = 0x00;
- 267   1        TXEN = 0;
- 268   1        
- 269   1        while(1){
- 270   2          letter = ReceivePacket();
- 271   2          if(letter <= 250){
- 272   3            P00 = 0;  //Turn on LED1
- 273   3            PutString("Character received: ");
- 274   3            PutChar(letter);
- 275   3            PutString("\r\n");
- 276   3          }else{
- 277   3            P00 = 1;  //Turn off LED1
- 278   3          }
- 279   2        }
- 280   1        
- 281   1      }
- 282          
- 283          void main(){
- 284   1        
- 285   1        InitPin(0,0); //Initialize P00 for LED1
- 286   1        
+ 246   1      }
+ 247          
+ 248          
+ 249          void Transmitter(void){
+ 250   1        
+ 251   1        unsigned char letter = 0x00;
+ 252   1        TXEN = 1;
+ 253   1        
+ 254   1        while(1){
+ 255   2          unsigned char i;
+ 256   2          for(i=0x30;i<=0x39;i++){
+ 257   3            letter = i;
+ 258   3            PutString("Transmitting letter: ");
+ 259   3            PutChar(letter);
+ 260   3            PutString("\r\n");
+ 261   3            
+ 262   3            TransmitPacket(letter);
+ 263   3            //PutString("Letter transmitted! \r\n---------------------\r\n");
+ 264   3            
+ 265   3            //delay 1s
+ 266   3            Delay5ms(200);
+ 267   3          }
+ 268   2        }
+ 269   1        
+ 270   1      }
+ 271          
+ 272          void Receiver(void){
+ 273   1        unsigned char letter = 0x00;
+ 274   1        TXEN = 0;
+ 275   1        
+ 276   1        while(1){
+ 277   2          letter = ReceivePacket();
+ 278   2          if(letter <= 250){
+ 279   3            P00 = 0;  //Turn on LED1
+ 280   3            //PutString("Character received: ");
+ 281   3            PutChar(letter);
+ 282   3            //PutString("\r\n");
+ 283   3          }else{
+ 284   3            P00 = 1;  //Turn off LED1
+ 285   3          }
+ 286   2        }
  287   1        
- 288   1        P00 = 1;    //Initialize with LED1 turned OFF
- 289   1        
- 290   1        InitUART();
- 291   1        InitRF();
- 292   1        
- 293   1        if(P03 == 0){
- 294   2          Transmitter();
- 295   2        } else if (P05 == 0){
- 296   2          Receiver();
- 297   2        }
- 298   1        
- 299   1      }
- 300          
+ 288   1      }
+ 289          
+ 290          void main(){
+ 291   1        
+ 292   1        InitPin(0,0); //Initialize P00 for LED1
+ 293   1        InitPin(3,1);
+ 294   1        InitPin(5,1);
+ 295   1        
+ 296   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 297   1        
+ 298   1        InitUART();
+ 299   1        InitRF();
+ 300   1        
+ 301   1        if(P03 == 0){
+ 302   2          Transmitter();
+C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 14:00:18 PAGE 6   
 
+ 303   2        } else if (P05 == 0){
+ 304   2          Receiver();
+ 305   2        }
+ 306   1        
+ 307   1      }
+ 308          
 
-C51 COMPILER V9.54   TESTRANGE                                                             07/27/2015 12:18:21 PAGE 6   
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    666    ----
-   CONSTANT SIZE    =    102    ----
+   CODE SIZE        =    665    ----
+   CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       8
+   DATA SIZE        =   ----       9
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

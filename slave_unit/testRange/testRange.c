@@ -66,6 +66,7 @@ void InitPin(unsigned char pinNum, direction){
 	}
 
 }
+
 /* ---SetTXPower() & SetFrequency()------------------------
 ---------------------------------------------
 Currently not used and not working. 
@@ -101,11 +102,17 @@ void SetFrequency(unsigned char freq){
 } 
 */
 
+
 void Delay400us(volatile unsigned char n){
 	unsigned char i;
 	while(n--)
 		for(i=0;i<35;i++)
 			;
+}
+
+void Delay5ms(volatile unsigned char n){
+	while(n--)
+		Delay400us(50);
 }
 
 unsigned char SpiReadWrite(unsigned char b){
@@ -140,7 +147,6 @@ unsigned char ReceivePacket(void){
 	TRX_CE = 0;
 	return b;
 }
-
 
 void InitUART(void){
 	
@@ -197,7 +203,6 @@ void GetString(unsigned char *s){
 	*s = 0;
 }
 
-
 void SetAutoRetransmit(unsigned char setting){
 	
 	unsigned char tmp;
@@ -212,7 +217,6 @@ void SetAutoRetransmit(unsigned char setting){
 	SpiReadWrite(tmp | (setting <<5));	//change the AUTORETRAN setting
 	RACSN = 1;
 }
-
 
 void InitRF(void){
 	
@@ -241,6 +245,7 @@ void InitRF(void){
 	
 }
 
+
 void Transmitter(void){
 	
 	unsigned char letter = 0x00;
@@ -248,15 +253,17 @@ void Transmitter(void){
 	
 	while(1){
 		unsigned char i;
-		for(i=0;i<=250;i++){
+		for(i=0x30;i<=0x39;i++){
 			letter = i;
-			PutString("\nTransmitting letter '");
+			PutString("Transmitting letter: ");
 			PutChar(letter);
-			PutString("' ....\r\n");
+			PutString("\r\n");
 			
 			TransmitPacket(letter);
-			PutString("Letter transmitted! \r\n---------------------\r\n");
-			Delay400us(1);
+			//PutString("Letter transmitted! \r\n---------------------\r\n");
+			
+			//delay 1s
+			Delay5ms(200);
 		}
 	}
 	
@@ -270,9 +277,9 @@ void Receiver(void){
 		letter = ReceivePacket();
 		if(letter <= 250){
 			P00 = 0;	//Turn on LED1
-			PutString("Character received: ");
+			//PutString("Character received: ");
 			PutChar(letter);
-			PutString("\r\n");
+			//PutString("\r\n");
 		}else{
 			P00 = 1; 	//Turn off LED1
 		}
@@ -283,7 +290,8 @@ void Receiver(void){
 void main(){
 	
 	InitPin(0,0);	//Initialize P00 for LED1
-	
+	InitPin(3,1);
+	InitPin(5,1);
 	
 	P00 = 1; 		//Initialize with LED1 turned OFF
 	
