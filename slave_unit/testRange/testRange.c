@@ -117,7 +117,7 @@ void Delay5ms(volatile unsigned char n){
 
 unsigned char SpiReadWrite(unsigned char b){
 	EXIF &= ~0x20;				  // Clear SPI interrupt
-	SPI_DATA = b;				   // Move byte to send to SPI data register
+	SPI_DATA = b;						// Move byte to send to SPI data register
 	while((EXIF & 0x20) == 0x00)	// Wait until SPI has finished transmitting
 		;
 	return SPI_DATA;
@@ -263,7 +263,7 @@ void Transmitter(void){
 			//PutString("Letter transmitted! \r\n---------------------\r\n");
 			
 			//delay 1s
-			Delay5ms(200);
+			Delay5ms(100);
 		}
 	}
 	
@@ -290,7 +290,9 @@ void Receiver(void){
 			
 		}else{
 			P00 = 1; 	//Turn off LED1
+			PutChar(0x2D);
 		}
+		Delay5ms(10);
 	}
 	
 }
