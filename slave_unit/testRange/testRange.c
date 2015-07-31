@@ -248,32 +248,40 @@ void InitRF(void){
 
 void Transmitter(void){
 	
-	//unsigned char letter = 0x00;
+	unsigned char i,j,n = 0x30;
 	TXEN = 1;
 	
 	
 	//transmit 0x2B to indicate start of transmitter
-	TransmitPacket(0x2B);
-	Delay5ms(15);		//delay 0.25s
-	P00 = 0;
+	
 	
 	while(1){
-		unsigned char i,j;
-		
-		for(i=0x61; i<=0x7A; i++){
-			TransmitPacket(i);
-			Delay5ms(15);		//delay 0.25s
+		if(P03 == 0){
+			TransmitPacket(0x2B);
+			Delay5ms(30);		//delay 0.25s
+			TransmitPacket(n);
+			Delay5ms(10);
+			n++;
+			if (n > 0x39)
+				n = 0x30;
+			P00 = 0;
 			
-			for(j=0x30; j<=0x39; j++){
+			for(i=0x61; i<=0x69; i++){
+				TransmitPacket(i);
+				Delay5ms(10);		//delay 0.10s
+				
+				for(j=0x30; j<=0x39; j++){
 
-				//PutString("Transmitting letter: ");
-				//PutChar(letter);
-				//PutString("\r\n");
-				TransmitPacket(j);
+					//PutString("Transmitting letter: ");
+					//PutChar(letter);
+					//PutString("\r\n");
+					TransmitPacket(j);
 
-				Delay5ms(15);		//delay 0.25s
+					Delay5ms(10);		//delay 0.15s
+				}
 			}
-		}			
+		}
+					
 	}
 }
 
@@ -298,7 +306,9 @@ void Receiver(void){
 		else if(letter == 0x2B){
 			//to indicate transmitter just started
 			PutString("\r\n \r\nNew Transmission:");
-			//PutChar(letter);
+			letter = ReceivePacket();
+			PutChar(letter);
+			
 		}
 	}
 	
