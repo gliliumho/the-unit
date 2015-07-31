@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        07/28/2015  09:12:23  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        07/30/2015  18:15:01  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -32,24 +32,24 @@ LINK MAP OF MODULE:  .\Objects\testRange (?C_STARTUP)
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     07FDH                  *** GAP ***
             CODE    0800H     00C4H     UNIT         ?PR?_INITPIN?TESTRANGE
-            CODE    08C4H     0039H     UNIT         ?PR?INITUART?TESTRANGE
-            CODE    08FDH     0038H     UNIT         ?PR?_GETSTRING?TESTRANGE
-            CODE    0935H     0034H     UNIT         ?PR?RECEIVER?TESTRANGE
-            CODE    0969H     0033H     UNIT         ?PR?INITRF?TESTRANGE
-            CODE    099CH     002DH     UNIT         ?PR?TRANSMITTER?TESTRANGE
-            CODE    09C9H     002BH     UNIT         ?PR?_PUTSTRING?TESTRANGE
-            CODE    09F4H     002BH     UNIT         ?C?LIB_CODE
-            CODE    0A1FH     0027H     UNIT         ?PR?MAIN?TESTRANGE
-            CODE    0A46H     001FH     UNIT         ?PR?_SETAUTORETRANSMIT?TESTRANGE
-            CODE    0A65H     001AH     UNIT         ?PR?_TRANSMITPACKET?TESTRANGE
-            CODE    0A7FH     0019H     UNIT         ?CO?TESTRANGE
-            CODE    0A98H     0016H     UNIT         ?PR?_SPIREADWRITE?TESTRANGE
-            CODE    0AAEH     0015H     UNIT         ?PR?_DELAY400US?TESTRANGE
-            CODE    0AC3H     0011H     UNIT         ?PR?_DELAY5MS?TESTRANGE
-            CODE    0AD4H     0011H     UNIT         ?PR?RECEIVEPACKET?TESTRANGE
-            CODE    0AE5H     000CH     UNIT         ?C_C51STARTUP
-            CODE    0AF1H     000AH     UNIT         ?PR?_GETCHAR?TESTRANGE
-            CODE    0AFBH     0008H     UNIT         ?PR?_PUTCHAR?TESTRANGE
+            CODE    08C4H     004FH     UNIT         ?PR?RECEIVER?TESTRANGE
+            CODE    0913H     003CH     UNIT         ?PR?TRANSMITTER?TESTRANGE
+            CODE    094FH     0039H     UNIT         ?PR?INITUART?TESTRANGE
+            CODE    0988H     0038H     UNIT         ?PR?_GETSTRING?TESTRANGE
+            CODE    09C0H     0033H     UNIT         ?PR?INITRF?TESTRANGE
+            CODE    09F3H     002BH     UNIT         ?C?LIB_CODE
+            CODE    0A1EH     0027H     UNIT         ?PR?MAIN?TESTRANGE
+            CODE    0A45H     0025H     UNIT         ?PR?_PUTSTRING?TESTRANGE
+            CODE    0A6AH     001FH     UNIT         ?PR?_SETAUTORETRANSMIT?TESTRANGE
+            CODE    0A89H     001AH     UNIT         ?PR?_TRANSMITPACKET?TESTRANGE
+            CODE    0AA3H     001AH     UNIT         ?CO?TESTRANGE
+            CODE    0ABDH     0016H     UNIT         ?PR?_SPIREADWRITE?TESTRANGE
+            CODE    0AD3H     0015H     UNIT         ?PR?_DELAY400US?TESTRANGE
+            CODE    0AE8H     0011H     UNIT         ?PR?_DELAY5MS?TESTRANGE
+            CODE    0AF9H     0011H     UNIT         ?PR?RECEIVEPACKET?TESTRANGE
+            CODE    0B0AH     000CH     UNIT         ?C_C51STARTUP
+            CODE    0B16H     000AH     UNIT         ?PR?_GETCHAR?TESTRANGE
+            CODE    0B20H     0008H     UNIT         ?PR?_PUTCHAR?TESTRANGE
 
 
 
@@ -59,7 +59,7 @@ OVERLAY MAP OF MODULE:   .\Objects\testRange (?C_STARTUP)
 SEGMENT                                    DATA_GROUP 
   +--> CALLED SEGMENT                    START    LENGTH
 --------------------------------------------------------
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 2
 
 
 ?C_C51STARTUP                            -----    -----
@@ -78,34 +78,30 @@ SEGMENT                                    DATA_GROUP
 ?PR?INITRF?TESTRANGE                     -----    -----
   +--> ?PR?_SPIREADWRITE?TESTRANGE
 
-?PR?TRANSMITTER?TESTRANGE                0008H    0001H
-  +--> ?CO?TESTRANGE
-  +--> ?PR?_PUTSTRING?TESTRANGE
-  +--> ?PR?_PUTCHAR?TESTRANGE
+?PR?TRANSMITTER?TESTRANGE                0008H    0002H
   +--> ?PR?_TRANSMITPACKET?TESTRANGE
   +--> ?PR?_DELAY5MS?TESTRANGE
-
-?PR?_PUTSTRING?TESTRANGE                 0009H    0003H
-  +--> ?CO?TESTRANGE
-  +--> ?PR?_PUTCHAR?TESTRANGE
 
 ?PR?_TRANSMITPACKET?TESTRANGE            -----    -----
   +--> ?PR?_SPIREADWRITE?TESTRANGE
   +--> ?PR?_DELAY400US?TESTRANGE
 
-?PR?_DELAY400US?TESTRANGE                000AH    0001H
+?PR?_DELAY400US?TESTRANGE                000BH    0001H
 
-?PR?_DELAY5MS?TESTRANGE                  0009H    0001H
+?PR?_DELAY5MS?TESTRANGE                  000AH    0001H
   +--> ?PR?_DELAY400US?TESTRANGE
 
 ?PR?RECEIVER?TESTRANGE                   -----    -----
   +--> ?PR?RECEIVEPACKET?TESTRANGE
+  +--> ?CO?TESTRANGE
   +--> ?PR?_PUTSTRING?TESTRANGE
   +--> ?PR?_PUTCHAR?TESTRANGE
-  +--> ?PR?_DELAY5MS?TESTRANGE
 
 ?PR?RECEIVEPACKET?TESTRANGE              -----    -----
   +--> ?PR?_SPIREADWRITE?TESTRANGE
+
+?PR?_PUTSTRING?TESTRANGE                 0008H    0003H
+  +--> ?PR?_PUTCHAR?TESTRANGE
 
 
 
@@ -115,20 +111,20 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:0AE5H         SEGMENT       ?C_C51STARTUP
+  C:0B0AH         SEGMENT       ?C_C51STARTUP
   I:000FH         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 3
-
-
   D:00F0H         SYMBOL        B
   D:0083H         SYMBOL        DPH
   D:0082H         SYMBOL        DPL
   N:0000H         SYMBOL        IBPSTACK
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 3
+
+
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:0AE8H         SYMBOL        IDATALOOP
+  C:0B0DH         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -137,18 +133,18 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:0AE5H         SYMBOL        STARTUP1
+  C:0B0AH         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         126
-  C:0AE5H         LINE#         133
-  C:0AE7H         LINE#         134
-  C:0AE8H         LINE#         135
-  C:0AE9H         LINE#         136
-  C:0AEBH         LINE#         185
-  C:0AEEH         LINE#         196
+  C:0B0AH         LINE#         133
+  C:0B0CH         LINE#         134
+  C:0B0DH         LINE#         135
+  C:0B0EH         LINE#         136
+  C:0B10H         LINE#         185
+  C:0B13H         LINE#         196
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        TESTRANGE
@@ -157,35 +153,35 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B3H         PUBLIC        SPI_CTRL
-  C:0AC3H         PUBLIC        _Delay5ms
+  C:0AE8H         PUBLIC        _Delay5ms
   D:00A8H         PUBLIC        IE
   B:00A0H.5       PUBLIC        DR
   D:00B8H         PUBLIC        IP
   B:0098H.0       PUBLIC        RI
-  C:08FDH         PUBLIC        _GetString
+  C:0988H         PUBLIC        _GetString
   B:0098H.1       PUBLIC        TI
-  C:0AF1H         PUBLIC        _GetChar
-  C:0AD4H         PUBLIC        ReceivePacket
-  C:099CH         PUBLIC        Transmitter
-  C:0A1FH         PUBLIC        main
+  C:0B16H         PUBLIC        _GetChar
+  C:0AF9H         PUBLIC        ReceivePacket
+  C:0913H         PUBLIC        Transmitter
+  C:0A1EH         PUBLIC        main
   D:0091H         PUBLIC        EXIF
-  C:0969H         PUBLIC        InitRF
+  C:09C0H         PUBLIC        InitRF
   B:0080H.0       PUBLIC        P00
   D:0099H         PUBLIC        SBUF
   D:0087H         PUBLIC        PCON
   B:0080H.3       PUBLIC        P03
-  C:0A65H         PUBLIC        _TransmitPacket
+  C:0A89H         PUBLIC        _TransmitPacket
   D:0098H         PUBLIC        SCON
   B:0080H.5       PUBLIC        P05
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 4
+  C:0A45H         PUBLIC        _PutString
+  C:08C4H         PUBLIC        Receiver
+  C:0B20H         PUBLIC        _PutChar
+  C:0AC6H         PUBLIC        _SpiReadWrite
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 4
 
 
-  C:09CFH         PUBLIC        _PutString
-  C:0935H         PUBLIC        Receiver
-  C:0AFBH         PUBLIC        _PutChar
-  C:0AA1H         PUBLIC        _SpiReadWrite
   C:0800H         PUBLIC        _InitPin
   B:00A0H.4       PUBLIC        TXEN
   D:0094H         PUBLIC        P0_DIR
@@ -193,7 +189,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   D:00B4H         PUBLIC        SPICLK
   D:008DH         PUBLIC        TH1
   D:00E8H         PUBLIC        EIE
-  C:08C4H         PUBLIC        InitUART
+  C:094FH         PUBLIC        InitUART
   B:0088H.6       PUBLIC        TR1
   D:00F8H         PUBLIC        EIP
   B:00A0H.5       PUBLIC        TRX_CE
@@ -201,9 +197,9 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   D:00B2H         PUBLIC        SPI_DATA
   D:00D8H         PUBLIC        EICON
   D:008EH         PUBLIC        CKCON
-  C:0AAEH         PUBLIC        _Delay400us
+  C:0AD3H         PUBLIC        _Delay400us
   B:00A0H.3       PUBLIC        RACSN
-  C:0A46H         PUBLIC        _SetAutoRetransmit
+  C:0A6AH         PUBLIC        _SetAutoRetransmit
   D:00D0H         PUBLIC        PSW
   -------         PROC          _INITPIN
   D:0007H         SYMBOL        pinNum
@@ -239,13 +235,13 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   C:0880H         LINE#         40
   C:0883H         LINE#         41
   C:088DH         LINE#         42
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 5
-
-
   C:0890H         LINE#         43
   C:0891H         LINE#         45
   C:0891H         LINE#         46
   C:0894H         LINE#         47
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 5
+
+
   C:089EH         LINE#         48
   C:08A1H         LINE#         49
   C:08A2H         LINE#         51
@@ -264,237 +260,233 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
   C:08C3H         LINE#         68
   -------         ENDPROC       _INITPIN
   -------         PROC          _DELAY400US
-  D:000AH         SYMBOL        n
+  D:000BH         SYMBOL        n
   -------         DO            
   D:0006H         SYMBOL        i
   -------         ENDDO         
-  C:0AAEH         LINE#         106
-  C:0AB0H         LINE#         108
-  C:0AB7H         LINE#         109
-  C:0AC2H         LINE#         111
+  C:0AD3H         LINE#         106
+  C:0AD5H         LINE#         108
+  C:0ADCH         LINE#         109
+  C:0AE7H         LINE#         111
   -------         ENDPROC       _DELAY400US
   -------         PROC          _DELAY5MS
-  D:0009H         SYMBOL        n
-  C:0AC3H         LINE#         113
-  C:0AC5H         LINE#         114
-  C:0ACCH         LINE#         115
-  C:0AD3H         LINE#         116
+  D:000AH         SYMBOL        n
+  C:0AE8H         LINE#         113
+  C:0AEAH         LINE#         114
+  C:0AF1H         LINE#         115
+  C:0AF8H         LINE#         116
   -------         ENDPROC       _DELAY5MS
-  C:0A9CH         SYMBOL        L?0083
-  -------         PROC          L?0082
-  -------         ENDPROC       L?0082
-  C:0A9CH         SYMBOL        L?0083
+  C:0AC1H         SYMBOL        L?0089
+  -------         PROC          L?0088
+  -------         ENDPROC       L?0088
+  C:0AC1H         SYMBOL        L?0089
   -------         PROC          _SPIREADWRITE
   D:0007H         SYMBOL        b
-  C:0AA1H         LINE#         118
-  C:0AA1H         LINE#         119
-  C:0AA4H         LINE#         120
-  C:0AA6H         LINE#         121
-  C:0AABH         LINE#         123
-  C:0AADH         LINE#         124
+  C:0AC6H         LINE#         118
+  C:0AC6H         LINE#         119
+  C:0AC9H         LINE#         120
+  C:0ACBH         LINE#         121
+  C:0AD0H         LINE#         123
+  C:0AD2H         LINE#         124
   -------         ENDPROC       _SPIREADWRITE
   -------         PROC          _TRANSMITPACKET
   D:0006H         SYMBOL        b
-  C:0A65H         LINE#         126
-  C:0A67H         LINE#         127
-  C:0A69H         LINE#         128
-  C:0A6EH         LINE#         129
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 6
+  C:0A89H         LINE#         126
+  C:0A8BH         LINE#         127
+  C:0A8DH         LINE#         128
+  C:0A92H         LINE#         129
+  C:0A97H         LINE#         130
+  C:0A99H         LINE#         131
+  C:0A9BH         LINE#         132
+  C:0AA0H         LINE#         133
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 6
 
 
-  C:0A73H         LINE#         130
-  C:0A75H         LINE#         131
-  C:0A77H         LINE#         132
-  C:0A7CH         LINE#         133
-  C:0A7EH         LINE#         134
+  C:0AA2H         LINE#         134
   -------         ENDPROC       _TRANSMITPACKET
   -------         PROC          RECEIVEPACKET
   -------         DO            
   D:0007H         SYMBOL        b
   -------         ENDDO         
-  C:0AD4H         LINE#         136
-  C:0AD4H         LINE#         139
-  C:0AD6H         LINE#         141
-  C:0AD9H         LINE#         143
-  C:0ADBH         LINE#         144
-  C:0ADDH         LINE#         145
-  C:0AE0H         LINE#         146
-  C:0AE2H         LINE#         147
-  C:0AE4H         LINE#         148
-  C:0AE4H         LINE#         149
+  C:0AF9H         LINE#         136
+  C:0AF9H         LINE#         139
+  C:0AFBH         LINE#         141
+  C:0AFEH         LINE#         143
+  C:0B00H         LINE#         144
+  C:0B02H         LINE#         145
+  C:0B05H         LINE#         146
+  C:0B07H         LINE#         147
+  C:0B09H         LINE#         148
+  C:0B09H         LINE#         149
   -------         ENDPROC       RECEIVEPACKET
   -------         PROC          INITUART
   -------         DO            
   D:0006H         SYMBOL        cklf
   -------         ENDDO         
-  C:08C4H         LINE#         151
-  C:08C4H         LINE#         155
-  C:08C7H         LINE#         156
-  C:08CAH         LINE#         157
-  C:08CDH         LINE#         158
-  C:08D0H         LINE#         159
-  C:08D3H         LINE#         160
-  C:08D5H         LINE#         161
-  C:08D8H         LINE#         162
-  C:08DBH         LINE#         164
-  C:08DEH         LINE#         165
-  C:08E1H         LINE#         168
-  C:08E3H         LINE#         169
-  C:08E5H         LINE#         170
-  C:08ECH         LINE#         171
-  C:08EEH         LINE#         172
-  C:08F0H         LINE#         173
-  C:08F5H         LINE#         174
-  C:08FAH         LINE#         175
-  C:08FCH         LINE#         176
+  C:094FH         LINE#         151
+  C:094FH         LINE#         155
+  C:0952H         LINE#         156
+  C:0955H         LINE#         157
+  C:0958H         LINE#         158
+  C:095BH         LINE#         159
+  C:095EH         LINE#         160
+  C:0960H         LINE#         161
+  C:0963H         LINE#         162
+  C:0966H         LINE#         164
+  C:0969H         LINE#         165
+  C:096CH         LINE#         168
+  C:096EH         LINE#         169
+  C:0970H         LINE#         170
+  C:0977H         LINE#         171
+  C:0979H         LINE#         172
+  C:097BH         LINE#         173
+  C:0980H         LINE#         174
+  C:0985H         LINE#         175
+  C:0987H         LINE#         176
   -------         ENDPROC       INITUART
   -------         PROC          _PUTCHAR
   D:0007H         SYMBOL        c
-  C:0AFBH         LINE#         178
-  C:0AFBH         LINE#         179
-  C:0AFEH         LINE#         181
-  C:0B00H         LINE#         182
-  C:0B02H         LINE#         183
+  C:0B20H         LINE#         178
+  C:0B20H         LINE#         179
+  C:0B23H         LINE#         181
+  C:0B25H         LINE#         182
+  C:0B27H         LINE#         183
   -------         ENDPROC       _PUTCHAR
-  -------         PROC          L?0084
-  -------         ENDPROC       L?0084
   -------         PROC          _PUTSTRING
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 7
-
-
-  D:0009H         SYMBOL        s
-  C:09CFH         LINE#         185
-  C:09D5H         LINE#         186
-  C:09E0H         LINE#         187
-  C:09F3H         LINE#         188
+  D:0008H         SYMBOL        s
+  C:0A45H         LINE#         185
+  C:0A4BH         LINE#         186
+  C:0A56H         LINE#         187
+  C:0A69H         LINE#         188
   -------         ENDPROC       _PUTSTRING
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 7
+
+
   -------         PROC          _GETCHAR
   D:0001H         SYMBOL        c
-  C:0AF1H         LINE#         190
-  C:0AF1H         LINE#         191
-  C:0AF4H         LINE#         193
-  C:0AF6H         LINE#         194
+  C:0B16H         LINE#         190
+  C:0B16H         LINE#         191
+  C:0B19H         LINE#         193
+  C:0B1BH         LINE#         194
   -------         ENDPROC       _GETCHAR
   -------         PROC          _GETSTRING
   D:000CH         SYMBOL        s
-  C:08FDH         LINE#         197
-  C:0903H         LINE#         198
-  C:0905H         LINE#         199
-  C:0918H         LINE#         200
-  C:0923H         LINE#         201
-  C:0929H         LINE#         202
-  C:092BH         LINE#         203
+  C:0988H         LINE#         197
+  C:098EH         LINE#         198
+  C:0990H         LINE#         199
+  C:09A3H         LINE#         200
+  C:09AEH         LINE#         201
+  C:09B4H         LINE#         202
+  C:09B6H         LINE#         203
   -------         ENDPROC       _GETSTRING
   -------         PROC          _SETAUTORETRANSMIT
   D:0006H         SYMBOL        setting
   -------         DO            
   D:0005H         SYMBOL        tmp
   -------         ENDDO         
-  C:0A46H         LINE#         206
-  C:0A48H         LINE#         210
-  C:0A48H         LINE#         211
-  C:0A48H         LINE#         212
-  C:0A4FH         LINE#         213
-  C:0A51H         LINE#         215
-  C:0A53H         LINE#         216
-  C:0A58H         LINE#         217
-  C:0A62H         LINE#         218
-  C:0A64H         LINE#         219
+  C:0A6AH         LINE#         206
+  C:0A6CH         LINE#         210
+  C:0A6CH         LINE#         211
+  C:0A6CH         LINE#         212
+  C:0A73H         LINE#         213
+  C:0A75H         LINE#         215
+  C:0A77H         LINE#         216
+  C:0A7CH         LINE#         217
+  C:0A86H         LINE#         218
+  C:0A88H         LINE#         219
   -------         ENDPROC       _SETAUTORETRANSMIT
   -------         PROC          INITRF
   -------         DO            
   D:0006H         SYMBOL        tmp
   -------         ENDDO         
-  C:0969H         LINE#         221
-  C:0969H         LINE#         225
-  C:096CH         LINE#         226
-  C:096FH         LINE#         229
-  C:0971H         LINE#         230
-  C:0976H         LINE#         231
-  C:097BH         LINE#         232
-  C:0980H         LINE#         233
-  C:0982H         LINE#         235
-  C:0982H         LINE#         236
-  C:0982H         LINE#         237
-  C:0989H         LINE#         238
-  C:098BH         LINE#         240
-  C:098DH         LINE#         241
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 8
-
-
-  C:0992H         LINE#         243
-  C:0999H         LINE#         244
-  C:099BH         LINE#         246
+  C:09C0H         LINE#         221
+  C:09C0H         LINE#         225
+  C:09C3H         LINE#         226
+  C:09C6H         LINE#         229
+  C:09C8H         LINE#         230
+  C:09CDH         LINE#         231
+  C:09D2H         LINE#         232
+  C:09D7H         LINE#         233
+  C:09D9H         LINE#         235
+  C:09D9H         LINE#         236
+  C:09D9H         LINE#         237
+  C:09E0H         LINE#         238
+  C:09E2H         LINE#         240
+  C:09E4H         LINE#         241
+  C:09E9H         LINE#         243
+  C:09F0H         LINE#         244
+  C:09F2H         LINE#         246
   -------         ENDPROC       INITRF
   -------         PROC          TRANSMITTER
   -------         DO            
-  D:0005H         SYMBOL        letter
-  -------         DO            
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 8
+
+
   D:0008H         SYMBOL        i
+  D:0009H         SYMBOL        j
   -------         ENDDO         
-  -------         ENDDO         
-  C:099CH         LINE#         249
-  C:099CH         LINE#         251
-  C:099CH         LINE#         252
-  C:099EH         LINE#         254
-  C:099EH         LINE#         256
-  C:09A1H         LINE#         257
-  C:09A3H         LINE#         258
-  C:09ACH         LINE#         259
-  C:09B1H         LINE#         260
-  C:09B4H         LINE#         262
-  C:09B9H         LINE#         266
-  C:09BEH         LINE#         267
+  C:0913H         LINE#         249
+  C:0913H         LINE#         252
+  C:0915H         LINE#         256
+  C:091AH         LINE#         257
+  C:091FH         LINE#         258
+  C:0921H         LINE#         260
+  C:0921H         LINE#         263
+  C:0924H         LINE#         264
+  C:0929H         LINE#         265
+  C:092EH         LINE#         267
+  C:0931H         LINE#         272
+  C:0936H         LINE#         274
+  C:093BH         LINE#         275
+  C:0944H         LINE#         276
   -------         ENDPROC       TRANSMITTER
   -------         PROC          RECEIVER
   -------         DO            
-  D:0005H         SYMBOL        letter
+  D:0006H         SYMBOL        letter
   -------         ENDDO         
-  C:0935H         LINE#         272
-  C:0935H         LINE#         273
-  C:0937H         LINE#         274
-  C:0939H         LINE#         276
-  C:0939H         LINE#         277
-  C:093EH         LINE#         278
-  C:094AH         LINE#         279
-  C:094CH         LINE#         283
-  C:094FH         LINE#         284
-  C:0952H         LINE#         285
-  C:0952H         LINE#         286
-  C:0957H         LINE#         289
-  C:0959H         LINE#         291
-  C:095BH         LINE#         292
-  C:095DH         LINE#         293
-  C:0962H         LINE#         294
-  C:0962H         LINE#         295
-  C:0967H         LINE#         296
+  C:08C4H         LINE#         280
+  C:08C4H         LINE#         281
+  C:08C6H         LINE#         282
+  C:08C8H         LINE#         284
+  C:08C8H         LINE#         285
+  C:08CDH         LINE#         288
+  C:08E5H         LINE#         289
+  C:08E7H         LINE#         292
+  C:08F3H         LINE#         293
+  C:08FCH         LINE#         295
+  C:0901H         LINE#         296
+  C:0903H         LINE#         297
+  C:0905H         LINE#         298
+  C:0908H         LINE#         300
+  C:0911H         LINE#         302
+  C:0911H         LINE#         303
   -------         ENDPROC       RECEIVER
   -------         PROC          MAIN
-  C:0A1FH         LINE#         300
-  C:0A1FH         LINE#         302
-  C:0A26H         LINE#         303
-  C:0A2CH         LINE#         304
-  C:0A31H         LINE#         306
-  C:0A33H         LINE#         308
-  C:0A36H         LINE#         309
-  C:0A39H         LINE#         311
-  C:0A3CH         LINE#         312
-BL51 BANKED LINKER/LOCATER V6.22                                                      07/28/2015  09:12:23  PAGE 9
-
-
-  C:0A3FH         LINE#         313
-  C:0A42H         LINE#         314
-  C:0A45H         LINE#         315
-  C:0A45H         LINE#         317
+  C:0A1EH         LINE#         307
+  C:0A1EH         LINE#         309
+  C:0A25H         LINE#         310
+  C:0A2BH         LINE#         311
+  C:0A30H         LINE#         313
+  C:0A32H         LINE#         315
+  C:0A35H         LINE#         316
+  C:0A38H         LINE#         318
+  C:0A3BH         LINE#         319
+  C:0A3EH         LINE#         320
+  C:0A41H         LINE#         321
+  C:0A44H         LINE#         322
+  C:0A44H         LINE#         324
   -------         ENDPROC       MAIN
   -------         ENDMOD        TESTRANGE
 
   -------         MODULE        ?C?CLDPTR
-  C:09F4H         PUBLIC        ?C?CLDPTR
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/30/2015  18:15:01  PAGE 9
+
+
+  C:09F3H         PUBLIC        ?C?CLDPTR
   -------         ENDMOD        ?C?CLDPTR
 
   -------         MODULE        ?C?CSTPTR
-  C:0A0DH         PUBLIC        ?C?CSTPTR
+  C:0A0CH         PUBLIC        ?C?CSTPTR
   -------         ENDMOD        ?C?CSTPTR
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
@@ -504,8 +496,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\testRange (?C_STARTUP)
     SEGMENT: ?PR?_SETAUTORETRANSMIT?TESTRANGE
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 02DBH BYTE (35%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0300H BYTE (37%) *
 ******************************************************************************
 
-Program Size: data=16.0 xdata=0 code=774
+Program Size: data=16.0 xdata=0 code=811
 LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)

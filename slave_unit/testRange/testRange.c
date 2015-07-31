@@ -248,25 +248,33 @@ void InitRF(void){
 
 void Transmitter(void){
 	
-	unsigned char letter = 0x00;
+	//unsigned char letter = 0x00;
 	TXEN = 1;
 	
-	while(1){
-		unsigned char i;
-		for(i=0x30;i<=0x39;i++){
-			letter = i;
-			PutString("Transmitting letter: ");
-			PutChar(letter);
-			PutString("\r\n");
-			
-			TransmitPacket(letter);
-			//PutString("Letter transmitted! \r\n---------------------\r\n");
-			
-			//delay 1s
-			Delay5ms(100);
-		}
-	}
 	
+	//transmit 0x2B to indicate start of transmitter
+	TransmitPacket(0x2B);
+	Delay5ms(15);		//delay 0.25s
+	P00 = 0;
+	
+	while(1){
+		unsigned char i,j;
+		
+		for(i=0x61; i<=0x7A; i++){
+			TransmitPacket(i);
+			Delay5ms(15);		//delay 0.25s
+			
+			for(j=0x30; j<=0x39; j++){
+
+				//PutString("Transmitting letter: ");
+				//PutChar(letter);
+				//PutString("\r\n");
+				TransmitPacket(j);
+
+				Delay5ms(15);		//delay 0.25s
+			}
+		}			
+	}
 }
 
 void Receiver(void){
@@ -274,25 +282,24 @@ void Receiver(void){
 	TXEN = 0;
 	
 	while(1){
-		letter = ReceivePacket();
-		if(letter >= 0x30 && letter <= 0x39){
+		letter = ReceivePacket(); 
+		
+		//if letter is 0-9 or a-z
+		if((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)){
 			P00 = 0;	//Turn on LED1
 			
-			//PutString("Character received: ");
-			
-			if(letter == 0x30){
+			//if letter is a-z, print new line
+			if(letter>=0x61 && letter<=0x7A)
 				PutString("\r\n");
-			}
+			
 			PutChar(letter);
-			//PutString("\r\n");
-			
 			letter = 0x00;
-			
-		}else{
-			P00 = 1; 	//Turn off LED1
-			PutChar(0x2D);
+		} 
+		else if(letter == 0x2B){
+			//to indicate transmitter just started
+			PutString("\r\n \r\nNew Transmission:");
+			//PutChar(letter);
 		}
-		Delay5ms(10);
 	}
 	
 }
