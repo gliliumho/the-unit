@@ -280,6 +280,8 @@ void Transmitter(void){
 					Delay5ms(10);		//delay 0.15s
 				}
 			}
+			
+			P00 = 1;
 		}
 					
 	}

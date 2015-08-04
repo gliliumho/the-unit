@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -126,7 +126,7 @@ line level    source
  114   1        while(n--)
  115   1          Delay400us(50);
  116   1      }
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 3   
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 3   
 
  117          
  118          unsigned char SpiReadWrite(unsigned char b){
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          void PutChar(unsigned char c){
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 4   
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 4   
 
  179   1        while(!TI)
  180   1          ;
@@ -254,7 +254,7 @@ line level    source
  238   1        RACSN = 1;
  239   1      
  240   1        RACSN = 0;
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 5   
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 5   
 
  241   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
  242   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
@@ -298,65 +298,67 @@ line level    source
  280   5                Delay5ms(10);   //delay 0.15s
  281   5              }
  282   4            }
- 283   3          }
- 284   2                
- 285   2        }
- 286   1      }
- 287          
- 288          void Receiver(void){
- 289   1        unsigned char letter = 0x00;
- 290   1        TXEN = 0;
- 291   1        
- 292   1        while(1){
- 293   2          letter = ReceivePacket(); 
- 294   2          
- 295   2          //if letter is 0-9 or a-z
- 296   2          if((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)){
- 297   3            P00 = 0;  //Turn on LED1
- 298   3            
- 299   3            //if letter is a-z, print new line
- 300   3            if(letter>=0x61 && letter<=0x7A)
- 301   3              PutString("\r\n");
- 302   3            
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 16:51:13 PAGE 6   
+ 283   3            
+ 284   3            P00 = 1;
+ 285   3          }
+ 286   2                
+ 287   2        }
+ 288   1      }
+ 289          
+ 290          void Receiver(void){
+ 291   1        unsigned char letter = 0x00;
+ 292   1        TXEN = 0;
+ 293   1        
+ 294   1        while(1){
+ 295   2          letter = ReceivePacket(); 
+ 296   2          
+ 297   2          //if letter is 0-9 or a-z
+ 298   2          if((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)){
+ 299   3            P00 = 0;  //Turn on LED1
+ 300   3            
+ 301   3            //if letter is a-z, print new line
+ 302   3            if(letter>=0x61 && letter<=0x7A)
+C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 6   
 
- 303   3            PutChar(letter);
- 304   3            letter = 0x00;
- 305   3          } 
- 306   2          else if(letter == 0x2B){
- 307   3            //to indicate transmitter just started
- 308   3            PutString("\r\n \r\nNew Transmission:");
- 309   3            letter = ReceivePacket();
- 310   3            PutChar(letter);
- 311   3            
- 312   3          }
- 313   2        }
- 314   1        
- 315   1      }
- 316          
- 317          void main(){
- 318   1        
- 319   1        InitPin(0,0); //Initialize P00 for LED1
- 320   1        InitPin(3,1);
- 321   1        InitPin(5,1);
- 322   1        
- 323   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 303   3              PutString("\r\n");
+ 304   3            
+ 305   3            PutChar(letter);
+ 306   3            letter = 0x00;
+ 307   3          } 
+ 308   2          else if(letter == 0x2B){
+ 309   3            //to indicate transmitter just started
+ 310   3            PutString("\r\n \r\nNew Transmission:");
+ 311   3            letter = ReceivePacket();
+ 312   3            PutChar(letter);
+ 313   3            
+ 314   3          }
+ 315   2        }
+ 316   1        
+ 317   1      }
+ 318          
+ 319          void main(){
+ 320   1        
+ 321   1        InitPin(0,0); //Initialize P00 for LED1
+ 322   1        InitPin(3,1);
+ 323   1        InitPin(5,1);
  324   1        
- 325   1        InitUART();
- 326   1        InitRF();
- 327   1        
- 328   1        if(P03 == 0){
- 329   2          Transmitter();
- 330   2        } else if (P05 == 0){
- 331   2          Receiver();
- 332   2        }
- 333   1        
- 334   1      }
- 335          
+ 325   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 326   1        
+ 327   1        InitUART();
+ 328   1        InitRF();
+ 329   1        
+ 330   1        if(P03 == 0){
+ 331   2          Transmitter();
+ 332   2        } else if (P05 == 0){
+ 333   2          Receiver();
+ 334   2        }
+ 335   1        
+ 336   1      }
+ 337          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    748    ----
+   CODE SIZE        =    747    ----
    CONSTANT SIZE    =     26    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

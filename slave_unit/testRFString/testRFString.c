@@ -1,9 +1,13 @@
 
 #include <Nordic\reg9e5.h>
+#include <string.h>
+
 
 #define HFREQ 0		// 0=433MHz, 1=868/915MHz
 #define POWER 3 	// 0=min power...3 = max power
 
+/* Set pinNum as GPIO. direction=1 for input, direction=0 for output
+** eg.InitPin(1,1) will set P01 as input GPIO. */
 void InitPin(unsigned char pinNum, direction){
 	switch(pinNum){
 		case 0:
@@ -61,8 +65,7 @@ void InitPin(unsigned char pinNum, direction){
 			break;
 			
 		default:
-			break;
-			
+			break;	
 	}
 }
 
@@ -101,6 +104,7 @@ void SetFrequency(unsigned char freq){
 } 
 */
 
+
 void Delay400us(volatile unsigned char n){
 	unsigned char i;
 	while(n--)
@@ -108,39 +112,84 @@ void Delay400us(volatile unsigned char n){
 			;
 }
 
+void Delay5ms(volatile unsigned char n){
+	while(n--)
+		Delay400us(50);
+}
+
+/*	SpiReadWrite() is used to read/write to register using SPI.
+**	SpiReadWrite(REGISTER) will specify the register/byte you want to write to.
+**	Then SpiReadWrite(VALUE) will write value to register. If you use it again, it'll write to next byte.
+** 	c = SpiReadWrite() will read value from register.
+*/
 unsigned char SpiReadWrite(unsigned char b){
 	EXIF &= ~0x20;				  // Clear SPI interrupt
-	SPI_DATA = b;				   // Move byte to send to SPI data register
+	SPI_DATA = b;						// Move byte to send to SPI data register
 	while((EXIF & 0x20) == 0x00)	// Wait until SPI has finished transmitting
 		;
 	return SPI_DATA;
 }
 
-void TransmitPacket(unsigned char b){
+void TransmitPacket(unsigned char *b){
+	unsigned char i, width;
+	
 	RACSN = 0;
-	SpiReadWrite(WTP);
-	SpiReadWrite(b);
+	SpiReadWrite(RRC | 0x04);	   //Read byte 4 of RF config(TX payload width)
+	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
 	RACSN = 1;
-	TRX_CE = 1;
-	Delay400us(1);
-	TRX_CE = 0;
+	
+	/* To transmit more than one byte, just change the TX_PW in RF config.
+	**	Then use SpiReadWrite() for each byte. (You can just loop it).	*/
+	
+	RACSN = 0;
+	SpiReadWrite(WTP);					//Write to TX payload
+	for(i=0;i<width;i++){
+		if(*b!=0x00){							//if not EOS
+			SpiReadWrite(*b);				//then write byte to SPI
+			b++;										//move pointer to next byte
+		}else{
+			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
+		}
+	}
+	
+	RACSN = 1;
+	TRX_CE = 1;				//turn ON radio
+	Delay400us(20);		//delay to wait for transmission to be completed
+	TRX_CE = 0; 			//turn OFF radio
 }
 
-unsigned char ReceivePacket(void){
-	unsigned char b;
+void ReceivePacket(unsigned char *b){
+	unsigned char i, width;
+	
+	TRX_CE = 1;							//turn ON radio
 
-	TRX_CE = 1;
-
-	while(DR == 0)
-		;
+	while(DR == 0)					//DR=Data Ready
+		;											//Busy waiting until VALID packet is received
 	RACSN = 0;
-	SpiReadWrite(RRP);
-	b = SpiReadWrite(0);
+	SpiReadWrite(RRC | 0x03);	   //Read byte 4 of RF config(TX payload width)
+	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
 	RACSN = 1;
-	TRX_CE = 0;
-	return b;
+	
+	
+	/* To receive more than one byte, just change the RX_PW in RF config.
+	** Then use SpiReadWrite() for each byte. (You can just loop it).	*/
+	RACSN = 0;
+	SpiReadWrite(RRP);			//Read receive payload
+	for(i=0;i<width;i++){
+		*b = SpiReadWrite(0);		//populate *b with first byte of payload
+		b++;									//move pointer to next byte
+	}
+	
+	
+//	*b = SpiReadWrite(0);
+//	while(*b!=0x00){				//if end of message (NOTE: I use 0x00 to indicate EOS or end of packet.)
+//		b++;									//move pointer to next byte
+//		*b = SpiReadWrite(0);	
+//	}
+	
+	RACSN = 1;
+	TRX_CE = 0;							//turn OFF radio
 }
-
 
 void InitUART(void){
 	
@@ -152,6 +201,10 @@ void InitUART(void){
 	SCON = 0x52;					// Serial mode1, enable receiver
 	TMOD = 0x20;					// Timer1 8bit auto reload 
 	TR1 = 1;						// Start timer1
+	
+	/*	UART and RS-232 are using the same pin(P01 & P02) from SoC.
+	**	For RS-232, the signal passes through another microcontroller
+	**	that converts the UART TTL signal to serial RS-232 signals.	*/
 	P0_ALT |= 0x06;	//select alternative function for P01 and P02
 	P0_DIR &= 0x02; //P01(RXD) is input
 	
@@ -170,10 +223,10 @@ void InitUART(void){
 }
 
 void PutChar(unsigned char c){
-	while(!TI)
-		;
+	while(!TI) 	//TI=Transmit Interupt. TI=0 when UART TXD is busy
+		;					
 	TI = 0;
-	SBUF = c;
+	SBUF = c;		//SBUF will be transmitted through UART
 }
 
 void PutString(unsigned char *s){
@@ -182,21 +235,21 @@ void PutString(unsigned char *s){
 }
 
 void GetChar(unsigned char *c){
-	while(!RI)
+	while(!RI) 		//RI=Receive Interupt. RI=0 when UART RXD is busy
 		;
 	RI=0;
-	*c = SBUF;
+	*c = SBUF; 		//SBUF stores the byte received through UART
+	PutChar(*c);	//for internal echo
 }
 
 void GetString(unsigned char *s){
 	GetChar(s);
 	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
-		s++;
+		s++;													//move pointer to next byte
 		GetChar(s);
 	}
-	*s = 0;
+	*s = 0x00; 											//0x00 to indicate end of string(EOS)
 }
-
 
 void SetAutoRetransmit(unsigned char setting){
 	
@@ -213,7 +266,6 @@ void SetAutoRetransmit(unsigned char setting){
 	RACSN = 1;
 }
 
-
 void InitRF(void){
 	
 	unsigned char tmp;
@@ -224,8 +276,8 @@ void InitRF(void){
 	//Configure RF
 	RACSN = 0;
 	SpiReadWrite(WRC | 0x03);	   // Write to RF config address 3 (RX payload)
-	SpiReadWrite(0x01);			 // One byte RX payload width
-	SpiReadWrite(0x01);			 // One byte TX payload width
+	SpiReadWrite(0x20);			 // 20 byte RX payload width
+	SpiReadWrite(0x20);			 // 20 byte TX payload width
 	RACSN = 1;
 
 	RACSN = 0;
@@ -241,69 +293,70 @@ void InitRF(void){
 	
 }
 
+
 void Transmitter(void){
 	
-	unsigned char letter = 0x00;
-	TXEN = 1;
+	unsigned char payload[0x20];
+	//strcpy(payload, "Hello World!");	//copy "Hello world!" to string
+	GetString(&payload[0]);
+	TXEN = 1;													//turn radio to TX mode
+	
+	PutString("\r\n Packet content: ");
+	PutString(&payload[0]);						//
+	TransmitPacket(&payload[0]);
+	PutString("\r\n Packet transmitted.");
+	Delay5ms(10);
 	
 	while(1){
-		PutString("Type char: \r\n");
-		GetChar(&letter);
-		PutString("Transmitting letter '");
-		PutChar(letter);
-		PutString("' ....\r\n");
+		GetString(&payload[0]);
 		
-		TransmitPacket(letter);
-		PutString("Letter transmitted! \r\n---------------------\r\n");
+		PutString("\r\n Packet content: ");
+		PutString(&payload[0]);
+		TransmitPacket(&payload[0]);
+		PutString("\r\n Packet transmitted.");
+		Delay5ms(10);
+		
 	}
-	
 }
 
 void Receiver(void){
-	unsigned char letter = 0x00;
+	unsigned char payload[0x20];
 	TXEN = 0;
 	
+	PutString(" Receiver started. \r\n");
+	
 	while(1){
-		letter = ReceivePacket();
-		if (letter == '2'){
-			P00 = 1;	//RED
-			P04 = 0;
-			P06 = 0;
-			PutString("Char: 2 \r\n");
-		}else if (letter == '1'){
-			P00 = 0;
-			P04 = 1;	//YELLOW
-			P06 = 0;
-			PutString("Char: 1 \r\n");
-		}else if (letter == '0'){
-			P00 = 0;
-			P04 = 0;
-			P06 = 1;	//GREEN
-			PutString("Char: 0 \r\n");
+		
+		//clear array
+		unsigned char i;
+		for(i=0;i<0x20;i++){
+			payload[i] = 0x20;
 		}
+		
+		ReceivePacket(&payload[0]);
+		
+		PutString(" Payload: ");
+		PutString(&payload[0]);
+		PutString("\r\n");
+		
 	}
 	
 }
 
-
 void main(){
 	
-	InitPin(0,0);
-	InitPin(3,1);
-	InitPin(4,0);
-	InitPin(5,1);
-	InitPin(6,0);
+	InitPin(0,0);	//Initialize P00 for LED1
+	InitPin(3,1);	//Initialize SW2 as input
+	InitPin(5,1);	//Initialize SW3 as output
 	
-	P00 = 1;
-	P04 = 1;
-	P06 = 1;
+	P00 = 1; 		//Initialize with LED1 turned OFF
 	
 	InitUART();
 	InitRF();
 	
-	if(P03 == 0){
+	if(P03 == 0){		//SW2 for Transmitter
 		Transmitter();
-	} else if (P05 == 0){
+	} else if (P05 == 0){		//SW3 for Receiver
 		Receiver();
 	}
 	
