@@ -1,0 +1,456 @@
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TESTMULTIHOP
+OBJECT MODULE PLACED IN .\Objects\testMultiHop.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE testMultiHop.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listi
+                    -ngs\testMultiHop.lst) TABS(2) OBJECT(.\Objects\testMultiHop.obj)
+
+line level    source
+
+   1          
+   2          #include <Nordic\reg9e5.h>
+   3          #include <string.h>
+   4          
+   5          
+   6          #define HFREQ 0   // 0=433MHz, 1=868/915MHz
+   7          #define POWER 3   // 0=min power...3 = max power
+   8          
+   9          /* Set pinNum as GPIO. direction=1 for input, direction=0 for output
+  10          ** eg.InitPin(1,1) will set P01 as input GPIO. */
+  11          void InitPin(unsigned char pinNum, direction){
+  12   1        switch(pinNum){
+  13   2          case 0:
+  14   2            P0_ALT &= 0xFE;
+  15   2            if (direction == 1) P0_DIR |= 0x01;
+  16   2            else P0_DIR &= 0xFE;
+  17   2            break;
+  18   2          
+  19   2          case 1:
+  20   2            P0_ALT &= 0xFD;
+  21   2            if (direction == 1) P0_DIR |= 0x02;
+  22   2            else P0_DIR &= 0xFD;
+  23   2            break;
+  24   2          
+  25   2          case 2:
+  26   2            P0_ALT &= 0xFB;
+  27   2            if (direction == 1) P0_DIR |= 0x04;
+  28   2            else P0_DIR &= 0xFB;
+  29   2            break;
+  30   2            
+  31   2          case 3:
+  32   2            P0_ALT &= 0xF7;
+  33   2            if (direction == 1) P0_DIR |= 0x08;
+  34   2            else P0_DIR &= 0xF7;
+  35   2            break;
+  36   2          
+  37   2          case 4:
+  38   2            P0_ALT &= 0xEF;
+  39   2            if (direction == 1) P0_DIR |= 0x10;
+  40   2            else P0_DIR &= 0xEF;
+  41   2            break;
+  42   2          
+  43   2          case 5:
+  44   2            P0_ALT &= 0xDF;
+  45   2            if (direction == 1) P0_DIR |= 0x20;
+  46   2            else P0_DIR &= 0xDF;
+  47   2            break;
+  48   2          
+  49   2          case 6:
+  50   2            P0_ALT &= 0xBF;
+  51   2            if (direction == 1) P0_DIR |= 0x40;
+  52   2            else P0_DIR &= 0xBF;
+  53   2            break;
+  54   2            
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 2   
+
+  55   2          case 7:
+  56   2            P0_ALT &= 0x7F;
+  57   2            if (direction == 1) P0_DIR |= 0x80;
+  58   2            else P0_DIR &= 0x7F;
+  59   2            break;  
+  60   2            
+  61   2          case 8:
+  62   2            P0_ALT = 0x00;
+  63   2            if (direction == 1) P0_DIR = 0xFF;
+  64   2            else P0_DIR = 0x00;
+  65   2            break;
+  66   2            
+  67   2          default:
+  68   2            break;  
+  69   2        }
+  70   1      }
+  71          
+  72          /* ---SetTXPower() & SetFrequency()------------------------
+  73          ---------------------------------------------
+  74          Currently not used and not working. 
+  75          ---------------------------------------------
+  76          void SetTXPower(unsigned char powerlevel){
+  77            switch(powerlevel){
+  78              case 0:
+  79                CC &= 0xF3FF;
+  80                break;
+  81              case 1:
+  82                CC &= 0xF7FF;
+  83                CC |= 0x0400;
+  84                break;
+  85              case 2:
+  86                CC &= 0xFBFF;
+  87                CC |= 0x0800;
+  88                break;
+  89              case 3:
+  90                CC |= 0x0C00;
+  91                break;
+  92            }
+  93          }
+  94          
+  95          
+  96          ------------------------------------------
+  97          Currently not used and not working. 
+  98          ------------------------------------------
+  99          void SetFrequency(unsigned char freq){
+ 100            if(freq == 1)
+ 101              CC |= 0x0200;
+ 102            else
+ 103              CC &= 0xFDFF;
+ 104          } 
+ 105          */
+ 106          
+ 107          void Delay400us(volatile unsigned char n){
+ 108   1        unsigned char i;
+ 109   1        while(n--)
+ 110   1          for(i=0;i<35;i++)
+ 111   1            ;
+ 112   1      }
+ 113          
+ 114          void Delay5ms(volatile unsigned char n){
+ 115   1        while(n--)
+ 116   1          Delay400us(50);
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 3   
+
+ 117   1      }
+ 118          
+ 119          /*  SpiReadWrite() is used to read/write to register using SPI.
+ 120          **  SpiReadWrite(REGISTER) will specify the register/byte you want to write to.
+ 121          **  Then SpiReadWrite(VALUE) will write value to register. If you use it again, it'll write to next byte.
+ 122          **  c = SpiReadWrite() will read value from register.
+ 123          */
+ 124          unsigned char SpiReadWrite(unsigned char b){
+ 125   1        EXIF &= ~0x20;          // Clear SPI interrupt
+ 126   1        SPI_DATA = b;           // Move byte to send to SPI data register
+ 127   1        while((EXIF & 0x20) == 0x00)  // Wait until SPI has finished transmitting
+ 128   1          ;
+ 129   1        return SPI_DATA;
+ 130   1      }
+ 131          
+ 132          void TransmitPacket(unsigned char *b){
+ 133   1        unsigned char i, width;
+ 134   1        
+ 135   1        RACSN = 0;
+ 136   1        SpiReadWrite(RRC | 0x04);    //Read byte 4 of RF config(TX payload width)
+ 137   1        width = SpiReadWrite(0) & 0x3F;   //save the TX payload width
+ 138   1        RACSN = 1;
+ 139   1        
+ 140   1        /* To transmit more than one byte, just change the TX_PW in RF config.
+ 141   1        **  Then use SpiReadWrite() for each byte. (You can just loop it).  */
+ 142   1        
+ 143   1        RACSN = 0;
+ 144   1        SpiReadWrite(WTP);          //Write to TX payload
+ 145   1        for(i=0;i<width;i++){
+ 146   2          if(*b!=0x00){             //if not EOS
+ 147   3            SpiReadWrite(*b);       //then write byte to SPI
+ 148   3            b++;                    //move pointer to next byte
+ 149   3          }else{
+ 150   3            SpiReadWrite(0x00);     //write 0x00 for remaining of the payload
+ 151   3          }
+ 152   2        }
+ 153   1        
+ 154   1        RACSN = 1;
+ 155   1        TRX_CE = 1;       //turn ON radio
+ 156   1        Delay400us(20);   //delay to wait for transmission to be completed
+ 157   1        TRX_CE = 0;       //turn OFF radio
+ 158   1      }
+ 159          
+ 160          void ReceivePacket(unsigned char *b){
+ 161   1        unsigned char i, width;
+ 162   1        
+ 163   1        TRX_CE = 1;             //turn ON radio
+ 164   1      
+ 165   1        while(DR == 0)          //DR=Data Ready
+ 166   1          ;                     //Busy waiting until VALID packet is received
+ 167   1        RACSN = 0;
+ 168   1        SpiReadWrite(RRC | 0x03);    //Read byte 4 of RF config(TX payload width)
+ 169   1        width = SpiReadWrite(0) & 0x3F;   //save the TX payload width
+ 170   1        RACSN = 1;
+ 171   1        
+ 172   1        
+ 173   1        /* To receive more than one byte, just change the RX_PW in RF config.
+ 174   1        ** Then use SpiReadWrite() for each byte. (You can just loop it). */
+ 175   1        RACSN = 0;
+ 176   1        SpiReadWrite(RRP);      //Read receive payload
+ 177   1        for(i=0;i<width;i++){
+ 178   2          *b = SpiReadWrite(0);   //populate *b with first byte of payload
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 4   
+
+ 179   2          b++;            //move pointer to next byte
+ 180   2        }
+ 181   1        
+ 182   1        
+ 183   1        RACSN = 1;
+ 184   1        TRX_CE = 0;             //turn OFF radio
+ 185   1      }
+ 186          
+ 187          void InitUART(void){
+ 188   1        
+ 189   1        unsigned char cklf;
+ 190   1        
+ 191   1        TH1 = 0xE6;           // 9600@16MHz (when T1M=1 and SMOD=1)
+ 192   1        CKCON |= 0x10;          // T1M=1 (/4 timer clock)
+ 193   1        PCON = 0x80;          // SMOD=1 (double baud rate)
+ 194   1        SCON = 0x52;          // Serial mode1, enable receiver
+ 195   1        TMOD = 0x20;          // Timer1 8bit auto reload 
+ 196   1        TR1 = 1;            // Start timer1
+ 197   1        
+ 198   1        /*  UART and RS-232 are using the same pin(P01 & P02) from SoC.
+ 199   1        **  For RS-232, the signal passes through another microcontroller
+ 200   1        **  that converts the UART TTL signal to serial RS-232 signals. */
+ 201   1        P0_ALT |= 0x06; //select alternative function for P01 and P02
+ 202   1        P0_DIR &= 0x02; //P01(RXD) is input
+ 203   1        
+ 204   1        SPICLK = 0;     //Max SPI clock
+ 205   1        SPI_CTRL = 0x02;
+ 206   1        
+ 207   1        // Switch to 16MHz clock:
+ 208   1        RACSN = 0;
+ 209   1        SpiReadWrite(RRC | 0x09);
+ 210   1        cklf = SpiReadWrite(0) | 0x04;  //XO_DIRECT = 1, follow XO_Frequency
+ 211   1        RACSN = 1;
+ 212   1        RACSN = 0;
+ 213   1        SpiReadWrite(WRC | 0x09);
+ 214   1        SpiReadWrite(cklf);
+ 215   1        RACSN = 1;
+ 216   1      }
+ 217          
+ 218          void PutChar(unsigned char c){
+ 219   1        while(!TI)  //TI=Transmit Interupt. TI=0 when UART TXD is busy
+ 220   1          ;         
+ 221   1        TI = 0;
+ 222   1        SBUF = c;   //SBUF will be transmitted through UART
+ 223   1      }
+ 224          
+ 225          void PutString(unsigned char *s){
+ 226   1        while(*s != 0)
+ 227   1          PutChar(*s++);
+ 228   1      }
+ 229          
+ 230          void GetChar(unsigned char *c){
+ 231   1        while(!RI)    //RI=Receive Interupt. RI=0 when UART RXD is busy
+ 232   1          ;
+ 233   1        RI=0;
+ 234   1        *c = SBUF;    //SBUF stores the byte received through UART
+ 235   1        PutChar(*c);  //for internal echo
+ 236   1      }
+ 237          
+ 238          void GetString(unsigned char *s){
+ 239   1        GetChar(s);
+ 240   1        while(*s!= 0x0D && *s!= 0x0A){  //GetChar as long as not ENTER.
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 5   
+
+ 241   2          s++;                          //move pointer to next byte
+ 242   2          GetChar(s);
+ 243   2        }
+ 244   1        *s = 0x00;                      //0x00 to indicate end of string(EOS)
+ 245   1      }
+ 246          
+ 247          void SetAutoRetransmit(unsigned char setting){
+ 248   1        
+ 249   1        unsigned char tmp;
+ 250   1        
+ 251   1        RACSN = 0;
+ 252   1        SpiReadWrite(RRC | 0x01);       //Read RF config address byte #1
+ 253   1        tmp = SpiReadWrite(0) & 0xDF;   //store current RF config and clear off AUTORETRAN bit
+ 254   1        RACSN = 1;
+ 255   1        
+ 256   1        RACSN = 0;
+ 257   1        SpiReadWrite(WRC | 0x01);     //Write RF config at addr byte #1
+ 258   1        SpiReadWrite(tmp | (setting <<5));  //change the AUTORETRAN setting
+ 259   1        RACSN = 1;
+ 260   1      }
+ 261          
+ 262          void InitRF(void){
+ 263   1        
+ 264   1        unsigned char tmp;
+ 265   1        
+ 266   1        SPICLK = 0;           //Max SPI clock
+ 267   1        SPI_CTRL = 0x02;
+ 268   1        
+ 269   1        //Configure RF
+ 270   1        RACSN = 0;
+ 271   1        SpiReadWrite(WRC | 0x03);    // Write to RF config address 3 (RX payload)
+ 272   1        SpiReadWrite(0x03);      // 3 byte RX payload width
+ 273   1        SpiReadWrite(0x03);      // 3 byte TX payload width
+ 274   1        RACSN = 1;
+ 275   1      
+ 276   1        RACSN = 0;
+ 277   1        SpiReadWrite(RRC | 0x01);    // Read RF config address 1
+ 278   1        tmp = SpiReadWrite(0) & 0xf1;   // Clear the power and frequency setting bits
+ 279   1        RACSN = 1;
+ 280   1      
+ 281   1        RACSN = 0;
+ 282   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
+ 283   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
+ 284   1        SpiReadWrite(tmp | (POWER <<2) | (HFREQ << 1));
+ 285   1        RACSN = 1;
+ 286   1        
+ 287   1      }
+ 288          
+ 289          
+ 290          /*old Transmitter and Receiver
+ 291          void Transmitter(void){
+ 292            
+ 293            unsigned char payload[0x20];
+ 294            //strcpy(payload, "Hello World!");  //copy "Hello world!" to string
+ 295            GetString(&payload[0]);
+ 296            TXEN = 1;                         //turn radio to TX mode
+ 297            
+ 298            PutString("\r\n Packet content: ");
+ 299            PutString(&payload[0]);           //
+ 300            TransmitPacket(&payload[0]);
+ 301            PutString("\r\n Packet transmitted.");
+ 302            Delay5ms(10);
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 6   
+
+ 303            
+ 304            while(1){
+ 305              GetString(&payload[0]);
+ 306              
+ 307              PutString("\r\n Packet content: ");
+ 308              PutString(&payload[0]);
+ 309              TransmitPacket(&payload[0]);
+ 310              PutString("\r\n Packet transmitted.");
+ 311              Delay5ms(10);
+ 312              
+ 313            }
+ 314          }
+ 315          
+ 316          void Receiver(void){
+ 317            unsigned char payload[0x20];
+ 318            TXEN = 0;
+ 319            
+ 320            PutString(" Receiver started. \r\n");
+ 321            
+ 322            while(1){
+ 323              
+ 324              
+ 325          //    //clear array
+ 326          //    unsigned char i;
+ 327          //    for(i=0;i<0x20;i++){
+ 328          //      payload[i] = 0x20;
+ 329          //    }
+ 330              
+ 331              
+ 332              ReceivePacket(&payload[0]);
+ 333              
+ 334              PutString(" Payload: ");
+ 335              PutString(&payload[0]);
+ 336              PutString("\r\n");
+ 337              
+ 338            }
+ 339            
+ 340          }
+ 341          */
+ 342          
+ 343          void MasterTransmitter(void){
+ 344   1        unsigned char payload[3];
+ 345   1        TXEN = 1;
+ 346   1        
+ 347   1        while(1){
+ 348   2          unsigned char i;
+ 349   2          
+ 350   2          PutString("\r\n [Slave1 LED][Slave2 LED](no space): ");
+ 351   2          GetString(&payload[0]);
+ 352   2          
+ 353   2          PutString("\r\n Transmitting packet: ");
+ 354   2          PutString(&payload[0]);
+ 355   2          for(i=0;i<10;i++){
+ 356   3            TransmitPacket(&payload[0]);
+ 357   3          }
+ 358   2        }
+ 359   1      }
+ 360          
+ 361          void Slave(unsigned char slaveID){
+ 362   1        unsigned char payload[3];
+ 363   1        unsigned char id = slaveID;
+ 364   1        
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 7   
+
+ 365   1        while(1){
+ 366   2          unsigned char i;
+ 367   2          
+ 368   2          TXEN = 0;
+ 369   2          ReceivePacket(&payload[0]);
+ 370   2          
+ 371   2          if(payload[id] == 0x31){
+ 372   3            P00 = 0;
+ 373   3            P04 = 1;
+ 374   3            P06 = 1;
+ 375   3          } else if(payload[id] == 0x32){
+ 376   3            P00 = 1;
+ 377   3            P04 = 0;
+ 378   3            P06 = 1;
+ 379   3          } else if(payload[id] == 0x33){
+ 380   3            P00 = 1;
+ 381   3            P04 = 1;
+ 382   3            P06 = 0;
+ 383   3          }
+ 384   2          
+ 385   2          TXEN = 1;
+ 386   2          for(i=0;i<10;i++){
+ 387   3            TransmitPacket(&payload[0]);
+ 388   3          }
+ 389   2          Delay5ms(50);
+ 390   2        }
+ 391   1      }
+ 392          
+ 393          void main(){
+ 394   1        
+ 395   1        InitPin(0,0); //Initialize P00 for LED1
+ 396   1        InitPin(4,0);
+ 397   1        InitPin(6,0);
+ 398   1        InitPin(3,1); //Initialize SW2 as input
+ 399   1        InitPin(5,1); //Initialize SW3 as input
+ 400   1        InitPin(7,1); //Initialize SW4 as input
+ 401   1        
+ 402   1        P00 = 1;    //Initialize with LED1,3,4 turned ON
+ 403   1        P04 = 1;
+ 404   1        P06 = 1;
+ 405   1        
+ 406   1        InitUART();
+ 407   1        InitRF();
+ 408   1        
+ 409   1        if(P03 == 0){   //SW2 for Transmitter
+ 410   2          MasterTransmitter();
+ 411   2        } else if (P05 == 0){   //SW3 for Receiver
+ 412   2          Slave(0);
+ 413   2        } else if (P07 == 0){
+ 414   2          Slave(1);
+ 415   2        }
+ 416   1        
+ 417   1      }
+ 418          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    844    ----
+   CONSTANT SIZE    =     65    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      16
+C51 COMPILER V9.54   TESTMULTIHOP                                                          08/05/2015 14:01:37 PAGE 8   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -126,7 +126,7 @@ line level    source
  114   1        while(n--)
  115   1          Delay400us(50);
  116   1      }
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 3   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 3   
 
  117          
  118          unsigned char SpiReadWrite(unsigned char b){
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          void PutChar(unsigned char c){
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 4   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 4   
 
  179   1        while(!TI)
  180   1          ;
@@ -254,7 +254,7 @@ line level    source
  238   1        RACSN = 1;
  239   1      
  240   1        RACSN = 0;
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 5   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 5   
 
  241   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
  242   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
@@ -318,7 +318,7 @@ line level    source
  300   3            
  301   3            //if letter is a-z, print new line
  302   3            if(letter>=0x61 && letter<=0x7A)
-C51 COMPILER V9.54   TESTRANGE                                                             07/31/2015 17:21:17 PAGE 6   
+C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 17:28:40 PAGE 6   
 
  303   3              PutString("\r\n");
  304   3            
