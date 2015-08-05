@@ -203,6 +203,17 @@ void GetString(unsigned char *s){
 	*s = 0;
 }
 
+void ConsoleComment(void){
+	unsigned char c = 0x00;
+	
+	GetChar(&c);
+	while(c!=0x0D && c!=0x0A){
+		PutChar(c);
+		GetChar(&c);
+	}
+	PutString("\r\nDone!\r\n");
+}
+
 void SetAutoRetransmit(unsigned char setting){
 	
 	unsigned char tmp;
@@ -257,7 +268,10 @@ void Transmitter(void){
 	
 	while(1){
 		if(P03 == 0){
-			TransmitPacket(0x2B);
+			
+			for(i=0;i<5;i++)
+				TransmitPacket(0x01);
+			
 			Delay5ms(30);		//delay 0.25s
 			TransmitPacket(n);
 			Delay5ms(10);
@@ -281,6 +295,9 @@ void Transmitter(void){
 				}
 			}
 			
+			for(i=0;i<5;i++)
+				TransmitPacket(0x04);
+			
 			P00 = 1;
 		}
 					
@@ -289,9 +306,13 @@ void Transmitter(void){
 
 void Receiver(void){
 	unsigned char letter = 0x00;
+	unsigned char headerFlag = 0;
+	unsigned char endFlag = 1;
 	TXEN = 0;
 	
-	while(1){
+	PutString("\r\n \r\nReceiver started.");
+	
+	while(1){	
 		letter = ReceivePacket(); 
 		
 		//if letter is 0-9 or a-z
@@ -304,13 +325,22 @@ void Receiver(void){
 			
 			PutChar(letter);
 			letter = 0x00;
-		} 
-		else if(letter == 0x2B){
+		} else if(letter == 0x01){
 			//to indicate transmitter just started
-			PutString("\r\n \r\nNew Transmission:");
-			letter = ReceivePacket();
-			PutChar(letter);
-			
+			if(headerFlag == 0){
+				headerFlag = 1;
+				endFlag = 0;
+				PutString("\r\n \r\nNew Transmission:");
+				letter = ReceivePacket();
+				PutChar(letter);
+			}
+		} else if(letter == 0x04){
+			if(endFlag == 0){
+				headerFlag = 0;
+				endFlag = 1;
+				PutString("\r\nEnd of Transmission. \r\nEnter Comment: ");
+				ConsoleComment();
+			}
 		}
 	}
 	
