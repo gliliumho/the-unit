@@ -203,6 +203,64 @@ void GetString(unsigned char *s){
 	*s = 0;
 }
 
+void PrintNumber(unsigned int n){
+	unsigned char bit4, bit3, bit2, bit1, bit0;
+	
+	if(n >= 10000){
+		bit4 = n/10000;
+		n -= bit4*10000;
+	} else{
+		bit4 = 0;
+	}
+	
+	if(n >= 1000){
+		bit3 = n/1000;
+		n -= bit3*1000;
+	} else{
+		bit3 = 0;
+	}
+	
+	if(n >= 100){
+		bit2 = n/100;
+		n -= bit2*100;
+	} else{
+		bit2 = 0;
+	}
+	
+	if(n >= 10){
+		bit1 = n/10;
+		n -= bit1*10;
+	} else{
+		bit1 = 0;
+	}
+	
+	bit0 = n;
+	
+	
+	bit4 += 0x30;
+	bit3 += 0x30;
+	bit2 += 0x30;
+	bit1 += 0x30;
+	bit0 += 0x30;
+	
+	if(bit4 >= 0x31){
+		PutChar(bit4);
+		PutChar(bit3);
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit3 >= 0x31){
+		PutChar(bit3);
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit2 >= 0x31){
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit1>= 0x31)
+		PutChar(bit1);
+	
+	PutChar(bit0);
+
+}
 void ConsoleComment(void){
 	unsigned char c = 0x00;
 	
@@ -258,46 +316,45 @@ void InitRF(void){
 
 
 void Transmitter(void){
-	
-	unsigned char i,j,n = 0x30;
+	unsigned char i,j,n = 0x00;
 	TXEN = 1;
-	
-	
-	//transmit 0x2B to indicate start of transmitter
-	
 	
 	while(1){
 		if(P03 == 0){
 			
-			for(i=0;i<5;i++)
+			for(i=0;i<50;i++){
 				TransmitPacket(0x01);
+				Delay400us(5);
+				TransmitPacket(n);
+				P00 ^= 1;
+			}
 			
-			Delay5ms(30);		//delay 0.25s
-			TransmitPacket(n);
 			Delay5ms(10);
-			n++;
-			if (n > 0x39)
-				n = 0x30;
 			P00 = 0;
 			
-			for(i=0x61; i<=0x69; i++){
+			for(i=0x61; i<=0x74; i++){
 				TransmitPacket(i);
+				P00 ^= 1;
 				Delay5ms(10);		//delay 0.10s
-				
-				for(j=0x30; j<=0x39; j++){
-
+				for(j=0x31; j<=0x39; j++){
 					//PutString("Transmitting letter: ");
 					//PutChar(letter);
 					//PutString("\r\n");
 					TransmitPacket(j);
-
+					P00 ^= 1;
 					Delay5ms(10);		//delay 0.15s
 				}
 			}
 			
-			for(i=0;i<5;i++)
+			for(i=0;i<100;i++){
 				TransmitPacket(0x04);
+				P00 ^= 1;
+				Delay400us(5);
+			}
 			
+			n++;
+			if (n > 0x09)
+				n = 0x00;
 			P00 = 1;
 		}
 					
@@ -308,6 +365,7 @@ void Receiver(void){
 	unsigned char letter = 0x00;
 	unsigned char headerFlag = 0;
 	unsigned char endFlag = 1;
+	unsigned int packetCount = 0;
 	TXEN = 0;
 	
 	PutString("\r\n \r\nReceiver started.");
@@ -315,32 +373,38 @@ void Receiver(void){
 	while(1){	
 		letter = ReceivePacket(); 
 		
-		//if letter is 0-9 or a-z
-		if((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)){
+		if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)) && endFlag==0){	
+			//if letter is 0-9 or a-z
+			headerFlag = 0;
 			P00 = 0;	//Turn on LED1
 			
 			//if letter is a-z, print new line
 			if(letter>=0x61 && letter<=0x7A)
 				PutString("\r\n");
 			
+			packetCount++;
 			PutChar(letter);
 			letter = 0x00;
-		} else if(letter == 0x01){
-			//to indicate transmitter just started
-			if(headerFlag == 0){
-				headerFlag = 1;
-				endFlag = 0;
-				PutString("\r\n \r\nNew Transmission:");
-				letter = ReceivePacket();
-				PutChar(letter);
-			}
-		} else if(letter == 0x04){
-			if(endFlag == 0){
-				headerFlag = 0;
-				endFlag = 1;
-				PutString("\r\nEnd of Transmission. \r\nEnter Comment: ");
-				ConsoleComment();
-			}
+		} else if(letter == 0x01 && headerFlag == 0){	//to indicate transmitter just started
+			letter = ReceivePacket();
+			PutString("\r\n \r\nNew Transmission:");
+			letter += 0x30;
+			PutChar(letter);
+			headerFlag = 1;
+			endFlag = 0;
+			packetCount = 0;
+		} else if(letter == 0x04 && endFlag == 0){	//to indicate end of transmission
+			headerFlag = 0;
+			endFlag = 1;
+			PutString("\r\nEnd of Transmission. Received ");
+			PrintNumber(packetCount);
+			PutString("/200 packets sent. Packet loss: ");
+			packetCount = (200-packetCount)*100/200;
+			PrintNumber(packetCount);
+			PutChar(0x25);
+			packetCount = 0;
+			PutString("\r\nEnter Comment: ");
+			ConsoleComment();
 		}
 	}
 	

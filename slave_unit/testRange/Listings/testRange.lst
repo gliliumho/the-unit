@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -126,7 +126,7 @@ line level    source
  114   1        while(n--)
  115   1          Delay400us(50);
  116   1      }
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 3   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 3   
 
  117          
  118          unsigned char SpiReadWrite(unsigned char b){
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          void PutChar(unsigned char c){
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 4   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 4   
 
  179   1        while(!TI)
  180   1          ;
@@ -219,182 +219,248 @@ line level    source
  203   1        *s = 0;
  204   1      }
  205          
- 206          void ConsoleComment(void){
- 207   1        unsigned char c = 0x00;
+ 206          void PrintNumber(unsigned int n){
+ 207   1        unsigned char bit4, bit3, bit2, bit1, bit0;
  208   1        
- 209   1        GetChar(&c);
- 210   1        while(c!=0x0D && c!=0x0A){
- 211   2          PutChar(c);
- 212   2          GetChar(&c);
- 213   2        }
- 214   1        PutString("\r\nDone!\r\n");
- 215   1      }
- 216          
- 217          void SetAutoRetransmit(unsigned char setting){
- 218   1        
- 219   1        unsigned char tmp;
- 220   1        
- 221   1        RACSN = 0;
- 222   1        SpiReadWrite(RRC | 0x01);       //Read RF config address byte #1
- 223   1        tmp = SpiReadWrite(0) & 0xDF;   //store current RF config and clear off AUTORETRAN bit
- 224   1        RACSN = 1;
- 225   1        
- 226   1        RACSN = 0;
- 227   1        SpiReadWrite(WRC | 0x01);     //Write RF config at addr byte #1
- 228   1        SpiReadWrite(tmp | (setting <<5));  //change the AUTORETRAN setting
- 229   1        RACSN = 1;
- 230   1      }
- 231          
- 232          void InitRF(void){
- 233   1        
- 234   1        unsigned char tmp;
- 235   1        
- 236   1        SPICLK = 0;           //Max SPI clock
- 237   1        SPI_CTRL = 0x02;
+ 209   1        if(n >= 10000){
+ 210   2          bit4 = n/10000;
+ 211   2          n -= bit4*10000;
+ 212   2        } else{
+ 213   2          bit4 = 0;
+ 214   2        }
+ 215   1        
+ 216   1        if(n >= 1000){
+ 217   2          bit3 = n/1000;
+ 218   2          n -= bit3*1000;
+ 219   2        } else{
+ 220   2          bit3 = 0;
+ 221   2        }
+ 222   1        
+ 223   1        if(n >= 100){
+ 224   2          bit2 = n/100;
+ 225   2          n -= bit2*100;
+ 226   2        } else{
+ 227   2          bit2 = 0;
+ 228   2        }
+ 229   1        
+ 230   1        if(n >= 10){
+ 231   2          bit1 = n/10;
+ 232   2          n -= bit1*10;
+ 233   2        } else{
+ 234   2          bit1 = 0;
+ 235   2        }
+ 236   1        
+ 237   1        bit0 = n;
  238   1        
- 239   1        //Configure RF
- 240   1        RACSN = 0;
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 5   
+ 239   1        
+ 240   1        bit4 += 0x30;
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 5   
 
- 241   1        SpiReadWrite(WRC | 0x03);    // Write to RF config address 3 (RX payload)
- 242   1        SpiReadWrite(0x01);      // One byte RX payload width
- 243   1        SpiReadWrite(0x01);      // One byte TX payload width
- 244   1        RACSN = 1;
- 245   1      
- 246   1        RACSN = 0;
- 247   1        SpiReadWrite(RRC | 0x01);    // Read RF config address 1
- 248   1        tmp = SpiReadWrite(0) & 0xf1;   // Clear the power and frequency setting bits
- 249   1        RACSN = 1;
- 250   1      
- 251   1        RACSN = 0;
- 252   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
- 253   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
- 254   1        SpiReadWrite(tmp | (POWER <<2) | (HFREQ << 1));
- 255   1        RACSN = 1;
- 256   1        
- 257   1      }
- 258          
- 259          
- 260          void Transmitter(void){
- 261   1        
- 262   1        unsigned char i,j,n = 0x30;
- 263   1        TXEN = 1;
- 264   1        
- 265   1        
- 266   1        //transmit 0x2B to indicate start of transmitter
- 267   1        
- 268   1        
- 269   1        while(1){
- 270   2          if(P03 == 0){
- 271   3            
- 272   3            for(i=0;i<5;i++)
- 273   3              TransmitPacket(0x01);
- 274   3            
- 275   3            Delay5ms(30);   //delay 0.25s
- 276   3            TransmitPacket(n);
- 277   3            Delay5ms(10);
- 278   3            n++;
- 279   3            if (n > 0x39)
- 280   3              n = 0x30;
- 281   3            P00 = 0;
- 282   3            
- 283   3            for(i=0x61; i<=0x69; i++){
- 284   4              TransmitPacket(i);
- 285   4              Delay5ms(10);   //delay 0.10s
- 286   4              
- 287   4              for(j=0x30; j<=0x39; j++){
- 288   5      
- 289   5                //PutString("Transmitting letter: ");
- 290   5                //PutChar(letter);
- 291   5                //PutString("\r\n");
- 292   5                TransmitPacket(j);
- 293   5      
- 294   5                Delay5ms(10);   //delay 0.15s
- 295   5              }
- 296   4            }
- 297   3            
- 298   3            for(i=0;i<5;i++)
- 299   3              TransmitPacket(0x04);
- 300   3            
- 301   3            P00 = 1;
- 302   3          }
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 6   
+ 241   1        bit3 += 0x30;
+ 242   1        bit2 += 0x30;
+ 243   1        bit1 += 0x30;
+ 244   1        bit0 += 0x30;
+ 245   1        
+ 246   1        if(bit4 >= 0x31){
+ 247   2          PutChar(bit4);
+ 248   2          PutChar(bit3);
+ 249   2          PutChar(bit2);
+ 250   2          PutChar(bit1);
+ 251   2        }else if(bit3 >= 0x31){
+ 252   2          PutChar(bit3);
+ 253   2          PutChar(bit2);
+ 254   2          PutChar(bit1);
+ 255   2        }else if(bit2 >= 0x31){
+ 256   2          PutChar(bit2);
+ 257   2          PutChar(bit1);
+ 258   2        }else if(bit1>= 0x31)
+ 259   1          PutChar(bit1);
+ 260   1        
+ 261   1        PutChar(bit0);
+ 262   1      
+ 263   1      }
+ 264          void ConsoleComment(void){
+ 265   1        unsigned char c = 0x00;
+ 266   1        
+ 267   1        GetChar(&c);
+ 268   1        while(c!=0x0D && c!=0x0A){
+ 269   2          PutChar(c);
+ 270   2          GetChar(&c);
+ 271   2        }
+ 272   1        PutString("\r\nDone!\r\n");
+ 273   1      }
+ 274          
+ 275          void SetAutoRetransmit(unsigned char setting){
+ 276   1        
+ 277   1        unsigned char tmp;
+ 278   1        
+ 279   1        RACSN = 0;
+ 280   1        SpiReadWrite(RRC | 0x01);       //Read RF config address byte #1
+ 281   1        tmp = SpiReadWrite(0) & 0xDF;   //store current RF config and clear off AUTORETRAN bit
+ 282   1        RACSN = 1;
+ 283   1        
+ 284   1        RACSN = 0;
+ 285   1        SpiReadWrite(WRC | 0x01);     //Write RF config at addr byte #1
+ 286   1        SpiReadWrite(tmp | (setting <<5));  //change the AUTORETRAN setting
+ 287   1        RACSN = 1;
+ 288   1      }
+ 289          
+ 290          void InitRF(void){
+ 291   1        
+ 292   1        unsigned char tmp;
+ 293   1        
+ 294   1        SPICLK = 0;           //Max SPI clock
+ 295   1        SPI_CTRL = 0x02;
+ 296   1        
+ 297   1        //Configure RF
+ 298   1        RACSN = 0;
+ 299   1        SpiReadWrite(WRC | 0x03);    // Write to RF config address 3 (RX payload)
+ 300   1        SpiReadWrite(0x01);      // One byte RX payload width
+ 301   1        SpiReadWrite(0x01);      // One byte TX payload width
+ 302   1        RACSN = 1;
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 6   
 
- 303   2                
- 304   2        }
- 305   1      }
- 306          
- 307          void Receiver(void){
- 308   1        unsigned char letter = 0x00;
- 309   1        unsigned char headerFlag = 0;
- 310   1        unsigned char endFlag = 1;
- 311   1        TXEN = 0;
- 312   1        
- 313   1        PutString("\r\n \r\nReceiver started.");
+ 303   1      
+ 304   1        RACSN = 0;
+ 305   1        SpiReadWrite(RRC | 0x01);    // Read RF config address 1
+ 306   1        tmp = SpiReadWrite(0) & 0xf1;   // Clear the power and frequency setting bits
+ 307   1        RACSN = 1;
+ 308   1      
+ 309   1        RACSN = 0;
+ 310   1        SpiReadWrite(WRC | 0x01);   // Write RF config address 1
+ 311   1        // Change power defined by POWER and to 433 or 868/915MHz defined by HFREQ above:
+ 312   1        SpiReadWrite(tmp | (POWER <<2) | (HFREQ << 1));
+ 313   1        RACSN = 1;
  314   1        
- 315   1        while(1){ 
- 316   2          letter = ReceivePacket(); 
- 317   2          
- 318   2          //if letter is 0-9 or a-z
- 319   2          if((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)){
- 320   3            P00 = 0;  //Turn on LED1
- 321   3            
- 322   3            //if letter is a-z, print new line
- 323   3            if(letter>=0x61 && letter<=0x7A)
- 324   3              PutString("\r\n");
- 325   3            
- 326   3            PutChar(letter);
- 327   3            letter = 0x00;
- 328   3          } else if(letter == 0x01){
- 329   3            //to indicate transmitter just started
- 330   3            if(headerFlag == 0){
- 331   4              headerFlag = 1;
- 332   4              endFlag = 0;
- 333   4              PutString("\r\n \r\nNew Transmission:");
- 334   4              letter = ReceivePacket();
- 335   4              PutChar(letter);
- 336   4            }
- 337   3          } else if(letter == 0x04){
- 338   3            if(endFlag == 0){
- 339   4              headerFlag = 0;
- 340   4              endFlag = 1;
- 341   4              PutString("\r\nEnd of Transmission. \r\nEnter Comment: ");
- 342   4              ConsoleComment();
- 343   4            }
- 344   3          }
- 345   2        }
- 346   1        
- 347   1      }
- 348          
- 349          void main(){
- 350   1        
- 351   1        InitPin(0,0); //Initialize P00 for LED1
- 352   1        InitPin(3,1);
- 353   1        InitPin(5,1);
- 354   1        
- 355   1        P00 = 1;    //Initialize with LED1 turned OFF
- 356   1        
- 357   1        InitUART();
- 358   1        InitRF();
- 359   1        
- 360   1        if(P03 == 0){
- 361   2          Transmitter();
- 362   2        } else if (P05 == 0){
- 363   2          Receiver();
- 364   2        }
-C51 COMPILER V9.54   TESTRANGE                                                             08/05/2015 19:11:11 PAGE 7   
+ 315   1      }
+ 316          
+ 317          
+ 318          void Transmitter(void){
+ 319   1        unsigned char i,j,n = 0x00;
+ 320   1        TXEN = 1;
+ 321   1        
+ 322   1        while(1){
+ 323   2          if(P03 == 0){
+ 324   3            
+ 325   3            for(i=0;i<50;i++){
+ 326   4              TransmitPacket(0x01);
+ 327   4              Delay400us(5);
+ 328   4              TransmitPacket(n);
+ 329   4              P00 ^= 1;
+ 330   4            }
+ 331   3            
+ 332   3            Delay5ms(10);
+ 333   3            P00 = 0;
+ 334   3            
+ 335   3            for(i=0x61; i<=0x74; i++){
+ 336   4              TransmitPacket(i);
+ 337   4              P00 ^= 1;
+ 338   4              Delay5ms(10);   //delay 0.10s
+ 339   4              for(j=0x31; j<=0x39; j++){
+ 340   5                //PutString("Transmitting letter: ");
+ 341   5                //PutChar(letter);
+ 342   5                //PutString("\r\n");
+ 343   5                TransmitPacket(j);
+ 344   5                P00 ^= 1;
+ 345   5                Delay5ms(10);   //delay 0.15s
+ 346   5              }
+ 347   4            }
+ 348   3            
+ 349   3            for(i=0;i<100;i++){
+ 350   4              TransmitPacket(0x04);
+ 351   4              P00 ^= 1;
+ 352   4              Delay400us(5);
+ 353   4            }
+ 354   3            
+ 355   3            n++;
+ 356   3            if (n > 0x09)
+ 357   3              n = 0x00;
+ 358   3            P00 = 1;
+ 359   3          }
+ 360   2                
+ 361   2        }
+ 362   1      }
+ 363          
+ 364          void Receiver(void){
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 7   
 
- 365   1        
- 366   1      }
- 367          
+ 365   1        unsigned char letter = 0x00;
+ 366   1        unsigned char headerFlag = 0;
+ 367   1        unsigned char endFlag = 1;
+ 368   1        unsigned int packetCount = 0;
+ 369   1        TXEN = 0;
+ 370   1        
+ 371   1        PutString("\r\n \r\nReceiver started.");
+ 372   1        
+ 373   1        while(1){ 
+ 374   2          letter = ReceivePacket(); 
+ 375   2          
+ 376   2          if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)) && endFlag==0){ 
+ 377   3            //if letter is 0-9 or a-z
+ 378   3            headerFlag = 0;
+ 379   3            P00 = 0;  //Turn on LED1
+ 380   3            
+ 381   3            //if letter is a-z, print new line
+ 382   3            if(letter>=0x61 && letter<=0x7A)
+ 383   3              PutString("\r\n");
+ 384   3            
+ 385   3            packetCount++;
+ 386   3            PutChar(letter);
+ 387   3            letter = 0x00;
+ 388   3          } else if(letter == 0x01 && headerFlag == 0){ //to indicate transmitter just started
+ 389   3            letter = ReceivePacket();
+ 390   3            PutString("\r\n \r\nNew Transmission:");
+ 391   3            letter += 0x30;
+ 392   3            PutChar(letter);
+ 393   3            headerFlag = 1;
+ 394   3            endFlag = 0;
+ 395   3            packetCount = 0;
+ 396   3          } else if(letter == 0x04 && endFlag == 0){  //to indicate end of transmission
+ 397   3            headerFlag = 0;
+ 398   3            endFlag = 1;
+ 399   3            PutString("\r\nEnd of Transmission. Received ");
+ 400   3            PrintNumber(packetCount);
+ 401   3            PutString("/200 packets sent. Packet loss: ");
+ 402   3            packetCount = (200-packetCount)*100/200;
+ 403   3            PrintNumber(packetCount);
+ 404   3            PutChar(0x25);
+ 405   3            packetCount = 0;
+ 406   3            PutString("\r\nEnter Comment: ");
+ 407   3            ConsoleComment();
+ 408   3          }
+ 409   2        }
+ 410   1        
+ 411   1      }
+ 412          
+ 413          void main(){
+ 414   1        
+ 415   1        InitPin(0,0); //Initialize P00 for LED1
+ 416   1        InitPin(3,1);
+ 417   1        InitPin(5,1);
+ 418   1        
+ 419   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 420   1        
+ 421   1        InitUART();
+ 422   1        InitRF();
+ 423   1        
+ 424   1        if(P03 == 0){
+ 425   2          Transmitter();
+ 426   2        } else if (P05 == 0){
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 8   
+
+ 427   2          Receiver();
+ 428   2        }
+ 429   1        
+ 430   1      }
+ 431          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    852    ----
-   CONSTANT SIZE    =    100    ----
+   CODE SIZE        =   1250    ----
+   CONSTANT SIZE    =    143    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       9
+   DATA SIZE        =   ----      18
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
