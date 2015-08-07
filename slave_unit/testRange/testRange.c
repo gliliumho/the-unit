@@ -316,13 +316,14 @@ void InitRF(void){
 
 
 void Transmitter(void){
-	unsigned char i,j,n = 0x00;
+	unsigned char i,j;
+	unsigned char n = 0x10;
 	TXEN = 1;
 	
 	while(1){
 		if(P03 == 0){
 			
-			for(i=0;i<50;i++){
+			for(i=0;i<100;i++){
 				TransmitPacket(0x01);
 				Delay400us(5);
 				TransmitPacket(n);
@@ -353,8 +354,8 @@ void Transmitter(void){
 			}
 			
 			n++;
-			if (n > 0x09)
-				n = 0x00;
+			if (n > 0x19)
+				n = 0x10;
 			P00 = 1;
 		}
 					
@@ -373,7 +374,7 @@ void Receiver(void){
 	while(1){	
 		letter = ReceivePacket(); 
 		
-		if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)) && endFlag==0){	
+		if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 &&  letter<=0x7A)) && endFlag==0){	
 			//if letter is 0-9 or a-z
 			headerFlag = 0;
 			P00 = 0;	//Turn on LED1
@@ -385,15 +386,21 @@ void Receiver(void){
 			packetCount++;
 			PutChar(letter);
 			letter = 0x00;
+			
 		} else if(letter == 0x01 && headerFlag == 0){	//to indicate transmitter just started
+			
 			letter = ReceivePacket();
-			PutString("\r\n \r\nNew Transmission:");
-			letter += 0x30;
-			PutChar(letter);
+			if(letter >= 0x10 && letter <= 0x19){
+				PutString("\r\n \r\nNew Transmission:");
+				letter += 0x20;
+				PutChar(letter);
+			}
 			headerFlag = 1;
 			endFlag = 0;
 			packetCount = 0;
+			
 		} else if(letter == 0x04 && endFlag == 0){	//to indicate end of transmission
+			
 			headerFlag = 0;
 			endFlag = 1;
 			PutString("\r\nEnd of Transmission. Received ");
@@ -405,6 +412,7 @@ void Receiver(void){
 			packetCount = 0;
 			PutString("\r\nEnter Comment: ");
 			ConsoleComment();
+			
 		}
 	}
 	

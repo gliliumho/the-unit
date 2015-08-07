@@ -244,6 +244,74 @@ void GetString(unsigned char *s){
 	*s = 0x00; 											//0x00 to indicate end of string(EOS)
 }
 
+void PrintNumber(unsigned int n){
+	unsigned char bit4, bit3, bit2, bit1, bit0;
+	
+	if(n >= 10000){
+		bit4 = n/10000;
+		n -= bit4*10000;
+	} else{
+		bit4 = 0;
+	}
+	
+	if(n >= 1000){
+		bit3 = n/1000;
+		n -= bit3*1000;
+	} else{
+		bit3 = 0;
+	}
+	
+	if(n >= 100){
+		bit2 = n/100;
+		n -= bit2*100;
+	} else{
+		bit2 = 0;
+	}
+	
+	if(n >= 10){
+		bit1 = n/10;
+		n -= bit1*10;
+	} else{
+		bit1 = 0;
+	}
+	
+	bit0 = n;
+	
+	
+	bit4 += 0x30;
+	bit3 += 0x30;
+	bit2 += 0x30;
+	bit1 += 0x30;
+	bit0 += 0x30;
+	
+	if(bit4 >= 0x31){
+		PutChar(bit4);
+		PutChar(bit3);
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit3 >= 0x31){
+		PutChar(bit3);
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit2 >= 0x31){
+		PutChar(bit2);
+		PutChar(bit1);
+	}else if(bit1>= 0x31)
+		PutChar(bit1);
+	
+	PutChar(bit0);
+
+}
+void ConsoleComment(void){
+	unsigned char c = 0x00;
+	
+	GetChar(&c);
+	while(c!=0x0D && c!=0x0A){
+		PutChar(c);
+		GetChar(&c);
+	}
+	PutString("\r\nDone!\r\n");
+}
 void SetAutoRetransmit(unsigned char setting){
 	
 	unsigned char tmp;
@@ -269,8 +337,8 @@ void InitRF(void){
 	//Configure RF
 	RACSN = 0;
 	SpiReadWrite(WRC | 0x03);	   // Write to RF config address 3 (RX payload)
-	SpiReadWrite(0x03);			 // 3 byte RX payload width
-	SpiReadWrite(0x03);			 // 3 byte TX payload width
+	SpiReadWrite(0x04);			 // 3 byte RX payload width
+	SpiReadWrite(0x04);			 // 3 byte TX payload width
 	RACSN = 1;
 
 	RACSN = 0;
@@ -341,7 +409,7 @@ void Receiver(void){
 */
 
 void MasterTransmitter(void){
-	unsigned char payload[3];
+	unsigned char payload[4];
 	TXEN = 1;
 	
 	while(1){
@@ -352,7 +420,7 @@ void MasterTransmitter(void){
 		
 		PutString("\r\n Transmitting packet: ");
 		PutString(&payload[0]);
-		for(i=0;i<10;i++){
+		for(i=0;i<50;i++){
 			TransmitPacket(&payload[0]);
 		}
 	}
@@ -406,13 +474,15 @@ void main(){
 	InitUART();
 	InitRF();
 	
-	if(P03 == 0){		//SW2 for Transmitter
-		MasterTransmitter();
-	} else if (P05 == 0){		//SW3 for Receiver
-		Slave(0);
-	} else if (P07 == 0){
-		Slave(1);
-	}
+	MasterTransmitter();
+	
+//	if(P03 == 0){		//SW2 for Transmitter
+//		Slave(0);
+//	} else if (P05 == 0){		//SW3 for Receiver
+//		Slave(1);
+//	} else if (P07 == 0){
+//		Slave(2);
+//	}
 	
 }
 

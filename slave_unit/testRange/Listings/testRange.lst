@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 1   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTRANGE
@@ -62,7 +62,7 @@ line level    source
   52   2            P0_ALT &= 0x7F;
   53   2            if (direction == 1) P0_DIR |= 0x80;
   54   2            else P0_DIR &= 0x7F;
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 2   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 2   
 
   55   2            break;  
   56   2            
@@ -126,7 +126,7 @@ line level    source
  114   1        while(n--)
  115   1          Delay400us(50);
  116   1      }
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 3   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 3   
 
  117          
  118          unsigned char SpiReadWrite(unsigned char b){
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          void PutChar(unsigned char c){
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 4   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 4   
 
  179   1        while(!TI)
  180   1          ;
@@ -254,7 +254,7 @@ line level    source
  238   1        
  239   1        
  240   1        bit4 += 0x30;
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 5   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 5   
 
  241   1        bit3 += 0x30;
  242   1        bit2 += 0x30;
@@ -318,7 +318,7 @@ line level    source
  300   1        SpiReadWrite(0x01);      // One byte RX payload width
  301   1        SpiReadWrite(0x01);      // One byte TX payload width
  302   1        RACSN = 1;
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 6   
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 6   
 
  303   1      
  304   1        RACSN = 0;
@@ -336,127 +336,135 @@ line level    source
  316          
  317          
  318          void Transmitter(void){
- 319   1        unsigned char i,j,n = 0x00;
- 320   1        TXEN = 1;
- 321   1        
- 322   1        while(1){
- 323   2          if(P03 == 0){
- 324   3            
- 325   3            for(i=0;i<50;i++){
- 326   4              TransmitPacket(0x01);
- 327   4              Delay400us(5);
- 328   4              TransmitPacket(n);
- 329   4              P00 ^= 1;
- 330   4            }
- 331   3            
- 332   3            Delay5ms(10);
- 333   3            P00 = 0;
- 334   3            
- 335   3            for(i=0x61; i<=0x74; i++){
- 336   4              TransmitPacket(i);
- 337   4              P00 ^= 1;
- 338   4              Delay5ms(10);   //delay 0.10s
- 339   4              for(j=0x31; j<=0x39; j++){
- 340   5                //PutString("Transmitting letter: ");
- 341   5                //PutChar(letter);
- 342   5                //PutString("\r\n");
- 343   5                TransmitPacket(j);
- 344   5                P00 ^= 1;
- 345   5                Delay5ms(10);   //delay 0.15s
- 346   5              }
- 347   4            }
- 348   3            
- 349   3            for(i=0;i<100;i++){
- 350   4              TransmitPacket(0x04);
- 351   4              P00 ^= 1;
- 352   4              Delay400us(5);
- 353   4            }
- 354   3            
- 355   3            n++;
- 356   3            if (n > 0x09)
- 357   3              n = 0x00;
- 358   3            P00 = 1;
- 359   3          }
- 360   2                
- 361   2        }
- 362   1      }
- 363          
- 364          void Receiver(void){
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 7   
+ 319   1        unsigned char i,j;
+ 320   1        unsigned char n = 0x10;
+ 321   1        TXEN = 1;
+ 322   1        
+ 323   1        while(1){
+ 324   2          if(P03 == 0){
+ 325   3            
+ 326   3            for(i=0;i<100;i++){
+ 327   4              TransmitPacket(0x01);
+ 328   4              Delay400us(5);
+ 329   4              TransmitPacket(n);
+ 330   4              P00 ^= 1;
+ 331   4            }
+ 332   3            
+ 333   3            Delay5ms(10);
+ 334   3            P00 = 0;
+ 335   3            
+ 336   3            for(i=0x61; i<=0x74; i++){
+ 337   4              TransmitPacket(i);
+ 338   4              P00 ^= 1;
+ 339   4              Delay5ms(10);   //delay 0.10s
+ 340   4              for(j=0x31; j<=0x39; j++){
+ 341   5                //PutString("Transmitting letter: ");
+ 342   5                //PutChar(letter);
+ 343   5                //PutString("\r\n");
+ 344   5                TransmitPacket(j);
+ 345   5                P00 ^= 1;
+ 346   5                Delay5ms(10);   //delay 0.15s
+ 347   5              }
+ 348   4            }
+ 349   3            
+ 350   3            for(i=0;i<100;i++){
+ 351   4              TransmitPacket(0x04);
+ 352   4              P00 ^= 1;
+ 353   4              Delay400us(5);
+ 354   4            }
+ 355   3            
+ 356   3            n++;
+ 357   3            if (n > 0x19)
+ 358   3              n = 0x10;
+ 359   3            P00 = 1;
+ 360   3          }
+ 361   2                
+ 362   2        }
+ 363   1      }
+ 364          
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 7   
 
- 365   1        unsigned char letter = 0x00;
- 366   1        unsigned char headerFlag = 0;
- 367   1        unsigned char endFlag = 1;
- 368   1        unsigned int packetCount = 0;
- 369   1        TXEN = 0;
- 370   1        
- 371   1        PutString("\r\n \r\nReceiver started.");
- 372   1        
- 373   1        while(1){ 
- 374   2          letter = ReceivePacket(); 
- 375   2          
- 376   2          if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 && letter<=0x7A)) && endFlag==0){ 
- 377   3            //if letter is 0-9 or a-z
- 378   3            headerFlag = 0;
- 379   3            P00 = 0;  //Turn on LED1
- 380   3            
- 381   3            //if letter is a-z, print new line
- 382   3            if(letter>=0x61 && letter<=0x7A)
- 383   3              PutString("\r\n");
- 384   3            
- 385   3            packetCount++;
- 386   3            PutChar(letter);
- 387   3            letter = 0x00;
- 388   3          } else if(letter == 0x01 && headerFlag == 0){ //to indicate transmitter just started
- 389   3            letter = ReceivePacket();
- 390   3            PutString("\r\n \r\nNew Transmission:");
- 391   3            letter += 0x30;
- 392   3            PutChar(letter);
- 393   3            headerFlag = 1;
- 394   3            endFlag = 0;
- 395   3            packetCount = 0;
- 396   3          } else if(letter == 0x04 && endFlag == 0){  //to indicate end of transmission
- 397   3            headerFlag = 0;
- 398   3            endFlag = 1;
- 399   3            PutString("\r\nEnd of Transmission. Received ");
- 400   3            PrintNumber(packetCount);
- 401   3            PutString("/200 packets sent. Packet loss: ");
- 402   3            packetCount = (200-packetCount)*100/200;
- 403   3            PrintNumber(packetCount);
- 404   3            PutChar(0x25);
- 405   3            packetCount = 0;
- 406   3            PutString("\r\nEnter Comment: ");
- 407   3            ConsoleComment();
- 408   3          }
- 409   2        }
- 410   1        
- 411   1      }
- 412          
- 413          void main(){
- 414   1        
- 415   1        InitPin(0,0); //Initialize P00 for LED1
- 416   1        InitPin(3,1);
- 417   1        InitPin(5,1);
+ 365          void Receiver(void){
+ 366   1        unsigned char letter = 0x00;
+ 367   1        unsigned char headerFlag = 0;
+ 368   1        unsigned char endFlag = 1;
+ 369   1        unsigned int packetCount = 0;
+ 370   1        TXEN = 0;
+ 371   1        
+ 372   1        PutString("\r\n \r\nReceiver started.");
+ 373   1        
+ 374   1        while(1){ 
+ 375   2          letter = ReceivePacket(); 
+ 376   2          
+ 377   2          if(((letter >= 0x30 && letter <= 0x39)||(letter>=0x61 &&  letter<=0x7A)) && endFlag==0){  
+ 378   3            //if letter is 0-9 or a-z
+ 379   3            headerFlag = 0;
+ 380   3            P00 = 0;  //Turn on LED1
+ 381   3            
+ 382   3            //if letter is a-z, print new line
+ 383   3            if(letter>=0x61 && letter<=0x7A)
+ 384   3              PutString("\r\n");
+ 385   3            
+ 386   3            packetCount++;
+ 387   3            PutChar(letter);
+ 388   3            letter = 0x00;
+ 389   3            
+ 390   3          } else if(letter == 0x01 && headerFlag == 0){ //to indicate transmitter just started
+ 391   3            
+ 392   3            letter = ReceivePacket();
+ 393   3            if(letter >= 0x10 && letter <= 0x19){
+ 394   4              PutString("\r\n \r\nNew Transmission:");
+ 395   4              letter += 0x20;
+ 396   4              PutChar(letter);
+ 397   4            }
+ 398   3            headerFlag = 1;
+ 399   3            endFlag = 0;
+ 400   3            packetCount = 0;
+ 401   3            
+ 402   3          } else if(letter == 0x04 && endFlag == 0){  //to indicate end of transmission
+ 403   3            
+ 404   3            headerFlag = 0;
+ 405   3            endFlag = 1;
+ 406   3            PutString("\r\nEnd of Transmission. Received ");
+ 407   3            PrintNumber(packetCount);
+ 408   3            PutString("/200 packets sent. Packet loss: ");
+ 409   3            packetCount = (200-packetCount)*100/200;
+ 410   3            PrintNumber(packetCount);
+ 411   3            PutChar(0x25);
+ 412   3            packetCount = 0;
+ 413   3            PutString("\r\nEnter Comment: ");
+ 414   3            ConsoleComment();
+ 415   3            
+ 416   3          }
+ 417   2        }
  418   1        
- 419   1        P00 = 1;    //Initialize with LED1 turned OFF
- 420   1        
- 421   1        InitUART();
- 422   1        InitRF();
- 423   1        
- 424   1        if(P03 == 0){
- 425   2          Transmitter();
- 426   2        } else if (P05 == 0){
-C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 11:37:27 PAGE 8   
+ 419   1      }
+ 420          
+ 421          void main(){
+ 422   1        
+ 423   1        InitPin(0,0); //Initialize P00 for LED1
+ 424   1        InitPin(3,1);
+ 425   1        InitPin(5,1);
+ 426   1        
+C51 COMPILER V9.54   TESTRANGE                                                             08/06/2015 14:33:50 PAGE 8   
 
- 427   2          Receiver();
- 428   2        }
- 429   1        
- 430   1      }
- 431          
+ 427   1        P00 = 1;    //Initialize with LED1 turned OFF
+ 428   1        
+ 429   1        InitUART();
+ 430   1        InitRF();
+ 431   1        
+ 432   1        if(P03 == 0){
+ 433   2          Transmitter();
+ 434   2        } else if (P05 == 0){
+ 435   2          Receiver();
+ 436   2        }
+ 437   1        
+ 438   1      }
+ 439          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1250    ----
+   CODE SIZE        =   1265    ----
    CONSTANT SIZE    =    143    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
