@@ -5,5 +5,9 @@ testRange - written for range test for evaluation kit.
 testRFString - written for testing to send payload with multiple bytes. 
 testMultiHop - PoC for The Unit hopping architecture. Currently still 1 way communication (master to slave) only.
 
+<<<<<<< HEAD
 testChar & testString - kept for archiving purpose only. Previously written to test character/string operation through UART.
+=======
+
+>>>>>>> 005c32d822d0dd730420403305cc565825d82174
 These code written by KY Ho & KH Teo.

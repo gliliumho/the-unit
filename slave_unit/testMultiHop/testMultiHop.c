@@ -338,6 +338,7 @@ void GetNumber(unsigned char *b, unsigned char n){
 		}
 	}
 	*b = 0x00;
+
 }
 //converts 4 unsigned char into 1 integer(4bytes)
 unsigned int Byte2Int(unsigned char b[]){
@@ -521,6 +522,7 @@ void Slave(unsigned char groupID){
 
 void main(){
 	
+
 	unsigned char number[6];
 	unsigned int num;
 	unsigned char e;
@@ -555,6 +557,7 @@ void main(){
 		//PutString("\r\nType something: ");
 		//ConsoleComment();
 	}
+
 	
 	
 	//MasterTransmitter();
