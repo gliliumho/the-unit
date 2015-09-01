@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 1   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TESTMULTIHOP
@@ -62,7 +62,7 @@ line level    source
   52   2            else P0_DIR &= 0xBF;
   53   2            break;
   54   2            
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 2   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 2   
 
   55   2          case 7:
   56   2            P0_ALT &= 0x7F;
@@ -126,7 +126,7 @@ line level    source
  114          void Delay5ms(volatile unsigned char n){
  115   1        while(n--)
  116   1          Delay400us(50);
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 3   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 3   
 
  117   1      }
  118          
@@ -190,7 +190,7 @@ line level    source
  176   1        SpiReadWrite(RRP);      //Read receive payload
  177   1        for(i=0;i<width;i++){
  178   2          *b = SpiReadWrite(0);   //populate *b with first byte of payload
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 4   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 4   
 
  179   2          b++;            //move pointer to next byte
  180   2        }
@@ -254,7 +254,7 @@ line level    source
  238          void GetString(unsigned char *s){
  239   1        GetChar(s);
  240   1        while(*s!= 0x0D && *s!= 0x0A){  //GetChar as long as not ENTER.
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 5   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 5   
 
  241   2          s++;                          //move pointer to next byte
  242   2          GetChar(s);
@@ -318,7 +318,7 @@ line level    source
  300   1          PutChar(bit1);
  301   1        
  302   1        PutChar(bit0);
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 6   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 6   
 
  303   1      
  304   1      }
@@ -382,7 +382,7 @@ line level    source
  362   1        b++;
  363   1      }
  364          
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 7   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 7   
 
  365          
  366          void ConsoleComment(void){
@@ -446,7 +446,7 @@ line level    source
  424            TXEN = 1;                         //turn radio to TX mode
  425            
  426            PutString("\r\n Packet content: ");
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 8   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 8   
 
  427            PutString(&payload[0]);           //
  428            TransmitPacket(&payload[0]);
@@ -510,7 +510,7 @@ line level    source
  486   2        }
  487   1      }
  488          
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 9   
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 9   
 
  489          void Slave(unsigned char groupID){
  490   1        unsigned char payload[3];
@@ -571,10 +571,10 @@ line level    source
  545   2          num = Ascii2Int(&number[0]);
  546   2          
  547   2          //num = 1000/num;
- 548   2          Int2Byte(num, &number[0]);
+ 548   2          //Int2Byte(num, &number[0]);
  549   2          
- 550   2          num = Byte2Int(&number[0]);
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:37:29 PAGE 10  
+ 550   2          //num = Byte2Int(&number[0]);
+C51 COMPILER V9.54   TESTMULTIHOP                                                          09/01/2015 15:55:09 PAGE 10  
 
  551   2          
  552   2          PutString("\r\nThe number you entered is: ");
@@ -601,7 +601,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1578    ----
+   CODE SIZE        =   1560    ----
    CONSTANT SIZE    =    133    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

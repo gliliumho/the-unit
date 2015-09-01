@@ -545,9 +545,9 @@ void main(){
 		num = Ascii2Int(&number[0]);
 		
 		//num = 1000/num;
-		Int2Byte(num, &number[0]);
+		//Int2Byte(num, &number[0]);
 		
-		num = Byte2Int(&number[0]);
+		//num = Byte2Int(&number[0]);
 		
 		PutString("\r\nThe number you entered is: ");
 		PrintInt(num);
