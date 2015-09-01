@@ -244,7 +244,7 @@ void GetString(unsigned char *s){
 	*s = 0x00; 											//0x00 to indicate end of string(EOS)
 }
 
-void PrintNumber(unsigned int n){
+void PrintInt(unsigned int n){
 	unsigned char bit4, bit3, bit2, bit1, bit0;
 	
 	if(n >= 10000){
@@ -302,12 +302,71 @@ void PrintNumber(unsigned int n){
 	PutChar(bit0);
 
 }
+//converts a string of ascii chars to 1 integer
+unsigned int Ascii2Int (unsigned char *n){
+	unsigned int value;
+	
+	if(*n >= 0x30 && *n <=0x39){
+			value += (*n - 0x30);
+			n++;
+	}
+	
+	while(*n!=0x00){
+		if(*n >= 0x30 && *n <=0x39){
+			value = value * 10;
+			value += (*n - 0x30);
+			n++;
+		}
+	}
+	
+	return value;
+}
+
+void GetNumber(unsigned char *b, unsigned char n){
+	unsigned char i=0;
+	while(i<n){
+		GetChar(b);
+		if(*b>=0x30 && *b<=0x39){
+			b++;
+			i++;
+		}else if(*b==0x0D){
+			*b = 0x00;
+			break;
+		}else{
+			PutString("\r\nerror.");
+			//break;
+		}
+	}
+}
+//converts 4 unsigned char into 1 integer(4bytes)
+unsigned int Byte2Int(unsigned char b[]){
+	unsigned int value = 0;
+	value = (b[0]<<24)&0xFF000000|
+					(b[1]<<16)&0x00FF0000|
+					(b[2]<< 8)&0x0000FF00|
+					(b[3]<< 0)&0x000000FF;
+	
+	return value;
+}
+
+//splits 4-byte integer to 4 unsigned char by populating *b
+void Int2Byte(unsigned int n, unsigned char *b){
+	*b = (n >>24) & 0xFF;
+	b++;
+	*b = (n >>16) & 0xFF;
+	b++;
+	*b = (n >> 8) & 0xFF;
+	b++;
+	*b = (n >> 0) & 0xFF;
+	b++;
+}
+
+
 void ConsoleComment(void){
 	unsigned char c = 0x00;
 	
 	GetChar(&c);
 	while(c!=0x0D && c!=0x0A){
-		PutChar(c);
 		GetChar(&c);
 	}
 	PutString("\r\nDone!\r\n");
@@ -426,9 +485,10 @@ void MasterTransmitter(void){
 	}
 }
 
-void Slave(unsigned char slaveID){
+void Slave(unsigned char groupID){
 	unsigned char payload[3];
-	unsigned char id = slaveID;
+	unsigned char id = groupID;
+	unsigned char slaveID = 0;
 	
 	while(1){
 		unsigned char i;
@@ -460,6 +520,10 @@ void Slave(unsigned char slaveID){
 
 void main(){
 	
+	unsigned char number[5];
+	unsigned int num;
+	unsigned char e;
+	
 	InitPin(0,0);	//Initialize P00 for LED1
 	InitPin(4,0);
 	InitPin(6,0);
@@ -474,7 +538,9 @@ void main(){
 	InitUART();
 	InitRF();
 	
-	MasterTransmitter();
+	
+	
+	//MasterTransmitter();
 	
 //	if(P03 == 0){		//SW2 for Transmitter
 //		Slave(0);

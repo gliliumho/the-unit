@@ -24,18 +24,31 @@ Project File Date:  08/05/2015
 <h2>Output:</h2>
 Build Project 'testMultiHop' - Target 'Target 1'
 compiling testMultiHop.c...
+C:\GitRepo\the-unit\slave_unit\testMultiHop\testMultiHop.c(523): warning C280: 'number': unreferenced local variable
+C:\GitRepo\the-unit\slave_unit\testMultiHop\testMultiHop.c(524): warning C280: 'num': unreferenced local variable
+C:\GitRepo\the-unit\slave_unit\testMultiHop\testMultiHop.c(525): warning C280: 'e': unreferenced local variable
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_PRINTNUMBER?TESTMULTIHOP
+    SEGMENT: ?PR?_PRINTINT?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_ASCII2INT?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETNUMBER?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_BYTE2INT?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT2BYTE?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?CONSOLECOMMENT?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_SETAUTORETRANSMIT?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MASTERTRANSMITTER?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_SLAVE?TESTMULTIHOP
-Program Size: data=27.0 xdata=0 code=1363
+Program Size: data=48.0 xdata=0 code=1788
 creating hex file from ".\Objects\testMultiHop"...
-".\Objects\testMultiHop" - 0 Error(s), 4 Warning(s).
+".\Objects\testMultiHop" - 0 Error(s), 12 Warning(s).
 </pre>
 </body>
 </html>
