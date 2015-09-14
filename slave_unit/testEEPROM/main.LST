@@ -1,0 +1,90 @@
+C51 COMPILER V9.53.0.0   MAIN                                                              09/14/2015 11:05:18 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SIZE) OPTIMIZE(8,SIZE) BROWSE DEBUG OBJECTEXTEND TABS(
+                    -2)
+
+line level    source
+
+   1          
+   2          #include <Nordic\reg9e5.h>
+   3          #include "util.h"
+   4          #include "uart.h"
+   5          #include "radio.h"
+   6          #include "eeprom.h"
+   7          //#include "nrf9e5.h"
+   8          
+   9          void ChangeID(unsigned char, unsigned char);
+  10          void DisplayID(void);
+  11          
+  12          void main(void){
+  13   1        
+  14   1        unsigned char uniqueID;
+  15   1        unsigned char groupID;
+  16   1        
+  17   1        InitPin(3,1);
+  18   1        InitPin(5,1);
+  19   1        InitUART();
+  20   1        InitRF();
+  21   1        InitEEPROM();
+  22   1        PutString("\r\nPlease press SW2 or SW3.");
+  23   1        
+  24   1        //SW2 or SW3
+  25   1        while(1){
+  26   2          if(P03 == 0){
+  27   3            
+  28   3            PutString("\r\nPlease enter new groupID: ");
+  29   3            GetChar(&groupID);
+  30   3            //groupID -= 0x30;
+  31   3            
+  32   3            PutString("\r\nPlease enter new uniqueID: ");
+  33   3            GetChar(&uniqueID);
+  34   3            //uniqueID -= 0x30;
+  35   3            
+  36   3            ChangeID(groupID, uniqueID);
+  37   3            DisplayID();
+  38   3            
+  39   3          }else if(P05 == 0){
+  40   3            DisplayID();
+  41   3            
+  42   3          }
+  43   2        } 
+  44   1      }
+  45          
+  46          
+  47          
+  48          void ChangeID(unsigned char groupID, unsigned char uniqueID){
+  49   1        EEWrite(3900, groupID);
+  50   1        EEWrite(3901, uniqueID);
+  51   1      }
+  52          
+  53          void DisplayID(void){
+  54   1        unsigned char group, unique;
+C51 COMPILER V9.53.0.0   MAIN                                                              09/14/2015 11:05:18 PAGE 2   
+
+  55   1        
+  56   1        group = EERead(3900);
+  57   1        unique = EERead(3901);
+  58   1        
+  59   1        PutString("\r\nCurrent groupID & uniqueID is: ");
+  60   1        PutChar(group);
+  61   1        PutChar(0x20);
+  62   1        PutChar(unique);
+  63   1        
+  64   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    153    ----
+   CONSTANT SIZE    =    120    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

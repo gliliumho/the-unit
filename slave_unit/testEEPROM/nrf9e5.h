@@ -1,6 +1,12 @@
 
 #define HFREQ 0		// 0=433MHz, 1=868/915MHz
 #define POWER 3 	// 0=min power...3 = max power
+#define EE_WRSR     0x01
+#define EE_WRITE    0x02
+#define EE_READ     0x03
+#define EE_WRDI     0x04
+#define EE_RDSR     0x05
+#define EE_WREN     0x06
 
 /* Set pinNum as GPIO. direction=1 for input, direction=0 for output
 ** eg.InitPin(1,1) will set P01 as input GPIO. */
@@ -64,6 +70,7 @@ void InitPin(unsigned char pinNum, direction){
 			break;	
 	}
 }
+
 void Delay400us(volatile unsigned char n){
 	unsigned char i;
 	while(n--)
@@ -144,10 +151,54 @@ void ReceivePacket(unsigned char *b){
 	TRX_CE = 0;							//turn OFF radio
 }
 
+void InitEEPROM(void){
+//  P1_DIR &= ~0x1b;
+    SPICLK = 5;                             // CLK/32 SPI clock
+
+    EECSN = 1;
+    SPI_CTRL = 0x01;                        // Connect internal SPI to P1
+}
+
+unsigned char EEStatus(void){
+    unsigned char b;
+
+    EECSN = 0;
+    SpiReadWrite(EE_RDSR);
+    b = SpiReadWrite(0);
+    EECSN = 1;
+    return b;
+}
+
+unsigned char EERead(unsigned int addr){
+    unsigned char b;
+
+    while ((EEStatus() & 0x01) != 0x00)     // Wait if busy
+        ;
+    EECSN = 0;
+    SpiReadWrite(EE_READ);
+    SpiReadWrite(addr >> 8);
+    SpiReadWrite(addr & 0xff);
+    b = SpiReadWrite(0);
+    EECSN = 1;
+    return b;
+}
+
+void EEWrite(unsigned int addr, unsigned char b){
+    while((EEStatus() & 0x01) != 0x00)      // Wait if busy
+        ;
+    EECSN = 0;
+    SpiReadWrite(EE_WREN);
+    EECSN = 1;
+    EECSN = 0;
+    SpiReadWrite(EE_WRITE);
+    SpiReadWrite(addr >> 8);
+    SpiReadWrite(addr & 0xff);
+    SpiReadWrite(b);
+    EECSN = 1;
+}
+
 void InitUART(void){
-	
-	unsigned char cklf;
-	
+
 	TH1 = 0xE6;					  // 9600@16MHz (when T1M=1 and SMOD=1)
 	CKCON |= 0x10;				  // T1M=1 (/4 timer clock)
 	PCON = 0x80;					// SMOD=1 (double baud rate)
@@ -160,19 +211,7 @@ void InitUART(void){
 	**	that converts the UART TTL signal to serial RS-232 signals.	*/
 	P0_ALT |= 0x06;	//select alternative function for P01 and P02
 	P0_DIR &= 0x02; //P01(RXD) is input
-	
-	SPICLK = 0;			//Max SPI clock
-	SPI_CTRL = 0x02;
-	
-	// Switch to 16MHz clock:
-	RACSN = 0;
-	SpiReadWrite(RRC | 0x09);
-	cklf = SpiReadWrite(0) | 0x04;	//XO_DIRECT = 1, follow XO_Frequency
-	RACSN = 1;
-	RACSN = 0;
-	SpiReadWrite(WRC | 0x09);
-	SpiReadWrite(cklf);
-	RACSN = 1;
+
 }
 
 /*Sample usage:
@@ -326,6 +365,7 @@ void GetNumber(unsigned char *b, unsigned char n){
 	*b = 0x00;
 
 }
+
 //converts 4 unsigned char into 1 integer(4bytes)
 unsigned int Byte2Int(unsigned char b[]){
 	unsigned int value = 0;
@@ -349,7 +389,6 @@ void Int2Byte(unsigned int n, unsigned char *b){
 	b++;
 }
 
-
 void ConsoleComment(void){
 	unsigned char c = 0x00;
 	
@@ -363,10 +402,20 @@ void ConsoleComment(void){
 
 void InitRF(void){
 	
-	unsigned char tmp;
+	unsigned char tmp, cklf;
 	
 	SPICLK = 0;						//Max SPI clock
 	SPI_CTRL = 0x02;
+	
+	// Switch to 16MHz clock:
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x09);
+	cklf = SpiReadWrite(0) | 0x04;	//XO_DIRECT = 1, follow XO_Frequency
+	RACSN = 1;
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x09);
+	SpiReadWrite(cklf);
+	RACSN = 1;
 	
 	//Configure RF
 	RACSN = 0;
@@ -508,7 +557,6 @@ void RadioPowerUpDown(unsigned char val){
 	else if(val == 1)
 		TRX_CE = 1;
 }
-
 void SetCRCMode(unsigned char flag){
 	unsigned char tmp;
 	

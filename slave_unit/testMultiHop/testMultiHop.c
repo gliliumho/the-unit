@@ -113,8 +113,7 @@ void main(){
 
 	unsigned char number[6];
 	unsigned int num;
-	unsigned char e;
-	unsigned char s;
+
 	
 	
 	

@@ -1,7 +1,7 @@
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/08/2015 11:08:31 PAGE 1   
+C51 COMPILER V9.53.0.0   TESTMULTIHOP                                                      09/10/2015 16:08:30 PAGE 1   
 
 
-C51 COMPILER V9.54, COMPILATION OF MODULE TESTMULTIHOP
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE TESTMULTIHOP
 OBJECT MODULE PLACED IN .\Objects\testMultiHop.obj
 COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE testMultiHop.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listi
                     -ngs\testMultiHop.lst) TABS(2) OBJECT(.\Objects\testMultiHop.obj)
@@ -12,8 +12,6 @@ line level    source
    2          #include <Nordic\reg9e5.h>
    3          #include <string.h>
    4          #include "nrf9e5.h"
-*** WARNING C280 IN LINE 513 OF nrf9e5.h: 'groupID': unreferenced local variable
-*** WARNING C280 IN LINE 513 OF nrf9e5.h: 'uniqueID': unreferenced local variable
    5          
    6          /*old Transmitter and Receiver
    7          void Transmitter(void){
@@ -62,10 +60,10 @@ line level    source
   50              PutString(" Payload: ");
   51              PutString(&payload[0]);
   52              PutString("\r\n");
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/08/2015 11:08:31 PAGE 2   
-
   53              
   54            }
+C51 COMPILER V9.53.0.0   TESTMULTIHOP                                                      09/10/2015 16:08:30 PAGE 2   
+
   55            
   56          }
   57          */
@@ -126,74 +124,69 @@ line level    source
  112   1        
  113   1      
  114   1        unsigned char number[6];
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/08/2015 11:08:31 PAGE 3   
-
  115   1        unsigned int num;
- 116   1        unsigned char e;
- 117   1        unsigned char s;
+ 116   1      
+C51 COMPILER V9.53.0.0   TESTMULTIHOP                                                      09/10/2015 16:08:30 PAGE 3   
+
+ 117   1        
  118   1        
  119   1        
- 120   1        
- 121   1        InitPin(0,0); //Initialize P00 for LED1
- 122   1        InitPin(4,0);
- 123   1        InitPin(6,0);
- 124   1        InitPin(3,1); //Initialize SW2 as input
- 125   1        InitPin(5,1); //Initialize SW3 as input
- 126   1        InitPin(7,1); //Initialize SW4 as input
- 127   1        
- 128   1        P00 = 1;    //Initialize with LED1,3,4 turned ON
- 129   1        P04 = 1;
- 130   1        P06 = 1;
- 131   1        
- 132   1        InitUART();
- 133   1        InitRF();
- 134   1        
- 135   1        while(1){
- 136   2          PutString("\r\nEnter a number: ");
- 137   2          GetNumber(&number[0],5);
- 138   2          num = Ascii2Int(&number[0]);
- 139   2          
- 140   2          //num = 1000/num;
- 141   2          //Int2Byte(num, &number[0]);
- 142   2          
- 143   2          //num = Byte2Int(&number[0]);
- 144   2          
- 145   2          PutString("\r\nThe number you entered is: ");
- 146   2          PrintInt(num);
- 147   2          //num++;
- 148   2          //PutString("\r\nType something: ");
- 149   2          //ConsoleComment();
- 150   2        }
- 151   1      
+ 120   1        InitPin(0,0); //Initialize P00 for LED1
+ 121   1        InitPin(4,0);
+ 122   1        InitPin(6,0);
+ 123   1        InitPin(3,1); //Initialize SW2 as input
+ 124   1        InitPin(5,1); //Initialize SW3 as input
+ 125   1        InitPin(7,1); //Initialize SW4 as input
+ 126   1        
+ 127   1        P00 = 1;    //Initialize with LED1,3,4 turned ON
+ 128   1        P04 = 1;
+ 129   1        P06 = 1;
+ 130   1        
+ 131   1        InitUART();
+ 132   1        InitRF();
+ 133   1        
+ 134   1        while(1){
+ 135   2          PutString("\r\nEnter a number: ");
+ 136   2          GetNumber(&number[0],5);
+ 137   2          num = Ascii2Int(&number[0]);
+ 138   2          
+ 139   2          //num = 1000/num;
+ 140   2          //Int2Byte(num, &number[0]);
+ 141   2          
+ 142   2          //num = Byte2Int(&number[0]);
+ 143   2          
+ 144   2          PutString("\r\nThe number you entered is: ");
+ 145   2          PrintInt(num);
+ 146   2          //num++;
+ 147   2          //PutString("\r\nType something: ");
+ 148   2          //ConsoleComment();
+ 149   2        }
+ 150   1      
+ 151   1        
  152   1        
- 153   1        
- 154   1        //MasterTransmitter();
- 155   1        
- 156   1      //  if(P03 == 0){   //SW2 for Transmitter
- 157   1      //    Slave(0);
- 158   1      //  } else if (P05 == 0){   //SW3 for Receiver
- 159   1      //    Slave(1);
- 160   1      //  } else if (P07 == 0){
- 161   1      //    Slave(2);
- 162   1      //  }
- 163   1        
- 164   1      }
-*** WARNING C280 IN LINE 116 OF testMultiHop.c: 'e': unreferenced local variable
-*** WARNING C280 IN LINE 117 OF testMultiHop.c: 's': unreferenced local variable
- 165          
+ 153   1        //MasterTransmitter();
+ 154   1        
+ 155   1      //  if(P03 == 0){   //SW2 for Transmitter
+ 156   1      //    Slave(0);
+ 157   1      //  } else if (P05 == 0){   //SW3 for Receiver
+ 158   1      //    Slave(1);
+ 159   1      //  } else if (P07 == 0){
+ 160   1      //    Slave(2);
+ 161   1      //  }
+ 162   1        
+ 163   1      }
+ 164          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1920    ----
+   CODE SIZE        =   2080    ----
    CONSTANT SIZE    =    133    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----      43
+   DATA SIZE        =   ----      39
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.54   TESTMULTIHOP                                                          09/08/2015 11:08:31 PAGE 4   
-
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
