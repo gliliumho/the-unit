@@ -11,8 +11,9 @@ void DisplayID(void);
 
 void main(void){
 	
-	unsigned char uniqueID;
-	unsigned char groupID;
+	unsigned char uniqueID = 0;
+	unsigned char groupID = 0;
+	unsigned char flag_pressed = 0;
 	
 	InitPin(3,1);
 	InitPin(5,1);
@@ -36,9 +37,11 @@ void main(void){
 			ChangeID(groupID, uniqueID);
 			DisplayID();
 			
-		}else if(P05 == 0){
+		}else if(P05 == 0 && flag_pressed == 0){
+			flag_pressed = 1;
 			DisplayID();
-			
+		}else if(P05 == 1 && flag_pressed == 1){
+			flag_pressed = 0;
 		}
 	}	
 }

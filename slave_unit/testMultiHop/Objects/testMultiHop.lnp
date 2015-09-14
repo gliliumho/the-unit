@@ -1,4 +1,0 @@
-".\Objects\STARTUP.obj",
-".\Objects\testMultiHop.obj" 
-TO ".\Objects\testMultiHop" 
-PRINT(".\Listings\testMultiHop.m51") RAMSIZE(256) 

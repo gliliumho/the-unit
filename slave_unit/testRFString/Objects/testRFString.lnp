@@ -1,4 +1,0 @@
-".\Objects\STARTUP.obj",
-".\Objects\testRFString.obj" 
-TO ".\Objects\testRFString" 
-PRINT(".\Listings\testRFString.m51") RAMSIZE(256) 

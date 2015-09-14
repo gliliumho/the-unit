@@ -9,6 +9,7 @@
 
   <project>
     <PathAndName>.\testRange\testRange.uvproj</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
@@ -19,7 +20,6 @@
   <project>
     <PathAndName>.\testMultiHop\testMultiHop.uvproj</PathAndName>
     <NodeIsActive>1</NodeIsActive>
-    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
 </ProjectWorkspace>
