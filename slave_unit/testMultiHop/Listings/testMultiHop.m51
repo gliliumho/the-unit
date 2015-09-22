@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        09/01/2015  16:10:14  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        09/08/2015  12:38:40  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -27,15 +27,16 @@ LINK MAP OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     000FH     UNIT         _DATA_GROUP_
-            DATA    0017H     0005H     UNIT         ?DT?MASTERTRANSMITTER?TESTMULTIHOP
-            DATA    001CH     0005H     UNIT         ?DT?_SLAVE?TESTMULTIHOP
-            DATA    0021H     0003H     UNIT         ?DT?_GETSTRING?TESTMULTIHOP
-            DATA    0024H     0003H     UNIT         ?DT?_BYTE2INT?TESTMULTIHOP
-            DATA    0027H     0001H     UNIT         ?DT?_DELAY400US?TESTMULTIHOP
-            DATA    0028H     0001H     UNIT         ?DT?_DELAY5MS?TESTMULTIHOP
-            DATA    0029H     0001H     UNIT         ?DT?CONSOLECOMMENT?TESTMULTIHOP
-            IDATA   002AH     0001H     UNIT         ?STACK
+            DATA    0008H     0010H     UNIT         _DATA_GROUP_
+            DATA    0018H     0005H     UNIT         ?DT?MASTERTRANSMITTER?TESTMULTIHOP
+            DATA    001DH     0004H     UNIT         ?DT?_PRINTINT?TESTMULTIHOP
+            DATA    0021H     0003H     UNIT         ?DT?_PUTSTRING?TESTMULTIHOP
+            DATA    0024H     0003H     UNIT         ?DT?_GETSTRING?TESTMULTIHOP
+            DATA    0027H     0003H     UNIT         ?DT?_GETNUMBER?TESTMULTIHOP
+            DATA    002AH     0003H     UNIT         ?DT?_BYTE2INT?TESTMULTIHOP
+            DATA    002DH     0002H     UNIT         ?DT?_ASCII2INT?TESTMULTIHOP
+            DATA    002FH     0001H     UNIT         ?DT?CONSOLECOMMENT?TESTMULTIHOP
+            IDATA   0030H     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
@@ -44,30 +45,30 @@ LINK MAP OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
             CODE    0903H     00C4H     UNIT         ?PR?_INITPIN?TESTMULTIHOP
             CODE    09C7H     00BFH     UNIT         ?C?LIB_CODE
             CODE    0A86H     009AH     UNIT         ?PR?_BYTE2INT?TESTMULTIHOP
-            CODE    0B20H     0085H     UNIT         ?CO?TESTMULTIHOP
-            CODE    0BA5H     0060H     UNIT         ?PR?MAIN?TESTMULTIHOP
-            CODE    0C05H     0058H     UNIT         ?PR?_GETNUMBER?TESTMULTIHOP
-            CODE    0C5DH     0055H     UNIT         ?PR?_SLAVE?TESTMULTIHOP
-            CODE    0CB2H     0054H     UNIT         ?PR?_ASCII2INT?TESTMULTIHOP
-            CODE    0D06H     0041H     UNIT         ?PR?_TRANSMITPACKET?TESTMULTIHOP
-            CODE    0D47H     003DH     UNIT         ?PR?_INT2BYTE?TESTMULTIHOP
-            CODE    0D84H     003DH     UNIT         ?PR?MASTERTRANSMITTER?TESTMULTIHOP
-            CODE    0DC1H     0039H     UNIT         ?PR?INITUART?TESTMULTIHOP
-            CODE    0DFAH     0038H     UNIT         ?PR?_RECEIVEPACKET?TESTMULTIHOP
-            CODE    0E32H     0038H     UNIT         ?PR?_GETSTRING?TESTMULTIHOP
-            CODE    0E6AH     0033H     UNIT         ?PR?INITRF?TESTMULTIHOP
-            CODE    0E9DH     0026H     UNIT         ?PR?CONSOLECOMMENT?TESTMULTIHOP
-            CODE    0EC3H     0025H     UNIT         ?PR?_PUTSTRING?TESTMULTIHOP
-            CODE    0EE8H     001FH     UNIT         ?PR?_SETAUTORETRANSMIT?TESTMULTIHOP
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 2
+            CODE    0B20H     0058H     UNIT         ?PR?_GETNUMBER?TESTMULTIHOP
+            CODE    0B78H     0055H     UNIT         ?PR?_SLAVE?TESTMULTIHOP
+            CODE    0BCDH     0054H     UNIT         ?PR?_ASCII2INT?TESTMULTIHOP
+            CODE    0C21H     0054H     UNIT         ?CO?TESTMULTIHOP
+            CODE    0C75H     0044H     UNIT         ?PR?MAIN?TESTMULTIHOP
+            CODE    0CB9H     0041H     UNIT         ?PR?_TRANSMITPACKET?TESTMULTIHOP
+            CODE    0CFAH     003DH     UNIT         ?PR?_INT2BYTE?TESTMULTIHOP
+            CODE    0D37H     003DH     UNIT         ?PR?MASTERTRANSMITTER?TESTMULTIHOP
+            CODE    0D74H     0039H     UNIT         ?PR?INITUART?TESTMULTIHOP
+            CODE    0DADH     0038H     UNIT         ?PR?_RECEIVEPACKET?TESTMULTIHOP
+            CODE    0DE5H     0038H     UNIT         ?PR?_GETSTRING?TESTMULTIHOP
+            CODE    0E1DH     0033H     UNIT         ?PR?INITRF?TESTMULTIHOP
+            CODE    0E50H     0026H     UNIT         ?PR?CONSOLECOMMENT?TESTMULTIHOP
+            CODE    0E76H     0025H     UNIT         ?PR?_PUTSTRING?TESTMULTIHOP
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 2
 
 
-            CODE    0F07H     0016H     UNIT         ?PR?_SPIREADWRITE?TESTMULTIHOP
-            CODE    0F1DH     0015H     UNIT         ?PR?_DELAY400US?TESTMULTIHOP
-            CODE    0F32H     0011H     UNIT         ?PR?_DELAY5MS?TESTMULTIHOP
-            CODE    0F43H     0011H     UNIT         ?PR?_GETCHAR?TESTMULTIHOP
-            CODE    0F54H     000CH     UNIT         ?C_C51STARTUP
-            CODE    0F60H     0008H     UNIT         ?PR?_PUTCHAR?TESTMULTIHOP
+            CODE    0E9BH     001FH     UNIT         ?PR?_SETAUTORETRANSMIT?TESTMULTIHOP
+            CODE    0EBAH     0016H     UNIT         ?PR?_SPIREADWRITE?TESTMULTIHOP
+            CODE    0ED0H     0015H     UNIT         ?PR?_DELAY400US?TESTMULTIHOP
+            CODE    0EE5H     0011H     UNIT         ?PR?_DELAY5MS?TESTMULTIHOP
+            CODE    0EF6H     0011H     UNIT         ?PR?_GETCHAR?TESTMULTIHOP
+            CODE    0F07H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0F13H     0008H     UNIT         ?PR?_PUTCHAR?TESTMULTIHOP
 
 
 
@@ -84,11 +85,7 @@ SEGMENT                                       DATA_GROUP
   +--> ?PR?_INITPIN?TESTMULTIHOP
   +--> ?PR?INITUART?TESTMULTIHOP
   +--> ?PR?INITRF?TESTMULTIHOP
-  +--> ?CO?TESTMULTIHOP
-  +--> ?PR?_PUTSTRING?TESTMULTIHOP
-  +--> ?PR?_GETNUMBER?TESTMULTIHOP
-  +--> ?PR?_ASCII2INT?TESTMULTIHOP
-  +--> ?PR?_PRINTINT?TESTMULTIHOP
+  +--> ?PR?_SLAVE?TESTMULTIHOP
 
 ?PR?INITUART?TESTMULTIHOP                   -----    -----
   +--> ?PR?_SPIREADWRITE?TESTMULTIHOP
@@ -96,21 +93,22 @@ SEGMENT                                       DATA_GROUP
 ?PR?INITRF?TESTMULTIHOP                     -----    -----
   +--> ?PR?_SPIREADWRITE?TESTMULTIHOP
 
-?PR?_PUTSTRING?TESTMULTIHOP                 0014H    0003H
-  +--> ?PR?_PUTCHAR?TESTMULTIHOP
+?PR?_SLAVE?TESTMULTIHOP                     0011H    0005H
+  +--> ?PR?_RECEIVEPACKET?TESTMULTIHOP
+  +--> ?PR?_TRANSMITPACKET?TESTMULTIHOP
+  +--> ?PR?_DELAY5MS?TESTMULTIHOP
 
-?PR?_GETNUMBER?TESTMULTIHOP                 0011H    0003H
-  +--> ?PR?_GETCHAR?TESTMULTIHOP
-  +--> ?CO?TESTMULTIHOP
-  +--> ?PR?_PUTSTRING?TESTMULTIHOP
+?PR?_RECEIVEPACKET?TESTMULTIHOP             -----    -----
+  +--> ?PR?_SPIREADWRITE?TESTMULTIHOP
 
-?PR?_GETCHAR?TESTMULTIHOP                   -----    -----
-  +--> ?PR?_PUTCHAR?TESTMULTIHOP
+?PR?_TRANSMITPACKET?TESTMULTIHOP            -----    -----
+  +--> ?PR?_SPIREADWRITE?TESTMULTIHOP
+  +--> ?PR?_DELAY400US?TESTMULTIHOP
 
-?PR?_ASCII2INT?TESTMULTIHOP                 0011H    0002H
+?PR?_DELAY400US?TESTMULTIHOP                0017H    0001H
 
-?PR?_PRINTINT?TESTMULTIHOP                  0011H    0004H
-  +--> ?PR?_PUTCHAR?TESTMULTIHOP
+?PR?_DELAY5MS?TESTMULTIHOP                  0016H    0001H
+  +--> ?PR?_DELAY400US?TESTMULTIHOP
 
 
 
@@ -119,12 +117,12 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   VALUE           TYPE          NAME
   ----------------------------------
 
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 3
-
-
   -------         MODULE        ?C_STARTUP
-  C:0F54H         SEGMENT       ?C_C51STARTUP
-  I:002AH         SEGMENT       ?STACK
+  C:0F07H         SEGMENT       ?C_C51STARTUP
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 3
+
+
+  I:0030H         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -133,7 +131,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:0F57H         SYMBOL        IDATALOOP
+  C:0F0AH         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -142,18 +140,18 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:0F54H         SYMBOL        STARTUP1
+  C:0F07H         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         126
-  C:0F54H         LINE#         133
-  C:0F56H         LINE#         134
-  C:0F57H         LINE#         135
-  C:0F58H         LINE#         136
-  C:0F5AH         LINE#         185
-  C:0F5DH         LINE#         196
+  C:0F07H         LINE#         133
+  C:0F09H         LINE#         134
+  C:0F0AH         LINE#         135
+  C:0F0BH         LINE#         136
+  C:0F0DH         LINE#         185
+  C:0F10H         LINE#         196
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        TESTMULTIHOP
@@ -162,46 +160,49 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B3H         PUBLIC        SPI_CTRL
-  C:0F32H         PUBLIC        _Delay5ms
+  C:0EE5H         PUBLIC        _Delay5ms
   D:00A8H         PUBLIC        IE
-  C:0C05H         PUBLIC        _GetNumber
-  C:0D84H         PUBLIC        MasterTransmitter
+  C:0B20H         PUBLIC        _GetNumber
+  C:0D37H         PUBLIC        MasterTransmitter
   B:00A0H.5       PUBLIC        DR
   D:00B8H         PUBLIC        IP
   B:0098H.0       PUBLIC        RI
-  C:0E32H         PUBLIC        _GetString
+  C:0DE5H         PUBLIC        _GetString
   B:0098H.1       PUBLIC        TI
-  C:0F43H         PUBLIC        _GetChar
-  C:0DFAH         PUBLIC        _ReceivePacket
-  C:0BA5H         PUBLIC        main
+  C:0EF6H         PUBLIC        _GetChar
+  C:0DADH         PUBLIC        _ReceivePacket
+  C:0C75H         PUBLIC        main
   D:0091H         PUBLIC        EXIF
-  C:0E6AH         PUBLIC        InitRF
-  C:0E9DH         PUBLIC        ConsoleComment
+  C:0E1DH         PUBLIC        InitRF
+  C:0E50H         PUBLIC        ConsoleComment
   B:0080H.0       PUBLIC        P00
   D:0099H         PUBLIC        SBUF
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 4
-
-
   D:0087H         PUBLIC        PCON
-  C:0D06H         PUBLIC        _TransmitPacket
+  B:0080H.3       PUBLIC        P03
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 4
+
+
+  C:0CB9H         PUBLIC        _TransmitPacket
   B:0080H.4       PUBLIC        P04
   D:0098H         PUBLIC        SCON
+  B:0080H.5       PUBLIC        P05
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
-  C:0EC3H         PUBLIC        _PutString
+  C:0E76H         PUBLIC        _PutString
   B:0080H.6       PUBLIC        P06
-  C:0F60H         PUBLIC        _PutChar
-  C:0F10H         PUBLIC        _SpiReadWrite
+  B:0080H.7       PUBLIC        P07
+  C:0F13H         PUBLIC        _PutChar
+  C:0EC3H         PUBLIC        _SpiReadWrite
   C:0800H         PUBLIC        _PrintInt
   C:0903H         PUBLIC        _InitPin
   B:00A0H.4       PUBLIC        TXEN
   D:0094H         PUBLIC        P0_DIR
   D:0095H         PUBLIC        P0_ALT
   D:00B4H         PUBLIC        SPICLK
-  C:0CB2H         PUBLIC        _Ascii2Int
+  C:0BCDH         PUBLIC        _Ascii2Int
   D:008DH         PUBLIC        TH1
   D:00E8H         PUBLIC        EIE
-  C:0DC1H         PUBLIC        InitUART
+  C:0D74H         PUBLIC        InitUART
   B:0088H.6       PUBLIC        TR1
   D:00F8H         PUBLIC        EIP
   B:00A0H.5       PUBLIC        TRX_CE
@@ -209,13 +210,13 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   D:00B2H         PUBLIC        SPI_DATA
   D:00D8H         PUBLIC        EICON
   D:008EH         PUBLIC        CKCON
-  C:0F1DH         PUBLIC        _Delay400us
-  C:0D47H         PUBLIC        _Int2Byte
+  C:0ED0H         PUBLIC        _Delay400us
+  C:0CFAH         PUBLIC        _Int2Byte
   C:0A86H         PUBLIC        _Byte2Int
   B:00A0H.3       PUBLIC        RACSN
-  C:0EE8H         PUBLIC        _SetAutoRetransmit
+  C:0E9BH         PUBLIC        _SetAutoRetransmit
   D:00D0H         PUBLIC        PSW
-  C:0C5DH         PUBLIC        _Slave
+  C:0B78H         PUBLIC        _Slave
   -------         PROC          _INITPIN
   D:0007H         SYMBOL        pinNum
   D:0004H         SYMBOL        direction
@@ -238,10 +239,10 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   C:0960H         LINE#         29
   C:0961H         LINE#         31
   C:0961H         LINE#         32
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 5
+
+
   C:0964H         LINE#         33
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 5
-
-
   C:096EH         LINE#         34
   C:0971H         LINE#         35
   C:0972H         LINE#         37
@@ -275,37 +276,37 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   C:09C6H         LINE#         70
   -------         ENDPROC       _INITPIN
   -------         PROC          _DELAY400US
-  D:0027H         SYMBOL        n
+  D:0017H         SYMBOL        n
   -------         DO            
   D:0006H         SYMBOL        i
   -------         ENDDO         
-  C:0F1DH         LINE#         107
-  C:0F1FH         LINE#         109
-  C:0F26H         LINE#         110
-  C:0F31H         LINE#         112
+  C:0ED0H         LINE#         107
+  C:0ED2H         LINE#         109
+  C:0ED9H         LINE#         110
+  C:0EE4H         LINE#         112
   -------         ENDPROC       _DELAY400US
   -------         PROC          _DELAY5MS
-  D:0028H         SYMBOL        n
-  C:0F32H         LINE#         114
-  C:0F34H         LINE#         115
-  C:0F3BH         LINE#         116
-  C:0F42H         LINE#         117
+  D:0016H         SYMBOL        n
+  C:0EE5H         LINE#         114
+  C:0EE7H         LINE#         115
+  C:0EEEH         LINE#         116
+  C:0EF5H         LINE#         117
   -------         ENDPROC       _DELAY5MS
-  C:0F0BH         SYMBOL        L?0137
-  -------         PROC          L?0136
-  -------         ENDPROC       L?0136
-  C:0F0BH         SYMBOL        L?0137
+  C:0EBEH         SYMBOL        L?0142
+  -------         PROC          L?0141
+  -------         ENDPROC       L?0141
+  C:0EBEH         SYMBOL        L?0142
   -------         PROC          _SPIREADWRITE
   D:0007H         SYMBOL        b
-  C:0F10H         LINE#         124
-  C:0F10H         LINE#         125
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 6
+  C:0EC3H         LINE#         124
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 6
 
 
-  C:0F13H         LINE#         126
-  C:0F15H         LINE#         127
-  C:0F1AH         LINE#         129
-  C:0F1CH         LINE#         130
+  C:0EC3H         LINE#         125
+  C:0EC6H         LINE#         126
+  C:0EC8H         LINE#         127
+  C:0ECDH         LINE#         129
+  C:0ECFH         LINE#         130
   -------         ENDPROC       _SPIREADWRITE
   -------         PROC          _TRANSMITPACKET
   D:0001H         SYMBOL        b
@@ -313,26 +314,26 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   D:0005H         SYMBOL        i
   D:0006H         SYMBOL        width
   -------         ENDDO         
-  C:0D06H         LINE#         132
-  C:0D06H         LINE#         135
-  C:0D08H         LINE#         136
-  C:0D0AH         LINE#         137
-  C:0D11H         LINE#         138
-  C:0D13H         LINE#         143
-  C:0D15H         LINE#         144
-  C:0D1AH         LINE#         145
-  C:0D21H         LINE#         146
-  C:0D27H         LINE#         147
-  C:0D2AH         LINE#         148
-  C:0D31H         LINE#         149
-  C:0D33H         LINE#         150
-  C:0D38H         LINE#         151
-  C:0D38H         LINE#         152
-  C:0D3BH         LINE#         154
-  C:0D3DH         LINE#         155
-  C:0D3FH         LINE#         156
-  C:0D44H         LINE#         157
-  C:0D46H         LINE#         158
+  C:0CB9H         LINE#         132
+  C:0CB9H         LINE#         135
+  C:0CBBH         LINE#         136
+  C:0CBDH         LINE#         137
+  C:0CC4H         LINE#         138
+  C:0CC6H         LINE#         143
+  C:0CC8H         LINE#         144
+  C:0CCDH         LINE#         145
+  C:0CD4H         LINE#         146
+  C:0CDAH         LINE#         147
+  C:0CDDH         LINE#         148
+  C:0CE4H         LINE#         149
+  C:0CE6H         LINE#         150
+  C:0CEBH         LINE#         151
+  C:0CEBH         LINE#         152
+  C:0CEEH         LINE#         154
+  C:0CF0H         LINE#         155
+  C:0CF2H         LINE#         156
+  C:0CF7H         LINE#         157
+  C:0CF9H         LINE#         158
   -------         ENDPROC       _TRANSMITPACKET
   -------         PROC          _RECEIVEPACKET
   D:0001H         SYMBOL        b
@@ -340,94 +341,94 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   D:0005H         SYMBOL        i
   D:0006H         SYMBOL        width
   -------         ENDDO         
-  C:0DFAH         LINE#         160
-  C:0DFAH         LINE#         163
-  C:0DFCH         LINE#         165
-  C:0DFFH         LINE#         167
-  C:0E01H         LINE#         168
-  C:0E03H         LINE#         169
-  C:0E0AH         LINE#         170
-  C:0E0CH         LINE#         175
-  C:0E0EH         LINE#         176
-  C:0E13H         LINE#         177
-  C:0E1AH         LINE#         178
-  C:0E23H         LINE#         179
-  C:0E2AH         LINE#         180
-  C:0E2DH         LINE#         183
-  C:0E2FH         LINE#         184
-  C:0E31H         LINE#         185
+  C:0DADH         LINE#         160
+  C:0DADH         LINE#         163
+  C:0DAFH         LINE#         165
+  C:0DB2H         LINE#         167
+  C:0DB4H         LINE#         168
+  C:0DB6H         LINE#         169
+  C:0DBDH         LINE#         170
+  C:0DBFH         LINE#         175
+  C:0DC1H         LINE#         176
+  C:0DC6H         LINE#         177
+  C:0DCDH         LINE#         178
+  C:0DD6H         LINE#         179
+  C:0DDDH         LINE#         180
+  C:0DE0H         LINE#         183
+  C:0DE2H         LINE#         184
+  C:0DE4H         LINE#         185
   -------         ENDPROC       _RECEIVEPACKET
   -------         PROC          INITUART
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 7
+
+
   -------         DO            
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 7
-
-
   D:0006H         SYMBOL        cklf
   -------         ENDDO         
-  C:0DC1H         LINE#         187
-  C:0DC1H         LINE#         191
-  C:0DC4H         LINE#         192
-  C:0DC7H         LINE#         193
-  C:0DCAH         LINE#         194
-  C:0DCDH         LINE#         195
-  C:0DD0H         LINE#         196
-  C:0DD2H         LINE#         201
-  C:0DD5H         LINE#         202
-  C:0DD8H         LINE#         204
-  C:0DDBH         LINE#         205
-  C:0DDEH         LINE#         208
-  C:0DE0H         LINE#         209
-  C:0DE2H         LINE#         210
-  C:0DE9H         LINE#         211
-  C:0DEBH         LINE#         212
-  C:0DEDH         LINE#         213
-  C:0DF2H         LINE#         214
-  C:0DF7H         LINE#         215
-  C:0DF9H         LINE#         216
+  C:0D74H         LINE#         187
+  C:0D74H         LINE#         191
+  C:0D77H         LINE#         192
+  C:0D7AH         LINE#         193
+  C:0D7DH         LINE#         194
+  C:0D80H         LINE#         195
+  C:0D83H         LINE#         196
+  C:0D85H         LINE#         201
+  C:0D88H         LINE#         202
+  C:0D8BH         LINE#         204
+  C:0D8EH         LINE#         205
+  C:0D91H         LINE#         208
+  C:0D93H         LINE#         209
+  C:0D95H         LINE#         210
+  C:0D9CH         LINE#         211
+  C:0D9EH         LINE#         212
+  C:0DA0H         LINE#         213
+  C:0DA5H         LINE#         214
+  C:0DAAH         LINE#         215
+  C:0DACH         LINE#         216
   -------         ENDPROC       INITUART
   -------         PROC          _PUTCHAR
   D:0007H         SYMBOL        c
-  C:0F60H         LINE#         218
-  C:0F60H         LINE#         219
-  C:0F63H         LINE#         221
-  C:0F65H         LINE#         222
-  C:0F67H         LINE#         223
+  C:0F13H         LINE#         218
+  C:0F13H         LINE#         219
+  C:0F16H         LINE#         221
+  C:0F18H         LINE#         222
+  C:0F1AH         LINE#         223
   -------         ENDPROC       _PUTCHAR
   -------         PROC          _PUTSTRING
-  D:0014H         SYMBOL        s
-  C:0EC3H         LINE#         225
-  C:0EC9H         LINE#         226
-  C:0ED4H         LINE#         227
-  C:0EE7H         LINE#         228
+  D:0021H         SYMBOL        s
+  C:0E76H         LINE#         225
+  C:0E7CH         LINE#         226
+  C:0E87H         LINE#         227
+  C:0E9AH         LINE#         228
   -------         ENDPROC       _PUTSTRING
   -------         PROC          _GETCHAR
   D:0001H         SYMBOL        c
-  C:0F43H         LINE#         230
-  C:0F43H         LINE#         231
-  C:0F46H         LINE#         233
-  C:0F48H         LINE#         234
-  C:0F4DH         LINE#         235
+  C:0EF6H         LINE#         230
+  C:0EF6H         LINE#         231
+  C:0EF9H         LINE#         233
+  C:0EFBH         LINE#         234
+  C:0F00H         LINE#         235
   -------         ENDPROC       _GETCHAR
   -------         PROC          _GETSTRING
-  D:0021H         SYMBOL        s
-  C:0E32H         LINE#         238
-  C:0E38H         LINE#         239
-  C:0E3AH         LINE#         240
-  C:0E4DH         LINE#         241
-  C:0E58H         LINE#         242
-  C:0E5EH         LINE#         243
-  C:0E60H         LINE#         244
+  D:0024H         SYMBOL        s
+  C:0DE5H         LINE#         238
+  C:0DEBH         LINE#         239
+  C:0DEDH         LINE#         240
+  C:0E00H         LINE#         241
+  C:0E0BH         LINE#         242
+  C:0E11H         LINE#         243
+  C:0E13H         LINE#         244
   -------         ENDPROC       _GETSTRING
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 8
+
+
   -------         PROC          _PRINTINT
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 8
-
-
   D:0002H         SYMBOL        n
   -------         DO            
-  D:0011H         SYMBOL        bit4
-  D:0012H         SYMBOL        bit3
-  D:0013H         SYMBOL        bit2
-  D:0014H         SYMBOL        bit1
+  D:001DH         SYMBOL        bit4
+  D:001EH         SYMBOL        bit3
+  D:001FH         SYMBOL        bit2
+  D:0020H         SYMBOL        bit1
   D:0006H         SYMBOL        bit0
   -------         ENDDO         
   C:0800H         LINE#         247
@@ -478,52 +479,52 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   C:08FEH         LINE#         302
   -------         ENDPROC       _PRINTINT
   -------         PROC          _ASCII2INT
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 9
+
+
   D:0001H         SYMBOL        n
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 9
-
-
   -------         DO            
-  D:0011H         SYMBOL        value
+  D:002DH         SYMBOL        value
   -------         ENDDO         
-  C:0CB2H         LINE#         306
-  C:0CB2H         LINE#         309
-  C:0CC1H         LINE#         310
-  C:0CC2H         LINE#         311
-  C:0CC2H         LINE#         312
-  C:0CC4H         LINE#         314
-  C:0CCAH         LINE#         315
-  C:0CD5H         LINE#         316
-  C:0CE4H         LINE#         317
-  C:0CF8H         LINE#         318
-  C:0CFFH         LINE#         319
-  C:0CFFH         LINE#         320
-  C:0D01H         LINE#         322
-  C:0D05H         LINE#         323
+  C:0BCDH         LINE#         306
+  C:0BCDH         LINE#         309
+  C:0BDCH         LINE#         310
+  C:0BDDH         LINE#         311
+  C:0BDDH         LINE#         312
+  C:0BDFH         LINE#         314
+  C:0BE5H         LINE#         315
+  C:0BF0H         LINE#         316
+  C:0BFFH         LINE#         317
+  C:0C13H         LINE#         318
+  C:0C1AH         LINE#         319
+  C:0C1AH         LINE#         320
+  C:0C1CH         LINE#         322
+  C:0C20H         LINE#         323
   -------         ENDPROC       _ASCII2INT
   -------         PROC          _GETNUMBER
-  D:0011H         SYMBOL        b
+  D:0027H         SYMBOL        b
   D:0005H         SYMBOL        n
   -------         DO            
   D:0006H         SYMBOL        i
   -------         ENDDO         
-  C:0C05H         LINE#         325
-  C:0C0BH         LINE#         326
-  C:0C0DH         LINE#         327
-  C:0C12H         LINE#         328
-  C:0C1BH         LINE#         329
-  C:0C30H         LINE#         330
-  C:0C3BH         LINE#         331
-  C:0C3CH         LINE#         332
-  C:0C42H         LINE#         333
-  C:0C46H         LINE#         334
-  C:0C48H         LINE#         335
-  C:0C48H         LINE#         336
-  C:0C51H         LINE#         338
-  C:0C51H         LINE#         339
-  C:0C53H         LINE#         340
+  C:0B20H         LINE#         325
+  C:0B26H         LINE#         326
+  C:0B28H         LINE#         327
+  C:0B2DH         LINE#         328
+  C:0B36H         LINE#         329
+  C:0B4BH         LINE#         330
+  C:0B56H         LINE#         331
+  C:0B57H         LINE#         332
+  C:0B5DH         LINE#         333
+  C:0B61H         LINE#         334
+  C:0B63H         LINE#         335
+  C:0B63H         LINE#         336
+  C:0B6CH         LINE#         338
+  C:0B6CH         LINE#         339
+  C:0B6EH         LINE#         340
   -------         ENDPROC       _GETNUMBER
   -------         PROC          _BYTE2INT
-  D:0024H         SYMBOL        b
+  D:002AH         SYMBOL        b
   -------         DO            
   D:0006H         SYMBOL        value
   -------         ENDDO         
@@ -536,153 +537,154 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   -------         PROC          _INT2BYTE
   D:0004H         SYMBOL        n
   D:0001H         SYMBOL        b
-  C:0D47H         LINE#         355
-  C:0D4BH         LINE#         356
-  C:0D58H         LINE#         357
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 10
+  C:0CFAH         LINE#         355
+  C:0CFEH         LINE#         356
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 10
 
 
-  C:0D5FH         LINE#         358
-  C:0D6EH         LINE#         359
-  C:0D75H         LINE#         360
-  C:0D79H         LINE#         361
-  C:0D80H         LINE#         362
+  C:0D0BH         LINE#         357
+  C:0D12H         LINE#         358
+  C:0D21H         LINE#         359
+  C:0D28H         LINE#         360
+  C:0D2CH         LINE#         361
+  C:0D33H         LINE#         362
   -------         ENDPROC       _INT2BYTE
   -------         PROC          CONSOLECOMMENT
   -------         DO            
-  D:0029H         SYMBOL        c
+  D:002FH         SYMBOL        c
   -------         ENDDO         
-  C:0E9DH         LINE#         367
-  C:0E9DH         LINE#         368
-  C:0EA0H         LINE#         370
-  C:0EA3H         LINE#         371
-  C:0EAFH         LINE#         372
-  C:0EB8H         LINE#         373
-  C:0EBAH         LINE#         374
+  C:0E50H         LINE#         367
+  C:0E50H         LINE#         368
+  C:0E53H         LINE#         370
+  C:0E56H         LINE#         371
+  C:0E62H         LINE#         372
+  C:0E6BH         LINE#         373
+  C:0E6DH         LINE#         374
   -------         ENDPROC       CONSOLECOMMENT
   -------         PROC          _SETAUTORETRANSMIT
   D:0006H         SYMBOL        setting
   -------         DO            
   D:0005H         SYMBOL        tmp
   -------         ENDDO         
-  C:0EE8H         LINE#         376
-  C:0EEAH         LINE#         380
-  C:0EEAH         LINE#         381
-  C:0EEAH         LINE#         382
-  C:0EF1H         LINE#         383
-  C:0EF3H         LINE#         385
-  C:0EF5H         LINE#         386
-  C:0EFAH         LINE#         387
-  C:0F04H         LINE#         388
-  C:0F06H         LINE#         389
+  C:0E9BH         LINE#         376
+  C:0E9DH         LINE#         380
+  C:0E9DH         LINE#         381
+  C:0E9DH         LINE#         382
+  C:0EA4H         LINE#         383
+  C:0EA6H         LINE#         385
+  C:0EA8H         LINE#         386
+  C:0EADH         LINE#         387
+  C:0EB7H         LINE#         388
+  C:0EB9H         LINE#         389
   -------         ENDPROC       _SETAUTORETRANSMIT
   -------         PROC          INITRF
   -------         DO            
   D:0006H         SYMBOL        tmp
   -------         ENDDO         
-  C:0E6AH         LINE#         391
-  C:0E6AH         LINE#         395
-  C:0E6DH         LINE#         396
-  C:0E70H         LINE#         399
-  C:0E72H         LINE#         400
-  C:0E77H         LINE#         401
-  C:0E7CH         LINE#         402
-  C:0E81H         LINE#         403
-  C:0E83H         LINE#         405
-  C:0E83H         LINE#         406
-  C:0E83H         LINE#         407
-  C:0E8AH         LINE#         408
-  C:0E8CH         LINE#         410
-  C:0E8EH         LINE#         411
-  C:0E93H         LINE#         413
-  C:0E9AH         LINE#         414
-  C:0E9CH         LINE#         416
+  C:0E1DH         LINE#         391
+  C:0E1DH         LINE#         395
+  C:0E20H         LINE#         396
+  C:0E23H         LINE#         399
+  C:0E25H         LINE#         400
+  C:0E2AH         LINE#         401
+  C:0E2FH         LINE#         402
+  C:0E34H         LINE#         403
+  C:0E36H         LINE#         405
+  C:0E36H         LINE#         406
+  C:0E36H         LINE#         407
+  C:0E3DH         LINE#         408
+  C:0E3FH         LINE#         410
+  C:0E41H         LINE#         411
+  C:0E46H         LINE#         413
+  C:0E4DH         LINE#         414
+  C:0E4FH         LINE#         416
   -------         ENDPROC       INITRF
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 11
+
+
   -------         PROC          MASTERTRANSMITTER
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 11
-
-
   -------         DO            
-  D:0017H         SYMBOL        payload
+  D:0018H         SYMBOL        payload
   -------         DO            
-  D:001BH         SYMBOL        i
+  D:001CH         SYMBOL        i
   -------         ENDDO         
   -------         ENDDO         
-  C:0D84H         LINE#         472
-  C:0D84H         LINE#         474
-  C:0D86H         LINE#         476
-  C:0D86H         LINE#         479
-  C:0D8FH         LINE#         480
-  C:0D98H         LINE#         482
-  C:0DA1H         LINE#         483
-  C:0DAAH         LINE#         484
-  C:0DADH         LINE#         485
-  C:0DB6H         LINE#         486
+  C:0D37H         LINE#         472
+  C:0D37H         LINE#         474
+  C:0D39H         LINE#         476
+  C:0D39H         LINE#         479
+  C:0D42H         LINE#         480
+  C:0D4BH         LINE#         482
+  C:0D54H         LINE#         483
+  C:0D5DH         LINE#         484
+  C:0D60H         LINE#         485
+  C:0D69H         LINE#         486
   -------         ENDPROC       MASTERTRANSMITTER
   -------         PROC          _SLAVE
   D:0007H         SYMBOL        groupID
   -------         DO            
-  D:001CH         SYMBOL        payload
+  D:0011H         SYMBOL        payload
   D:0004H         SYMBOL        id
-  D:001FH         SYMBOL        slaveID
+  D:0014H         SYMBOL        slaveID
   -------         DO            
-  D:0020H         SYMBOL        i
+  D:0015H         SYMBOL        i
   -------         ENDDO         
   -------         ENDDO         
-  C:0C5DH         LINE#         490
-  C:0C5DH         LINE#         492
-  C:0C5FH         LINE#         493
-  C:0C62H         LINE#         495
-  C:0C62H         LINE#         498
-  C:0C64H         LINE#         499
-  C:0C6DH         LINE#         501
-  C:0C76H         LINE#         502
-  C:0C78H         LINE#         503
-  C:0C7AH         LINE#         504
-  C:0C7CH         LINE#         505
-  C:0C82H         LINE#         506
-  C:0C84H         LINE#         507
-  C:0C86H         LINE#         508
-  C:0C88H         LINE#         509
-  C:0C8EH         LINE#         510
-  C:0C90H         LINE#         511
-  C:0C92H         LINE#         512
-  C:0C94H         LINE#         513
-  C:0C94H         LINE#         515
-  C:0C96H         LINE#         516
-  C:0C99H         LINE#         517
-  C:0CA2H         LINE#         518
-  C:0CABH         LINE#         519
-  C:0CB0H         LINE#         520
+  C:0B78H         LINE#         490
+  C:0B78H         LINE#         492
+  C:0B7AH         LINE#         493
+  C:0B7DH         LINE#         495
+  C:0B7DH         LINE#         498
+  C:0B7FH         LINE#         499
+  C:0B88H         LINE#         501
+  C:0B91H         LINE#         502
+  C:0B93H         LINE#         503
+  C:0B95H         LINE#         504
+  C:0B97H         LINE#         505
+  C:0B9DH         LINE#         506
+  C:0B9FH         LINE#         507
+  C:0BA1H         LINE#         508
+  C:0BA3H         LINE#         509
+  C:0BA9H         LINE#         510
+  C:0BABH         LINE#         511
+  C:0BADH         LINE#         512
+  C:0BAFH         LINE#         513
+  C:0BAFH         LINE#         515
+  C:0BB1H         LINE#         516
+  C:0BB4H         LINE#         517
+  C:0BBDH         LINE#         518
+  C:0BC6H         LINE#         519
+  C:0BCBH         LINE#         520
   -------         ENDPROC       _SLAVE
   -------         PROC          MAIN
   -------         DO            
   D:0008H         SYMBOL        number
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 12
+
+
   D:000EH         SYMBOL        num
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 12
-
-
   D:0010H         SYMBOL        e
   -------         ENDDO         
-  C:0BA5H         LINE#         523
-  C:0BA5H         LINE#         530
-  C:0BACH         LINE#         531
-  C:0BB1H         LINE#         532
-  C:0BB6H         LINE#         533
-  C:0BBCH         LINE#         534
-  C:0BC1H         LINE#         535
-  C:0BC6H         LINE#         537
-  C:0BC8H         LINE#         538
-  C:0BCAH         LINE#         539
-  C:0BCCH         LINE#         541
-  C:0BCFH         LINE#         542
-  C:0BD2H         LINE#         544
-  C:0BD2H         LINE#         545
-  C:0BDBH         LINE#         546
-  C:0BE6H         LINE#         547
-  C:0BF3H         LINE#         554
-  C:0BFCH         LINE#         555
-  C:0C03H         LINE#         559
+  C:0C75H         LINE#         523
+  C:0C75H         LINE#         530
+  C:0C7CH         LINE#         531
+  C:0C81H         LINE#         532
+  C:0C86H         LINE#         533
+  C:0C8CH         LINE#         534
+  C:0C91H         LINE#         535
+  C:0C96H         LINE#         537
+  C:0C98H         LINE#         538
+  C:0C9AH         LINE#         539
+  C:0C9CH         LINE#         541
+  C:0C9FH         LINE#         542
+  C:0CA2H         LINE#         565
+  C:0CA5H         LINE#         566
+  C:0CA7H         LINE#         567
+  C:0CACH         LINE#         568
+  C:0CAEH         LINE#         569
+  C:0CB3H         LINE#         570
+  C:0CB8H         LINE#         571
+  C:0CB8H         LINE#         573
   -------         ENDPROC       MAIN
   -------         ENDMOD        TESTMULTIHOP
 
@@ -707,7 +709,19 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
   -------         ENDMOD        ?C?UIDIV
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PRINTINT?TESTMULTIHOP
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_ASCII2INT?TESTMULTIHOP
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETNUMBER?TESTMULTIHOP
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_BYTE2INT?TESTMULTIHOP
+BL51 BANKED LINKER/LOCATER V6.22                                                      09/08/2015  12:38:40  PAGE 13
+
+
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_INT2BYTE?TESTMULTIHOP
@@ -719,17 +733,11 @@ SYMBOL TABLE OF MODULE:  .\Objects\testMultiHop (?C_STARTUP)
     SEGMENT: ?PR?_SETAUTORETRANSMIT?TESTMULTIHOP
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-BL51 BANKED LINKER/LOCATER V6.22                                                      09/01/2015  16:10:14  PAGE 13
-
-
     SEGMENT: ?PR?MASTERTRANSMITTER?TESTMULTIHOP
 
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_SLAVE?TESTMULTIHOP
-
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 06ACH BYTE (83%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 065FH BYTE (79%) *
 ******************************************************************************
 
-Program Size: data=43.0 xdata=0 code=1899
-LINK/LOCATE RUN COMPLETE.  6 WARNING(S),  0 ERROR(S)
+Program Size: data=49.0 xdata=0 code=1822
+LINK/LOCATE RUN COMPLETE.  8 WARNING(S),  0 ERROR(S)

@@ -5,6 +5,7 @@
 
 #define HFREQ 0		// 0=433MHz, 1=868/915MHz
 #define POWER 3 	// 0=min power...3 = max power
+//
 
 /* Set pinNum as GPIO. direction=1 for input, direction=0 for output
 ** eg.InitPin(1,1) will set P01 as input GPIO. */
@@ -471,7 +472,7 @@ void Receiver(void){
 
 void MasterTransmitter(void){
 	unsigned char payload[4];
-	TXEN = 1;
+	TXEN = 1; //TX mode
 	
 	while(1){
 		unsigned char i;
@@ -541,7 +542,7 @@ void main(){
 	InitUART();
 	InitRF();
 	
-	while(1){
+	/*while(1){
 		PutString("\r\nEnter a number: ");
 		GetNumber(&number[0],5);
 		num = Ascii2Int(&number[0]);
@@ -556,19 +557,19 @@ void main(){
 		//num++;
 		//PutString("\r\nType something: ");
 		//ConsoleComment();
-	}
+	}*/
 
 	
 	
 	//MasterTransmitter();
 	
-//	if(P03 == 0){		//SW2 for Transmitter
-//		Slave(0);
-//	} else if (P05 == 0){		//SW3 for Receiver
-//		Slave(1);
-//	} else if (P07 == 0){
-//		Slave(2);
-//	}
+	if(P03 == 0){		//SW2 for Transmitter
+		Slave(0);
+	} else if (P05 == 0){		//SW3 for Receiver
+		Slave(1);
+	} else if (P07 == 0){
+		Slave(2);
+	}
 	
 }
 

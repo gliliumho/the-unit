@@ -3,9 +3,9 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.14.2
+IDE-Version: µVision V5.15
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: REG REG-LPT-055, k, LIC=----
+License Information: KH Teo, Recogine Technology Sdn Bhd, LIC=----
  
 Tool Versions:
 Toolchain:       PK51 Prof. Develpers Kit  Version: 9.54
@@ -18,14 +18,18 @@ Hex Converter:   OH51.exe V2.7.0.0
 CPU DLL:         S8051.DLL V3.100.0.0
 Dialog DLL:      DP51.DLL V2.62.0.1 
 <h2>Project:</h2>
-C:\GitRepo\the-unit\slave_unit\testMultiHop\testMultiHop.uvproj
-Project File Date:  08/05/2015
+E:\The Unit\the-unit\slave_unit\testMultiHop\testMultiHop.uvproj
+Project File Date:  09/01/2015
 
 <h2>Output:</h2>
-Build Project 'testMultiHop' - Target 'Target 1'
-compiling testMultiHop.c...
-C:\GitRepo\the-unit\slave_unit\testMultiHop\testMultiHop.c(528): warning C280: 'e': unreferenced local variable
+Build target 'Target 1'
 linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PRINTINT?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_ASCII2INT?TESTMULTIHOP
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETNUMBER?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_BYTE2INT?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
@@ -36,11 +40,9 @@ linking...
     SEGMENT: ?PR?_SETAUTORETRANSMIT?TESTMULTIHOP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?MASTERTRANSMITTER?TESTMULTIHOP
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_SLAVE?TESTMULTIHOP
-Program Size: data=43.0 xdata=0 code=1899
+Program Size: data=49.0 xdata=0 code=1822
 creating hex file from ".\Objects\testMultiHop"...
-".\Objects\testMultiHop" - 0 Error(s), 7 Warning(s).
+".\Objects\testMultiHop" - 0 Error(s), 8 Warning(s).
 </pre>
 </body>
 </html>

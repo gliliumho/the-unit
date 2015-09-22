@@ -1,0 +1,46 @@
+C51 COMPILER V9.54   TESTTIMER2                                                            09/07/2015 09:31:33 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TESTTIMER2
+OBJECT MODULE PLACED IN .\Objects\testTimer2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE testTimer2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\testTimer2.lst) TABS(2) OBJECT(.\Objects\testTimer2.obj)
+
+line level    source
+
+   1          #include <reg9e5.H>
+   2          
+   3          void TOM1Delay(void);
+   4          sbit mybit=P1^4;
+   5          void main(void)
+   6          {
+   7   1        while(1)
+   8   1        {
+   9   2          mybit=~mybit;
+  10   2          TOM1Delay();
+  11   2        }
+  12   1      }
+  13          void TOM1Delay(void)
+  14          {
+  15   1        TMOD=0x01;  //Timer0, mode1 (16 bit counter)
+  16   1        TL0=0xFD;
+  17   1        TH0=0x4B;
+  18   1        TR0=1;
+  19   1        while(TF0==0);
+  20   1        TR0=1;
+  21   1        TF0=0;
+  22   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     26    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
