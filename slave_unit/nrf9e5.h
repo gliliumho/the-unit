@@ -1,8 +1,4 @@
 
-#include <Nordic\reg9e5.h>
-#include <string.h>
-
-
 #define HFREQ 0		// 0=433MHz, 1=868/915MHz
 #define POWER 3 	// 0=min power...3 = max power
 //
@@ -69,42 +65,6 @@ void InitPin(unsigned char pinNum, direction){
 			break;	
 	}
 }
-
-/* ---SetTXPower() & SetFrequency()------------------------
----------------------------------------------
-Currently not used and not working. 
----------------------------------------------
-void SetTXPower(unsigned char powerlevel){
-	switch(powerlevel){
-		case 0:
-			CC &= 0xF3FF;
-			break;
-		case 1:
-			CC &= 0xF7FF;
-			CC |= 0x0400;
-			break;
-		case 2:
-			CC &= 0xFBFF;
-			CC |= 0x0800;
-			break;
-		case 3:
-			CC |= 0x0C00;
-			break;
-	}
-}
-
-
-------------------------------------------
-Currently not used and not working. 
-------------------------------------------
-void SetFrequency(unsigned char freq){
-	if(freq == 1)
-		CC |= 0x0200;
-	else
-		CC &= 0xFDFF;
-} 
-*/
-
 void Delay400us(volatile unsigned char n){
 	unsigned char i;
 	while(n--)
@@ -151,8 +111,8 @@ void TransmitPacket(unsigned char *b){
 			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
 		}
 	}
-	
 	RACSN = 1;
+	
 	TRX_CE = 1;				//turn ON radio
 	Delay400us(20);		//delay to wait for transmission to be completed
 	TRX_CE = 0; 			//turn OFF radio
@@ -216,6 +176,10 @@ void InitUART(void){
 	RACSN = 1;
 }
 
+/*Sample usage:
+unsigned char a;
+PutChar(a);
+*/
 void PutChar(unsigned char c){
 	while(!TI) 	//TI=Transmit Interupt. TI=0 when UART TXD is busy
 		;					
@@ -223,11 +187,20 @@ void PutChar(unsigned char c){
 	SBUF = c;		//SBUF will be transmitted through UART
 }
 
+/*Sample usage:
+unsigned char a[n];
+PutString("Hello world!");
+PutString(&a[0]);
+*/
 void PutString(unsigned char *s){
 	while(*s != 0)
 		PutChar(*s++);
 }
 
+/*Sample usage:
+unsigned char a;
+GetChar(&a);
+*/
 void GetChar(unsigned char *c){
 	while(!RI) 		//RI=Receive Interupt. RI=0 when UART RXD is busy
 		;
@@ -236,6 +209,10 @@ void GetChar(unsigned char *c){
 	PutChar(*c);	//for internal echo
 }
 
+/*Sample usage:
+unsigned char a[n];
+GetString(&a[0]);
+*/
 void GetString(unsigned char *s){
 	GetChar(s);
 	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
@@ -303,7 +280,12 @@ void PrintInt(unsigned int n){
 	PutChar(bit0);
 
 }
+
 //converts a string of ascii chars to 1 integer
+/*Sample usage: Ascii2Int
+unsigned char a[n];
+Ascii2int(&a[0]);
+*/
 unsigned int Ascii2Int (unsigned char *n){
 	unsigned int value;
 	
@@ -323,6 +305,10 @@ unsigned int Ascii2Int (unsigned char *n){
 	return value;
 }
 
+/*Sample usage: GetNumber
+unsigned char a[n];
+GetNumber(&a[0], n-1);
+*/
 void GetNumber(unsigned char *b, unsigned char n){
 	unsigned char i=0;
 	while(i<n){
@@ -369,24 +355,11 @@ void ConsoleComment(void){
 	unsigned char c = 0x00;
 	
 	GetChar(&c);
+
 	while(c!=0x0D && c!=0x0A){
 		GetChar(&c);
 	}
 	PutString("\r\nDone!\r\n");
-}
-void SetAutoRetransmit(unsigned char setting){
-	
-	unsigned char tmp;
-	
-	RACSN = 0;
-	SpiReadWrite(RRC | 0x01); 			//Read RF config address byte #1
-	tmp = SpiReadWrite(0) & 0xDF;		//store current RF config and clear off AUTORETRAN bit
-	RACSN = 1;
-	
-	RACSN = 0;
-	SpiReadWrite(WRC | 0x01);			//Write RF config at addr byte #1
-	SpiReadWrite(tmp | (setting <<5));	//change the AUTORETRAN setting
-	RACSN = 1;
 }
 
 void InitRF(void){
@@ -399,8 +372,8 @@ void InitRF(void){
 	//Configure RF
 	RACSN = 0;
 	SpiReadWrite(WRC | 0x03);	   // Write to RF config address 3 (RX payload)
-	SpiReadWrite(0x04);			 // 3 byte RX payload width
-	SpiReadWrite(0x04);			 // 3 byte TX payload width
+	SpiReadWrite(0x06);			 // 6 byte RX payload width
+	SpiReadWrite(0x06);			 // 6 byte TX payload width
 	RACSN = 1;
 
 	RACSN = 0;
@@ -416,132 +389,201 @@ void InitRF(void){
 	
 }
 
-
-/*old Transmitter and Receiver
-void Transmitter(void){
+void SetAutoRetransmit(unsigned char setting){
 	
-	unsigned char payload[0x20];
-	//strcpy(payload, "Hello World!");	//copy "Hello world!" to string
-	GetString(&payload[0]);
-	TXEN = 1;													//turn radio to TX mode
+	unsigned char tmp;
 	
-	PutString("\r\n Packet content: ");
-	PutString(&payload[0]);						//
-	TransmitPacket(&payload[0]);
-	PutString("\r\n Packet transmitted.");
-	Delay5ms(10);
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x01); 			//Read RF config address byte #1
+	tmp = SpiReadWrite(0) & 0xDF;		//store current RF config and clear off AUTORETRAN bit
+	RACSN = 1;
 	
-	while(1){
-		GetString(&payload[0]);
-		
-		PutString("\r\n Packet content: ");
-		PutString(&payload[0]);
-		TransmitPacket(&payload[0]);
-		PutString("\r\n Packet transmitted.");
-		Delay5ms(10);
-		
-	}
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x01);			//Write RF config at addr byte #1
+	SpiReadWrite(tmp | (setting <<5));	//change the AUTORETRAN setting
+	RACSN = 1;
 }
 
-void Receiver(void){
-	unsigned char payload[0x20];
-	TXEN = 0;
-	
-	PutString(" Receiver started. \r\n");
-	
-	while(1){
-		
-		
-//		//clear array
-//		unsigned char i;
-//		for(i=0;i<0x20;i++){
-//			payload[i] = 0x20;
-//		}
-		
-		
-		ReceivePacket(&payload[0]);
-		
-		PutString(" Payload: ");
-		PutString(&payload[0]);
-		PutString("\r\n");
-		
-	}
-	
+void SetPayloadWidth(unsigned char w){
+	//Configure RF
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x03);	   // Write to RF config address 3 (RX payload)
+	SpiReadWrite(w);			 // 3 byte RX payload width
+	SpiReadWrite(w);			 // 3 byte TX payload width
+	RACSN = 1;
 }
-*/
 
+void SetTXPower(unsigned char powerlevel){
+	unsigned char tmp;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x01); 			//Read RF config address byte #1
+	tmp = SpiReadWrite(0) & 0xF3;		//store current RF config and clear off PA_PWR bit
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x01);			//Write RF config at addr byte #1
+	SpiReadWrite(tmp | (powerlevel <<2));	//change the PA_PWR setting
+	RACSN = 1;
+}
+
+void SetFrequency(unsigned char freq){
+	unsigned char tmp;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x01); 			//Read RF config address byte #1
+	tmp = SpiReadWrite(0) & 0xFD;		//store current RF config and clear off HFREQ_PLL bit
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x01);			//Write RF config at addr byte #1
+	SpiReadWrite(tmp | (freq <<1));	//change the HFREQ_PLL setting
+	RACSN = 1;
+} 
+
+void SetLowRXPower(unsigned char flag){
+	unsigned char tmp;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x01); 			//Read RF config address byte #1
+	tmp = SpiReadWrite(0) & 0xEF;		//store current RF config and clear off RX_RED_PWR bit
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x01);			//Write RF config at addr byte #1
+	SpiReadWrite(tmp | (flag <<4));	//change the RX_RED_PWR setting
+	RACSN = 1;
+}
+
+//*addr is the pointer to RX address, addr_size must be 1-4
+void SetRXAddress(unsigned char *addr, unsigned char addr_size){
+	unsigned char tmp, i;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x02);			//Read RF config at addr byte #2
+	tmp = SpiReadWrite(0) & 0xF8;	//store current address size and clear RXAddress size
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x02);			//Write RF config at addr byte #2
+	SpiReadWrite(tmp | (addr_size));	//change the RX address size
+	RACSN = 1;
+	
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x05);			//Write RF config at addr byte #5
+	for(i=0;i<addr_size;i++){
+		SpiReadWrite(*addr);	//change the TX address
+		addr++;
+	}
+	RACSN = 1;
+}
+
+//*addr is the pointer to TX address, addr_size must be 1-4
+void SetTXAddress(unsigned char *addr, unsigned char addr_size){
+	unsigned char tmp, i;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x02);			//Read RF config at addr byte #2
+	tmp = SpiReadWrite(0) & 0xF8;	//store current address size and clear TXAddress size
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x02);			//Write RF config at addr byte #2
+	SpiReadWrite(tmp | (addr_size<<4));	//change the TX address size
+	RACSN = 1;
+	
+	
+	RACSN = 0;
+	SpiReadWrite(WTA);			//Write TX Address
+	for(i=0;i<addr_size;i++){
+		SpiReadWrite(*addr);	//change the TX address
+		addr++;
+	}
+	RACSN = 1;
+}
+
+void RadioPowerUpDown(unsigned char val){
+	if(val == 0)
+		TRX_CE = 0;
+	else if(val == 1)
+		TRX_CE = 1;
+}
+
+void SetCRCMode(unsigned char flag){
+	unsigned char tmp;
+	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x09); 			//Read RF config address byte #9
+	tmp = SpiReadWrite(0) & 0x7F;		//store current RF config and clear off CRC_MODE bit
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x09);			//Write RF config at addr byte #9
+	SpiReadWrite(tmp | (flag <<7));	//change the CRC_MODE setting
+	RACSN = 1;
+}
+
+<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
 void MasterTransmitter(void){
 	unsigned char payload[4];
 	TXEN = 1; //TX mode
+=======
+void CRCEnableDisable(unsigned char flag){
+	unsigned char tmp;
+>>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
 	
-	while(1){
-		unsigned char i;
-		
-		PutString("\r\n [Slave1 LED][Slave2 LED](no space): ");
-		GetString(&payload[0]);
-		
-		PutString("\r\n Transmitting packet: ");
-		PutString(&payload[0]);
-		for(i=0;i<50;i++){
-			TransmitPacket(&payload[0]);
-		}
-	}
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x09); 			//Read RF config address byte #9
+	tmp = SpiReadWrite(0) & 0x7F;		//store current RF config and clear off CRC_EN bit
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WRC | 0x09);			//Write RF config at addr byte #9
+	SpiReadWrite(tmp | (flag <<6));	//change the CRC_EN setting
+	RACSN = 1;
 }
 
-void Slave(unsigned char groupID){
-	unsigned char payload[3];
-	unsigned char id = groupID;
-	unsigned char slaveID = 0;
+void SendTraffic(unsigned char *info){
+	unsigned char i, width;
 	
-	while(1){
-		unsigned char i;
-		
-		TXEN = 0;
-		ReceivePacket(&payload[0]);
-		
-		if(payload[id] == 0x31){
-			P00 = 0;
-			P04 = 1;
-			P06 = 1;
-		} else if(payload[id] == 0x32){
-			P00 = 1;
-			P04 = 0;
-			P06 = 1;
-		} else if(payload[id] == 0x33){
-			P00 = 1;
-			P04 = 1;
-			P06 = 0;
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x04);	   //Read byte 4 of RF config(TX payload width)
+	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
+	RACSN = 1;
+	
+	RACSN = 0;
+	SpiReadWrite(WTP);					//Write to TX payload
+	SpiReadWrite(0x01);					//Write 1 to first byte to indicate it's traffic info
+	for(i=1;i<width;i++){
+		if(*info!=0x00){							//if not EOS
+			SpiReadWrite(*info);				//then write byte to SPI
+			info++;										//move pointer to next byte
+		}else{
+			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
 		}
-		
-		TXEN = 1;
-		for(i=0;i<10;i++){
-			TransmitPacket(&payload[0]);
-		}
-		Delay5ms(50);
 	}
+	RACSN = 1;
+	
+	TRX_CE = 1;				//turn ON radio
+	Delay400us(20);		//delay to wait for transmission to be completed
+	TRX_CE = 0; 			//turn OFF radio
 }
 
-void main(){
-	
+unsigned char CheckTraffic(unsigned char *info, unsigned char groupID){
+	info += (groupID + 1);
+	return *info;
+}
 
-	unsigned char number[6];
-	unsigned int num;
-	unsigned char e;
+void RequestHeartbeat(unsigned char groupID, unsigned char uniqueID){
+	unsigned char i, width;
 	
-	InitPin(0,0);	//Initialize P00 for LED1
-	InitPin(4,0);
-	InitPin(6,0);
-	InitPin(3,1);	//Initialize SW2 as input
-	InitPin(5,1);	//Initialize SW3 as input
-	InitPin(7,1);	//Initialize SW4 as input
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x04);	   //Read byte 4 of RF config(TX payload width)
+	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
+	RACSN = 1;
 	
-	P00 = 1; 		//Initialize with LED1,3,4 turned ON
-	P04 = 1;
-	P06 = 1;
-	
-	InitUART();
-	InitRF();
-	
+<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
 	/*while(1){
 		PutString("\r\nEnter a number: ");
 		GetNumber(&number[0],5);
@@ -558,11 +600,44 @@ void main(){
 		//PutString("\r\nType something: ");
 		//ConsoleComment();
 	}*/
+=======
+	RACSN = 0;
+	SpiReadWrite(WTP);					//Write to TX payload
+	SpiReadWrite(0x02);					//Write 1 to first byte to indicate it's traffic info
+	SpiReadWrite(groupID);
+	SpiReadWrite(uniqueID);
+	for(i=3;i<width;i++){
+//		if(*info!=0x00){							//if not EOS
+//			SpiReadWrite(*info);				//then write byte to SPI
+//			info++;										//move pointer to next byte
+//		}else{
+//			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
+//		}
+		SpiReadWrite(0x00);	
+	}
+	RACSN = 1;
+	
+	TRX_CE = 1;				//turn ON radio
+	Delay400us(20);		//delay to wait for transmission to be completed
+	TRX_CE = 0; 			//turn OFF radio
+}
+>>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
 
+void SendHeartbeat(unsigned char groupID, unsigned char uniqueID){
+	unsigned char i, width;
 	
+	RACSN = 0;
+	SpiReadWrite(RRC | 0x04);	   //Read byte 4 of RF config(TX payload width)
+	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
+	RACSN = 1;
 	
-	//MasterTransmitter();
+	RACSN = 0;
+	SpiReadWrite(WTP);					//Write to TX payload
+	SpiReadWrite(0x03);					//Write 1 to first byte to indicate it's traffic info
+	SpiReadWrite(groupID);
+	SpiReadWrite(uniqueID);	
 	
+<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
 	if(P03 == 0){		//SW2 for Transmitter
 		Slave(0);
 	} else if (P05 == 0){		//SW3 for Receiver
@@ -570,6 +645,14 @@ void main(){
 	} else if (P07 == 0){
 		Slave(2);
 	}
+=======
+	for(i=3;i<width;i++){
+		SpiReadWrite(0x00);
+	}
+	RACSN = 1;
+>>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
 	
+	TRX_CE = 1;				//turn ON radio
+	Delay400us(20);		//delay to wait for transmission to be completed
+	TRX_CE = 0; 			//turn OFF radio
 }
-

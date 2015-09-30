@@ -13,4 +13,13 @@
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
+  <project>
+    <PathAndName>.\testRFString\testRFString.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\testMultiHop\testMultiHop.uvproj</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
+  </project>
+
 </ProjectWorkspace>
