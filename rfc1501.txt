@@ -1,0 +1,100 @@
+The Unit Working Group
+RFC: 1501
+
+Transmission of RF Packets over 433MHz Networks
+
+Table of Contents
+1. Introduction
+2. 433MHz Mode for nRF9E5
+3. Addressing Mode
+4. Maximum Transmission Unit
+5. RF Adaptation Layer and Frame Format
+6. Unicast Address Mapping (UL)
+7. Multicast Address Mapping (DL)
+8. Frame Delivery in a Link Layer
+9. Security Considerations
+10. Acknowlegdements
+11. References
+
+
+Introduction
+
+The 433MHz frequency band targets far distance communication. This document defines the frame format for transmission of RF packets as well as the downlink (DL) and uplink (UL) communication between RF master and RF slaves.
+
+5. RF Adaptation Layer and Frame Format
+
+The payload of nRF9E5 is constrained to 32 bytes. However to reduce transmission power, we limit the maximum payload size to 16 bytes in this version.
+
+					 1					 2					 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|   Dispatch 	|	Type Header	|								+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+							   -+
+|																|
++-															   -+
+|							Payload								|
++-															   -+
+|																|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.1.	Dispatch Type and Header
+
+The dispatch type is defined by a zero bit as the first bit and a one bit as the second bit. The dispatch type and header are shown here:
+
+					 1					 2					 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|0 1|  Dispatch |  Type-specific header
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Dispatch 				6-bit selector. Identifies the type of header immediately following the Dispatch Header.
+Type-specific header	A header determined by the Dispatch Header
+
+			Figure 1: Dispatch Type and Header
+
+  Pattern		Header type
++-----------+-------------------------------------------------------+
+| 01 000000 | NULL 				- Not a nRF9E5 frame				|
+| 01 000001 | Traffic 			- Downlink traffic information		|
+| 01 000010 | Node Info Request	- Uplink Node Info Request			|
+| 01 000011 | Node Info Reply	- Uplink Node Info Reply			|
+| 01 000100 | Change ID			- Dynamically changing ID of node	|
+| 01 000101 | reserved			- Reserved for future use			|
+| 	...		| reserved			- Reserved for future use			|
+| 01 111111 | reserved			- Reserved for future use			|
++-----------+-------------------------------------------------------+
+
+5.2.	Traffic Info Header
+
+The traffic header is defined by 
+
+					 1					 2					 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|0 1 0 0 0 0 0 1|size|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					 1					 2					 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+
+
+
+
