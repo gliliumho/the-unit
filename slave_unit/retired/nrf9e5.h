@@ -524,15 +524,10 @@ void SetCRCMode(unsigned char flag){
 	RACSN = 1;
 }
 
-<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
-void MasterTransmitter(void){
-	unsigned char payload[4];
-	TXEN = 1; //TX mode
-=======
+
 void CRCEnableDisable(unsigned char flag){
 	unsigned char tmp;
->>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
-	
+
 	RACSN = 0;
 	SpiReadWrite(RRC | 0x09); 			//Read RF config address byte #9
 	tmp = SpiReadWrite(0) & 0x7F;		//store current RF config and clear off CRC_EN bit
@@ -583,36 +578,13 @@ void RequestHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
 	RACSN = 1;
 	
-<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
-	/*while(1){
-		PutString("\r\nEnter a number: ");
-		GetNumber(&number[0],5);
-		num = Ascii2Int(&number[0]);
-		
-		//num = 1000/num;
-		//Int2Byte(num, &number[0]);
-		
-		//num = Byte2Int(&number[0]);
-		
-		PutString("\r\nThe number you entered is: ");
-		PrintInt(num);
-		//num++;
-		//PutString("\r\nType something: ");
-		//ConsoleComment();
-	}*/
-=======
+
 	RACSN = 0;
 	SpiReadWrite(WTP);					//Write to TX payload
 	SpiReadWrite(0x02);					//Write 1 to first byte to indicate it's traffic info
 	SpiReadWrite(groupID);
 	SpiReadWrite(uniqueID);
 	for(i=3;i<width;i++){
-//		if(*info!=0x00){							//if not EOS
-//			SpiReadWrite(*info);				//then write byte to SPI
-//			info++;										//move pointer to next byte
-//		}else{
-//			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
-//		}
 		SpiReadWrite(0x00);	
 	}
 	RACSN = 1;
@@ -621,7 +593,6 @@ void RequestHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	Delay400us(20);		//delay to wait for transmission to be completed
 	TRX_CE = 0; 			//turn OFF radio
 }
->>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
 
 void SendHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	unsigned char i, width;
@@ -637,21 +608,12 @@ void SendHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	SpiReadWrite(groupID);
 	SpiReadWrite(uniqueID);	
 	
-<<<<<<< HEAD:slave_unit/testMultiHop/testMultiHop.c
-	if(P03 == 0){		//SW2 for Transmitter
-		Slave(0);
-	} else if (P05 == 0){		//SW3 for Receiver
-		Slave(1);
-	} else if (P07 == 0){
-		Slave(2);
-	}
-=======
+
 	for(i=3;i<width;i++){
 		SpiReadWrite(0x00);
 	}
 	RACSN = 1;
->>>>>>> 7bd1219f1a541c4ab073e53be6340ecd516bb215:slave_unit/nrf9e5.h
-	
+
 	TRX_CE = 1;				//turn ON radio
 	Delay400us(20);		//delay to wait for transmission to be completed
 	TRX_CE = 0; 			//turn OFF radio
