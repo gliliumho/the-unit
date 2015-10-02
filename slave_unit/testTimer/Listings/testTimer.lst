@@ -1,0 +1,199 @@
+C51 COMPILER V9.54   TESTTIMER                                                             09/07/2015 09:34:34 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TESTTIMER
+OBJECT MODULE PLACED IN .\Objects\testTimer.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE testTimer.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\testTimer.lst) TABS(2) OBJECT(.\Objects\testTimer.obj)
+
+line level    source
+
+   1          #include <Nordic\reg9e5.h>
+   2          #include <string.h>
+   3          
+   4          void T0Delay(void);
+   5          void TOM1Delay(void);
+   6          sbit mybit=P0^4;
+   7          
+   8          #define HFREQ 0   // 0=433MHz, 1=868/915MHz
+   9          #define POWER 3   // 0=min power...3 = max power
+  10          
+  11          /* Set pinNum as GPIO. direction=1 for input, direction=0 for output
+  12          ** eg.InitPin(1,1) will set P01 as input GPIO. */
+  13          void InitPin(unsigned char pinNum, direction){
+  14   1        switch(pinNum){
+  15   2          case 0:
+  16   2            P0_ALT &= 0xFE;
+  17   2            if (direction == 1) P0_DIR |= 0x01;
+  18   2            else P0_DIR &= 0xFE;
+  19   2            break;
+  20   2          
+  21   2          case 1:
+  22   2            P0_ALT &= 0xFD;
+  23   2            if (direction == 1) P0_DIR |= 0x02;
+  24   2            else P0_DIR &= 0xFD;
+  25   2            break;
+  26   2          
+  27   2          case 2:
+  28   2            P0_ALT &= 0xFB;
+  29   2            if (direction == 1) P0_DIR |= 0x04;
+  30   2            else P0_DIR &= 0xFB;
+  31   2            break;
+  32   2            
+  33   2          case 3:
+  34   2            P0_ALT &= 0xF7;
+  35   2            if (direction == 1) P0_DIR |= 0x08;
+  36   2            else P0_DIR &= 0xF7;
+  37   2            break;
+  38   2          
+  39   2          case 4:
+  40   2            P0_ALT &= 0xEF;
+  41   2            if (direction == 1) P0_DIR |= 0x10;
+  42   2            else P0_DIR &= 0xEF;
+  43   2            break;
+  44   2          
+  45   2          case 5:
+  46   2            P0_ALT &= 0xDF;
+  47   2            if (direction == 1) P0_DIR |= 0x20;
+  48   2            else P0_DIR &= 0xDF;
+  49   2            break;
+  50   2          
+  51   2          case 6:
+  52   2            P0_ALT &= 0xBF;
+  53   2            if (direction == 1) P0_DIR |= 0x40;
+  54   2            else P0_DIR &= 0xBF;
+C51 COMPILER V9.54   TESTTIMER                                                             09/07/2015 09:34:34 PAGE 2   
+
+  55   2            break;
+  56   2            
+  57   2          case 7:
+  58   2            P0_ALT &= 0x7F;
+  59   2            if (direction == 1) P0_DIR |= 0x80;
+  60   2            else P0_DIR &= 0x7F;
+  61   2            break;  
+  62   2            
+  63   2          case 8:
+  64   2            P0_ALT = 0x00;
+  65   2            if (direction == 1) P0_DIR = 0xFF;
+  66   2            else P0_DIR = 0x00;
+  67   2            break;
+  68   2            
+  69   2          default:
+  70   2            break;  
+  71   2        }
+  72   1      }
+  73          
+  74          unsigned char SpiReadWrite(unsigned char b){
+  75   1        EXIF &= ~0x20;          // Clear SPI interrupt
+  76   1        SPI_DATA = b;           // Move byte to send to SPI data register
+  77   1        while((EXIF & 0x20) == 0x00)  // Wait until SPI has finished transmitting
+  78   1          ;
+  79   1        return SPI_DATA;
+  80   1      }
+  81          
+  82          void InitUART(void){
+  83   1        
+  84   1        unsigned char cklf;
+  85   1        
+  86   1        TH1 = 0xE6;           // 9600@16MHz (when T1M=1 and SMOD=1)
+  87   1        CKCON |= 0x10;          // T1M=1 (/4 timer clock)
+  88   1        PCON = 0x80;          // SMOD=1 (double baud rate)
+  89   1        SCON = 0x52;          // Serial mode1, enable receiver
+  90   1        
+  91   1        
+  92   1        TMOD = 0x20;          // Timer1 8bit auto reload 
+  93   1        TR1 = 1;            // Start timer1
+  94   1        
+  95   1        /*  UART and RS-232 are using the same pin(P01 & P02) from SoC.
+  96   1        **  For RS-232, the signal passes through another microcontroller
+  97   1        **  that converts the UART TTL signal to serial RS-232 signals. */
+  98   1        P0_ALT |= 0x06; //select alternative function for P01 and P02
+  99   1        P0_DIR &= 0x02; //P01(RXD) is input
+ 100   1        
+ 101   1        SPICLK = 0;     //Max SPI clock
+ 102   1        SPI_CTRL = 0x02;
+ 103   1        
+ 104   1        // Switch to 16MHz clock:
+ 105   1        RACSN = 0;
+ 106   1        SpiReadWrite(RRC | 0x09);
+ 107   1        cklf = SpiReadWrite(0) | 0x04;  //XO_DIRECT = 1, follow XO_Frequency
+ 108   1        RACSN = 1;
+ 109   1        RACSN = 0;
+ 110   1        SpiReadWrite(WRC | 0x09);
+ 111   1        SpiReadWrite(cklf);
+ 112   1        RACSN = 1;
+ 113   1      }
+ 114          
+ 115          void main(){
+ 116   1        InitUART();
+C51 COMPILER V9.54   TESTTIMER                                                             09/07/2015 09:34:34 PAGE 3   
+
+ 117   1        
+ 118   1        /*
+ 119   1        InitPin(0,0);
+ 120   1        InitPin(2,0);
+ 121   1        
+ 122   1        while(1)
+ 123   1        {
+ 124   1          //OFF all LEDs
+ 125   1          P00=0;
+ 126   1          P02=0;
+ 127   1          T0Delay();
+ 128   1          //ON all LEDs
+ 129   1          P00=1;
+ 130   1          P02=1;
+ 131   1          T0Delay();
+ 132   1        }
+ 133   1        */
+ 134   1      
+ 135   1        while(1)
+ 136   1        {
+ 137   2          mybit=~mybit;
+ 138   2          TOM1Delay();
+ 139   2        }
+ 140   1      }
+ 141          
+ 142          void T0Delay(){
+ 143   1        
+ 144   1        //Timer 0, Mode 1, 16-bit counter
+ 145   1        TMOD=0x01;
+ 146   1        //Initial counter value
+ 147   1        TL0=0x00;
+ 148   1        //Reload value (TL0 rolls over to TH0 value when the count increments from 0xFFFF)
+ 149   1        TH0=0x35;
+ 150   1        //Timer enable bit (TR0=1 to turn on T0)
+ 151   1        TR0=1;
+ 152   1        //Timer 0 overflow flag (when TF0=1 means roll over)
+ 153   1        while(TF0==0);
+ 154   1        //Timer enable bit (TR0=0 to turn off T0)
+ 155   1        TR0=0;
+ 156   1        //Clear Timer 0 overflow flag
+ 157   1        TF0=0;
+ 158   1      }
+ 159          
+ 160          void TOM1Delay(void)
+ 161          {
+ 162   1        TMOD=0x01;  //Timer0, mode1 (16 bit counter)
+ 163   1        TL0=0xFD;
+ 164   1        TH0=0x4B;
+ 165   1        TR0=1;
+ 166   1        while(TF0==0);
+ 167   1        TR0=1;
+ 168   1        TF0=0;
+ 169   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    319    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   TESTTIMER                                                             09/07/2015 09:34:34 PAGE 4   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
