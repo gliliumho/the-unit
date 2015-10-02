@@ -1,5 +1,0 @@
-"STARTUP.obj",
-"main.obj",
-".\libnrf9e5.LIB" 
-TO "testEEPROM" 
-RAMSIZE(256) 
