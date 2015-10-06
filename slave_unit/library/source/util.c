@@ -18,60 +18,6 @@ void InitPin(unsigned char pinNum, unsigned char direction){
 	else 
 		P0_DIR &= (~(0x01 << pinNum));
 	
-	/*
-	switch(pinNum){
-		case 0:			
-			P0_ALT &= 0xFE;
-			if (direction == 1) P0_DIR |= 0x01;
-			else P0_DIR &= 0xFE;
-			break;
-		
-		case 1:
-			P0_ALT &= 0xFD;
-			if (direction == 1) P0_DIR |= 0x02;
-			else P0_DIR &= 0xFD;
-			break;
-		
-		case 2:
-			P0_ALT &= 0xFB;
-			if (direction == 1) P0_DIR |= 0x04;
-			else P0_DIR &= 0xFB;
-			break;
-			
-		case 3:
-			P0_ALT &= 0xF7;
-			if (direction == 1) P0_DIR |= 0x08;
-			else P0_DIR &= 0xF7;
-			break;
-		
-		case 4:
-			P0_ALT &= 0xEF;
-			if (direction == 1) P0_DIR |= 0x10;
-			else P0_DIR &= 0xEF;
-			break;
-		
-		case 5:
-			P0_ALT &= 0xDF;
-			if (direction == 1) P0_DIR |= 0x20;
-			else P0_DIR &= 0xDF;
-			break;
-		
-		case 6:
-			P0_ALT &= 0xBF;
-			if (direction == 1) P0_DIR |= 0x40;
-			else P0_DIR &= 0xBF;
-			break;
-			
-		case 7:
-			P0_ALT &= 0x7F;
-			if (direction == 1) P0_DIR |= 0x80;
-			else P0_DIR &= 0x7F;
-			break;	
-			
-		default:
-			break;	
-	}
-	*/
 }
 
 void Delay400us(volatile unsigned char n){
@@ -92,9 +38,9 @@ void Delay5ms(volatile unsigned char n){
 ** 	c = SpiReadWrite() will read value from register.
 */
 unsigned char SpiReadWrite(unsigned char b){
-	EXIF &= ~0x20;				  // Clear SPI interrupt
-	SPI_DATA = b;						// Move byte to send to SPI data register
-	while((EXIF & 0x20) == 0x00)	// Wait until SPI has finished transmitting
+	EXIF &= ~0x20;
+	SPI_DATA = b;
+	while((EXIF & 0x20) == 0x00)
 		;
 	return SPI_DATA;
 }

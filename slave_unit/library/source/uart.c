@@ -19,9 +19,6 @@ void InitUART(void){
 	TMOD = 0x20;					// Timer1 8bit auto reload 
 	TR1 = 1;						// Start timer1
 	
-	/*	UART and RS-232 are using the same pin(P01 & P02) from SoC.
-	**	For RS-232, the signal passes through another microcontroller
-	**	that converts the UART TTL signal to serial RS-232 signals.	*/
 	P0_ALT |= 0x06;	//select alternative function for P01 and P02
 	P0_DIR &= 0x02; //P01(RXD) is input
 	
@@ -38,10 +35,6 @@ void InitUART(void){
 	RACSN = 1;
 }
 
-/*Sample usage:
-unsigned char a;
-PutChar(a);
-*/
 void PutChar(unsigned char c){
 	while(!TI) 	//TI=Transmit Interupt. TI=0 when UART TXD is busy
 		;					
@@ -49,32 +42,20 @@ void PutChar(unsigned char c){
 	SBUF = c;		//SBUF will be transmitted through UART
 }
 
-/*Sample usage:
-unsigned char a[n];
-PutString("Hello world!");
-PutString(&a[0]);
-*/
 void PutString(unsigned char *s){
 	while(*s != 0)
 		PutChar(*s++);
 }
 
-/*Sample usage:
-unsigned char a;
-GetChar(&a);
-*/
 void GetChar(unsigned char *c){
 	while(!RI) 		//RI=Receive Interupt. RI=0 when UART RXD is busy
 		;
 	RI=0;
-	*c = SBUF; 		//SBUF stores the byte received through UART
+	*c = SBUF;
 	PutChar(*c);	//for internal echo
 }
 
-/*Sample usage:
-unsigned char a[n];
-GetString(&a[0]);
-*/
+
 void GetString(unsigned char *s){
 	GetChar(s);
 	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
@@ -143,10 +124,6 @@ void PrintInt(unsigned int n){
 
 }
 
-/*Sample usage: Ascii2Int
-unsigned char a[n];
-Ascii2int(&a[0]);
-*/
 unsigned int Ascii2Int (unsigned char *n){
 	unsigned int value;
 	

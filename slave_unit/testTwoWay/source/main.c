@@ -5,7 +5,7 @@
 #include "eeprom.h"
 //#include "nrf9e5.h"
 
-#define SLAVE 0
+#define SLAVE 1
 
 #if SLAVE
 
@@ -26,37 +26,37 @@ void main(void){
 	
 	//SW2 or SW3
 	while(1){
-		SlaveOp(groupID, uniqueID);
-//		if(P03 == 0){
-//			
-//			PutString("\r\nPlease enter new groupID: ");
-//			GetChar(&groupID);
-//			
-//			PutString("\r\nPlease enter new uniqueID: ");
-//			GetChar(&uniqueID);
-//			
-//			ChangeID(groupID, uniqueID);
-//			DisplayID();
-//			
-//		}else if(P05 == 0){
-//				
-//			//InitRF();
-//			SlaveOp(groupID, uniqueID);
-//		}
+//		SlaveOp(groupID, uniqueID);
+		if(P03 == 0){
+			
+			PutString("\r\nPlease enter new groupID: ");
+			GetChar(&groupID);
+			
+			PutString("\r\nPlease enter new uniqueID: ");
+			GetChar(&uniqueID);
+			
+			ChangeID(groupID, uniqueID);
+			DisplayID();
+			
+		}else {
+				
+			//InitRF();
+			SlaveOp(groupID, uniqueID);
+		}
 	}	
 	
 }
 
 void ChangeID(unsigned char groupID, unsigned char uniqueID){
-	EEWrite(3900, groupID);
-	EEWrite(3901, uniqueID);
+	EEWrite(3950, groupID);
+	EEWrite(3951, uniqueID);
 }
 
 void DisplayID(void){
 	unsigned char group, unique;
 	
-	group = EERead(3900);
-	unique = EERead(3901);
+	group = EERead(3950);
+	unique = EERead(3951);
 	
 	PutString("\r\nCurrent groupID & uniqueID is: ");
 	PutChar(group);
@@ -78,6 +78,7 @@ void main(void){
 	unsigned char uniqueID = 0;
 	unsigned char groupID = 0;
 	unsigned char c = 0;
+	unsigned char temp = 0;
 	
 	InitPin(3,1);
 	InitPin(5,1);
@@ -127,7 +128,9 @@ void main(void){
 			uniqueID -= 0x30;
 			
 			RequestHeartbeat(groupID, uniqueID);
-			WaitHeartbeat(groupID, uniqueID);
+			do{
+				temp = WaitHeartbeat(groupID, uniqueID);
+			}while(temp == 0);
 			
 		}
 	}	

@@ -60,51 +60,45 @@ void TransmitPacket(unsigned char *b){
 	width = SpiReadWrite(0) & 0x3F;		//save the TX payload width
 	RACSN = 1;
 	
-	/* To transmit more than one byte, just change the TX_PW in RF config.
-	**	Then use SpiReadWrite() for each byte. (You can just loop it).	*/
-	
 	RACSN = 0;
 	SpiReadWrite(WTP);					//Write to TX payload
 	for(i=0;i<width;i++){
 		if(*b!=0x00){					//if not EOS
-			SpiReadWrite(*b);			//then write byte to SPI
-			b++;						//move pointer to next byte
+			SpiReadWrite(*b);
+			b++;
 		}else{
 			SpiReadWrite(0x00);			//write 0x00 for remaining of the payload
 		}
 	}
 	RACSN = 1;
 	
-	TRX_CE = 1;				//turn ON radio
-	Delay400us(20);			//delay to wait for transmission to be completed
-	TRX_CE = 0; 			//turn OFF radio
+	TRX_CE = 1;
+	Delay400us(20);
+	TRX_CE = 0;
 }
 
 void ReceivePacket(unsigned char *b){
 	unsigned char i, width;
 	
-	TRX_CE = 1;							//turn ON radio
+	TRX_CE = 1;
 
-	while(DR == 0)						//DR=Data Ready
-		;								//Busy waiting until VALID packet is received
+	while(DR == 0)
+		;
+	
 	RACSN = 0;
 	SpiReadWrite(RRC | 0x03);	   		//Read byte 4 of RF config(RX payload width)
 	width = SpiReadWrite(0) & 0x3F;		//save the RX payload width
 	RACSN = 1;
 	
-	
-	/* To receive more than one byte, just change the RX_PW in RF config.
-	** Then use SpiReadWrite() for each byte. (You can just loop it).	*/
 	RACSN = 0;
 	SpiReadWrite(RRP);				//Read receive payload
 	for(i=0;i<width;i++){
-		*b = SpiReadWrite(0);		//populate *b with first byte of payload
-		b++;						//move pointer to next byte
+		*b = SpiReadWrite(0);
+		b++;
 	}
 	
-	
 	RACSN = 1;
-	TRX_CE = 0;						//turn OFF radio
+	TRX_CE = 0;
 }
 
 void SetAutoRetransmit(unsigned char setting){
@@ -124,9 +118,9 @@ void SetAutoRetransmit(unsigned char setting){
 void SetPayloadWidth(unsigned char w){
 	//Configure RF
 	RACSN = 0;
-	SpiReadWrite(WRC | 0x03);	 // Write to RF config address 3 (RX payload)
-	SpiReadWrite(w);			 // 3 byte RX payload width
-	SpiReadWrite(w);			 // 3 byte TX payload width
+	SpiReadWrite(WRC | 0x03);	 // Write to RF config address 3
+	SpiReadWrite(w);
+	SpiReadWrite(w);
 	RACSN = 1;
 }
 
@@ -352,7 +346,8 @@ unsigned char WaitHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	// TR0 = 0;
 	
 	while(DR == 0)
-		PutString("\r\nwaiting..");
+			;
+	//PutString("\r\nwaiting..");
 	// TR0 = 0;
 	
 	if(DR != 1){
@@ -389,7 +384,7 @@ unsigned char WaitHeartbeat(unsigned char groupID, unsigned char uniqueID){
 unsigned char SlaveReceive(unsigned char *b){
 	unsigned char i, width;
 	
-	ReloadTimer0(0x00, 0x00);
+	//ReloadTimer0(0x00, 0x00);
 	TXEN = 0;
 	TRX_CE = 1;
 	// TF0 = 0;
@@ -425,13 +420,15 @@ unsigned char SlaveReceive(unsigned char *b){
 }
 
 void SlaveOp(unsigned char groupID, unsigned char uniqueID){
-	unsigned char i, temp;
+	unsigned char i;
+//	unsigned char temp;
 	unsigned char b[16];
 	
 	if(!SlaveReceive(&b[0])){
 		if(b[0]==0x01){
-			temp = CheckTraffic(&b[0], groupID);
-			switch(temp){
+			//temp = CheckTraffic(&b[0], groupID);
+			
+			switch(b[groupID]){
 				case 0x01:
 					P00 = 0;
 					P04 = 1;
@@ -448,28 +445,43 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 					P06 = 0;
 					break;
 				default:
+					PutString("\r\nUnidentified groupID..");
 					break;
 			}
 			
+			
 			TXEN = 1;
+			//Can be swapped to SlaveRelay() once that is done
 			for(i=0;i<10;i++)
 				TransmitPacket(&b[0]);
 			Delay5ms(5);
 			
 		}else if(b[0]==0x02){
 			if(b[1]==groupID && b[2]==uniqueID){
-				SendHeartbeat(groupID, uniqueID);
+				
+				for(i=0;i<100;i++)
+					SendHeartbeat(groupID, uniqueID);
+			
 			} else {
+				
+				
 				TXEN = 1;
+				//Can be swapped to SlaveRelay() once that is done
 				for(i=0;i<10;i++)
 					TransmitPacket(&b[0]);
-				Delay5ms(5);
+				//PutString("\r\nHB Request Relayed..");
+				//Delay5ms(5);
+				
 			}
 		}else if(b[0]==0x03){
+			
+			
 			TXEN = 1;
+			//Can be swapped to SlaveRelay() once that is done
 			for(i=0;i<10;i++)
 				TransmitPacket(&b[0]);
-			Delay5ms(5);
+			PutString("\r\nHB Relayed..");
+			//Delay5ms(5);
 		}
 		
 	}
