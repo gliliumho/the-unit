@@ -5,17 +5,19 @@
 #include "eeprom.h"
 //#include "nrf9e5.h"
 
-#define SLAVE 1
+#define SLAVE 0
 
 #if SLAVE
 
-void ChangeID(unsigned char, unsigned char);
-void DisplayID(void);
+//void ChangeID(unsigned char, unsigned char);
+//void DisplayID(void);
+
+
 
 void main(void){
 	
-	unsigned char uniqueID = 7;
-	unsigned char groupID = 2;
+	unsigned char uniqueID = 6;
+	unsigned char groupID = 3;
 	
 	InitPin(3,1);
 	InitPin(5,1);
@@ -47,23 +49,23 @@ void main(void){
 	
 }
 
-void ChangeID(unsigned char groupID, unsigned char uniqueID){
-	EEWrite(3950, groupID);
-	EEWrite(3951, uniqueID);
-}
+//void ChangeID(unsigned char groupID, unsigned char uniqueID){
+//	EEWrite(3950, groupID);
+//	EEWrite(3951, uniqueID);
+//}
 
-void DisplayID(void){
-	unsigned char group, unique;
-	
-	group = EERead(3950);
-	unique = EERead(3951);
-	
-	PutString("\r\nCurrent groupID & uniqueID is: ");
-	PutChar(group);
-	PutChar(0x20);
-	PutChar(unique);
-	
-}
+//void DisplayID(void){
+//	unsigned char group, unique;
+//	
+//	group = EERead(3950);
+//	unique = EERead(3951);
+//	
+//	PutString("\r\nCurrent groupID & uniqueID is: ");
+//	PutChar(group);
+//	PutChar(0x20);
+//	PutChar(unique);
+//	
+//}
 
 #else //MASTER
 
@@ -78,7 +80,8 @@ void main(void){
 	unsigned char uniqueID = 0;
 	unsigned char groupID = 0;
 	unsigned char c = 0;
-	unsigned char temp = 0;
+	unsigned char i,j;
+	unsigned char ret = 0;
 	
 	InitPin(3,1);
 	InitPin(5,1);
@@ -96,7 +99,6 @@ void main(void){
 		}
 		
 		if(P03 == 0){
-			unsigned char i; 
 			unsigned char temp[16];
 			
 			c = 0;
@@ -119,19 +121,27 @@ void main(void){
 			
 		}else if(P05 == 0){
 			c = 0;
-			PutString("\r\nPlease enter new groupID: ");
+			PutString("\r\nPlease enter groupID: ");
 			GetChar(&groupID);
 			groupID -= 0x30;
 			
-			PutString("\r\nPlease enter new uniqueID: ");
+			PutString("\r\nPlease enter uniqueID: ");
 			GetChar(&uniqueID);
 			uniqueID -= 0x30;
 			
-			RequestHeartbeat(groupID, uniqueID);
-			do{
-				temp = WaitHeartbeat(groupID, uniqueID);
-			}while(temp == 0);
 			
+			i = 0;
+			j = 0;
+			ret = 0;
+			while(ret == 0 && i <= 20){
+				RequestHeartbeat(groupID, uniqueID);
+				while(ret == 0 && j <= 20){
+					ret = WaitHeartbeat(groupID, uniqueID);
+					j++;
+				}
+				i++;
+			}
+		
 		}
 	}	
 	

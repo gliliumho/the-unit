@@ -337,21 +337,16 @@ unsigned char WaitHeartbeat(unsigned char groupID, unsigned char uniqueID){
 	unsigned char buf[16];
 	unsigned char i, width;
 	
-	ReloadTimer0(0x00, 0x00);
 	TXEN = 0;
-			
 	TRX_CE = 1;
 	
-	// TF0 = 0;
-	// TR0 = 0;
-	
-	while(DR == 0)
-			;
-	//PutString("\r\nwaiting..");
-	// TR0 = 0;
+	i = 0;
+	while(DR == 0 && i<=55){
+		i++;
+	}
 	
 	if(DR != 1){
-		PutString("\n\rHeartbeat request timeout.");
+		PutString("\r\nTimeout..");
 		return 0;
 	}
 	
@@ -454,7 +449,7 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 			//Can be swapped to SlaveRelay() once that is done
 			for(i=0;i<10;i++)
 				TransmitPacket(&b[0]);
-			Delay5ms(5);
+			Delay5ms(10);
 			
 		}else if(b[0]==0x02){
 			if(b[1]==groupID && b[2]==uniqueID){
@@ -462,7 +457,7 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 				for(i=0;i<100;i++)
 					SendHeartbeat(groupID, uniqueID);
 			
-			} else {
+			} else if(b[1] <= groupID){
 				
 				
 				TXEN = 1;
@@ -470,10 +465,10 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 				for(i=0;i<10;i++)
 					TransmitPacket(&b[0]);
 				//PutString("\r\nHB Request Relayed..");
-				//Delay5ms(5);
+				Delay5ms(5);
 				
 			}
-		}else if(b[0]==0x03){
+		}else if(b[0]==0x03 && b[1] <= groupID){
 			
 			
 			TXEN = 1;
@@ -481,7 +476,8 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 			for(i=0;i<10;i++)
 				TransmitPacket(&b[0]);
 			PutString("\r\nHB Relayed..");
-			//Delay5ms(5);
+			Delay5ms(5);
+			
 		}
 		
 	}
