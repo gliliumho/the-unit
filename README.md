@@ -49,13 +49,16 @@ some of the test codes that we previously wrote.
 *testRFString - archived. Written to test sending multiple bytes through RF.*
 
 *testMultiHop - archived. PoC for The Unit hopping architecture. At the point when this was written, only 1 way 
-			   communication (master to slave) was supported. To learn about two-way communication, look at 
-			   testTwoWay.*
+			    communication (master to slave) was supported. To learn about two-way communication, look at 
+			    testTwoWay.*
 
 *testChar & testString - archived. Written to test character/string operation through UART.*
 
-**testEEPROM** - test saving groupID & uniqueID in EEPROM. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
+**testEEPROM** - test saving groupID & uniqueID in EEPROM. 
+				 *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
 
-**testTwoWay** - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using delay. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
+**testTwoWay** - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using 
+				 delay. Will try using buffer to prevent "echo" problem and packet ID. 
+				 *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
 
 **library** - source code for library of functions. **Dependency for testEEPROM & testTwoWay.**
