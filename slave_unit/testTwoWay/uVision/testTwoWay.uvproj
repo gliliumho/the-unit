@@ -370,7 +370,7 @@
             <File>
               <FileName>libnrf9e5.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\library\libnrf9e5.LIB</FilePath>
+              <FilePath>..\..\library\uVision\libnrf9e5.LIB</FilePath>
             </File>
           </Files>
         </Group>

@@ -385,15 +385,15 @@ unsigned char SlaveReceive(unsigned char *b){
 	// TF0 = 0;
 	// TR0 = 0;
 	
+	//i=0;
 	while(DR == 0)
 		;
-	// TR0 = 0;
+
 	
-	if (DR != 1){
+	if ( DR != 1 ){
 		TRX_CE = 0;
-		PutString("\r\nTimeout..");
-		return 1;
-		
+		//PutString("TO.");
+		return 1;		
 	}else {
 		RACSN = 0;
 		SpiReadWrite(RRC | 0x03);
@@ -419,28 +419,36 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 //	unsigned char temp;
 	unsigned char b[16];
 	
-	if(!SlaveReceive(&b[0])){
+	if( !SlaveReceive(&b[0]) ){
+		PutChar(b[0]+0x30);
+		
 		if(b[0]==0x01){
-			//temp = CheckTraffic(&b[0], groupID);
+			PutString("\r\nReceived traffic info!");
 			
 			switch(b[groupID]){
-				case 0x01:
+				case 1:
 					P00 = 0;
 					P04 = 1;
 					P06 = 1;
 					break;
-				case 0x02:
+				
+				case 2:
 					P00 = 1;
 					P04 = 0;
 					P06 = 1;
 					break;
-				case 0x03:
+				
+				case 3:
 					P00 = 1;
 					P04 = 1;
 					P06 = 0;
 					break;
+				
 				default:
 					PutString("\r\nUnidentified groupID..");
+					P00 = 0;
+					P04 = 0;
+					P06 = 0;
 					break;
 			}
 			
@@ -454,7 +462,7 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 		}else if(b[0]==0x02){
 			if(b[1]==groupID && b[2]==uniqueID){
 				
-				for(i=0;i<100;i++)
+				for(i=0;i<50;i++)
 					SendHeartbeat(groupID, uniqueID);
 			
 			} else if(b[1] <= groupID){
@@ -465,7 +473,7 @@ void SlaveOp(unsigned char groupID, unsigned char uniqueID){
 				for(i=0;i<10;i++)
 					TransmitPacket(&b[0]);
 				//PutString("\r\nHB Request Relayed..");
-				Delay5ms(5);
+				Delay5ms(3);
 				
 			}
 		}else if(b[0]==0x03 && b[1] <= groupID){

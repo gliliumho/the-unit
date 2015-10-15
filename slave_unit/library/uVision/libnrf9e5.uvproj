@@ -368,11 +368,6 @@
               <FilePath>..\source\eeprom.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\source\main.c</FilePath>
-            </File>
-            <File>
               <FileName>radio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\source\radio.c</FilePath>

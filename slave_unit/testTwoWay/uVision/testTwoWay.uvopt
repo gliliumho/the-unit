@@ -186,7 +186,7 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\library\libnrf9e5.LIB</PathWithFileName>
+      <PathWithFileName>..\..\library\uVision\libnrf9e5.LIB</PathWithFileName>
       <FilenameWithoutPath>libnrf9e5.LIB</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

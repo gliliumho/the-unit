@@ -5,7 +5,7 @@
 #include "eeprom.h"
 //#include "nrf9e5.h"
 
-#define SLAVE 0
+#define SLAVE 1
 
 #if SLAVE
 
@@ -16,15 +16,20 @@
 
 void main(void){
 	
-	unsigned char uniqueID = 6;
-	unsigned char groupID = 3;
+	unsigned char uniqueID = 7;
+	unsigned char groupID = 2;
+	
+	InitPin(0,0);
+	InitPin(4,0);
+	InitPin(6,0);
 	
 	InitPin(3,1);
 	InitPin(5,1);
 	InitUART();
 	InitRF();
 	InitTimer0(0x02);
-	PutString("\r\nPlease press SW2 or SW3.");
+	PutString("\r\nHi! I'm slave from group ");
+	PutChar(groupID + 0x30);
 	
 	//SW2 or SW3
 	while(1){
@@ -37,8 +42,8 @@ void main(void){
 			PutString("\r\nPlease enter new uniqueID: ");
 			GetChar(&uniqueID);
 			
-			ChangeID(groupID, uniqueID);
-			DisplayID();
+//			ChangeID(groupID, uniqueID);
+//			DisplayID();
 			
 		}else {
 				
@@ -83,6 +88,7 @@ void main(void){
 	unsigned char i,j;
 	unsigned char ret = 0;
 	
+
 	InitPin(3,1);
 	InitPin(5,1);
 	InitUART();
@@ -104,16 +110,28 @@ void main(void){
 			c = 0;
 			PutString("\r\n::::Send Traffic Info:::::");
 			temp[0] = 0x01;
-			for(i=1;i<14;i++){
+			temp[1] = 0x04;
+			for(i=2;i<=3;i++){
 				PutString("\r\nTraffic info for group ");
-				PutChar((i+0x30));
+				PutChar(i+0x30);
 				PutString(": ");
 				GetChar(&temp[i]);
 				temp[i] -= 0x30;
 			}
+			for(i=4;i<=14;i++){
+				temp[i] = 0x04;
+			}
 			temp[15] = 0x00;
 			
-			for(i=1;i<10;i++){
+			PutString("\r\nTraffic info is :");
+			for(i=0;i<=15;i++){
+				PutChar( temp[i]+0x30 );
+			}
+			
+			TXEN = 1; 	//VERY FUCKING IMPORTANT. DON'T TAKE THIS LINE AWAY!!
+									//MORE IMPORTANT THAN KILLING OSAMA OR DEFEATING NAZIS.
+			
+			for(i=0;i<100;i++){
 				TransmitPacket(&temp[0]);
 			}
 			
@@ -135,7 +153,7 @@ void main(void){
 			ret = 0;
 			while(ret == 0 && i <= 20){
 				RequestHeartbeat(groupID, uniqueID);
-				while(ret == 0 && j <= 20){
+				while(ret == 0 && j <= 30){
 					ret = WaitHeartbeat(groupID, uniqueID);
 					j++;
 				}
