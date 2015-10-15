@@ -1,6 +1,7 @@
-#Project: The Unit
+# Project: The Unit
 
 Author: KY HO & KH Teo
+
 *Last update: 13/10/2015@11:06am +8GMT (DD/MM/YYYY)*
 
 >KY Ho: I feel the date needs clarification because Americans use Imperial system and the 
@@ -8,7 +9,8 @@ Author: KY HO & KH Teo
 >	   when the most powerful nation in the entire world does this kind of shit?)
 
 
-##Introduction
+## Introduction
+
 This is the repo for The Unit project. Initial plan/Phase 1 of the project is to make small IoT-like devices 
 to be installed on the guard-rail. These devices will include RF transceiver for communication, and 3x LED 
 strips(Red, Yellow, Green) to indicate the traffic of the road ahead. These devices are called "slaves".
@@ -26,7 +28,7 @@ slaves are alive or not. Else who would be wiping their shoes?). All these done 
 Phase 2 of the project will include sensors(or cameras, even though unlikely) to collect data along the highway.
 At the time of typing this, we're still unclear of what sensor to be installed. 
 
-##Hardware
+## Hardware
 
 For the actual hardware schematics, you can ask Hakim or Ramesh for hardware design. However, since Recogine is 
 mainly a software company and the fact that you're reading this, you're probably a software person. BUT! You'll 
@@ -37,23 +39,23 @@ suggest read the NRF9E5 spec sheet, especially the NRF905(transceiver) part and 
 RIoTboard, just refer to the spec sheet/user manual for the GPIO pin mapping. 
 
 
-##Software
+## Software
 
 Programming of the slaves are done in Keil-C, Cx51. You may read the sample codes from Nordic Semiconductor or 
 some of the test codes that we previously wrote. 
 
-*testRange 	- written for range test for evaluation kit.
+*testRange 	- written for range test for evaluation kit.*
 
-testRFString - archived. Written to test sending multiple bytes through RF.
+*testRFString - archived. Written to test sending multiple bytes through RF.*
 
-testMultiHop - archived. PoC for The Unit hopping architecture. At the point when this was written, only 1 way 
+*testMultiHop - archived. PoC for The Unit hopping architecture. At the point when this was written, only 1 way 
 			   communication (master to slave) was supported. To learn about two-way communication, look at 
-			   testTwoWay.
+			   testTwoWay.*
 
-testChar & testString - archived. Written to test character/string operation through UART.*
+*testChar & testString - archived. Written to test character/string operation through UART.*
 
-testEEPROM - test saving groupID & uniqueID in EEPROM. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
+**testEEPROM** - test saving groupID & uniqueID in EEPROM. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
 
-testTwoWay - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using delay. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
+**testTwoWay** - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using delay. *Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
 
-library - source code for library of functions. **Dependency for testEEPROM & testTwoWay.**
+**library** - source code for library of functions. **Dependency for testEEPROM & testTwoWay.**
