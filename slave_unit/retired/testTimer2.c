@@ -1,3 +1,14 @@
+/*
+*	testTimer2.c
+*	This is a program to test and get familiar with the timer on 8051 MCU.
+*	Some of the codes are copied from online tutorials.
+*	
+*	
+*	Author: KH Teo
+*	Dependencies: None
+*	
+*/
+
 #include <reg9e5.H>
 
 void TOM1Delay(void);
