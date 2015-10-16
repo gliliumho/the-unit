@@ -54,15 +54,12 @@ previously wrote.
 4. **library** - source code for library of functions. **Dependency for testEEPROM & testTwoWay.**
 
 
-Following codes are archived test codes.
-
-	+ _testRFString - Written to test sending multiple bytes through RF._
-	
-	+ _testMultiHop - PoC for The Unit hopping architecture. At the point when this was written, only 
-	1 way communication (master to slave) was supported. To learn about two-way communication, look at 
-	testTwoWay._
-	
-	+ _testChar & testString - Written to test character/string operation through UART._
+Following codes are archived test codes:
++ _testRFString - Written to test sending multiple bytes through RF._
++ _testMultiHop - PoC for The Unit hopping architecture. At the point when this was written, only 
+1 way communication (master to slave) was supported. To learn about two-way communication, look at 
+testTwoWay._
++ _testChar & testString - Written to test character/string operation through UART._
 
 ### Master Unit ###
 
