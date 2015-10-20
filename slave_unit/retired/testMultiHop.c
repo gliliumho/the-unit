@@ -1,3 +1,16 @@
+/*
+*	testMultiHop.c
+*	
+*	This is the test code that was used as PoC for the multihop architecture.
+*	
+*	
+*	Author: KY Ho 
+*			*some of the codes are copied from Nordic's sample code
+*	Dependencies : nrf9e5.h
+*	
+*	
+*/
+
 
 #include <Nordic\reg9e5.h>
 #include <string.h>

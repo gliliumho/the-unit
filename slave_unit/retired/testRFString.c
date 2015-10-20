@@ -1,3 +1,16 @@
+/*
+*	testRFString.c
+*	
+*	Written to test sending multiple bytes via RF
+*	
+*	
+*	Author: KY Ho 
+*			*some of the codes are copied from Nordic's sample code
+*	Dependencies : None
+*	
+*	
+*/
+
 
 #include <Nordic\reg9e5.h>
 #include <string.h>

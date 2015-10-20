@@ -1,3 +1,17 @@
+/*
+*	testString.c
+*	
+*	Written for PutString via UART
+*	
+*	
+*	Author: KY Ho 
+*			*some of the codes are copied from Nordic's sample code
+*	Dependencies : None
+*	
+*	
+*/
+
+
 
 #include <Nordic\reg9e5.h>
 

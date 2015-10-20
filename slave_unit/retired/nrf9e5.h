@@ -1,3 +1,14 @@
+/*
+*	nrf9e5.h
+*	
+*	Header file for some of the early test codes. This includes some of the common 
+*	functions for UART and radio.
+*	
+*	Author: KY Ho
+*	Dependencies: None
+*	
+*/
+
 
 #define HFREQ 0		// 0=433MHz, 1=868/915MHz
 #define POWER 3 	// 0=min power...3 = max power

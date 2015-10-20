@@ -1,3 +1,18 @@
+/*
+*	testChar.c
+*	
+*	This is the first test code ever written. This code was written to test
+*	sending byte using RF. 
+*	
+*	Author: KY Ho 
+*			*some of the codes are copied from Nordic's sample code
+*	Dependencies : None
+*	
+*	
+*/
+
+
+
 
 #include <Nordic\reg9e5.h>
 
