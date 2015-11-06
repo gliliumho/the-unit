@@ -1,5 +1,5 @@
 The Unit Working Group
-RFC: 1501
+RFC: 16.1
 
 Transmission of RF Packets over 433MHz Networks
 
@@ -8,10 +8,13 @@ Table of Contents
 2. 433MHz Mode for nRF9E5
 3. Addressing Mode
 4. Maximum Transmission Unit
-5. RF Adaptation Layer and Frame Format
-5.1.	Dispatch Type and Header
-5.2.1.	Traffic Info Header
-5.2.2	Traffic Info Payload
+5. Linear Daisy Chain Topology
+6. RF Adaptation Layer and Frame Format
+6.1.	Dispatch Type and Header
+6.2.1.	Traffic Info Header
+6.2.2.	Traffic Info Payload
+6.3.1.	Node Info Solicit Header (previously Node Info Request)
+6.3.2.	Node Info Response Header
 6. Unicast Address Mapping (UL)
 7. Multicast Address Mapping (DL)
 8. Frame Delivery in a Link Layer
@@ -24,12 +27,42 @@ Introduction
 
 The 433MHz frequency band targets far distance communication. This document defines the frame format for transmission of RF packets as well as the downlink (DL) and uplink (UL) communication between RF master and RF slaves.
 
-5. RF Adaptation Layer and Frame Format
+5. Linear Daisy Chain Topology
+
+All slaves are interconnected based on linear daisy chain topology, without redundancy, on the same broadcast domain. They are separated by one or more masters that act as a pitstop. The master will send Traffic Info messages to slaves downstream towards the second master, which in turn will process the messages.
+All devices under one master are counted as one segment. The information exchange within segment. One master would deliver traffic info to maximum number of groups G, denoted by the set G = {1,2,...,G}. For convenience, each group is assumed to be deployed with the same number of slaves S.
+	
+	+------+											   +------+
+    |	   |											   |	  |
+	|      |   +------+   +------+   +------+   +------+   |   	  |	  +------+	 +------+   +------+   +------+
+	|  M1  |---| G1S1 |---| G1S2 |---| G2S1 |---| G2S2 |---|  M2  |---| G1S1 |---| G1S2 |---| G2S1 |---| G2S2 |
+	|	   |   +------+   +------+   +------+   +------+   |	  |   +------+   +------+   +------+   +------+
+	+------+											   +------+
+	
+			Figure 1: Linear Daisy Chain Network Model
+	
+For example, two set of master and slaves are installed on guardrail, the Master M1 sent a Traffic Info message that was relayed by the slaves to another slaves. The slave received the Traffic Info message of matched Master ID and Group ID will process the messages.
+
+							+-----------+
+							| Master    |
+							+-----------+
+					+-----------------------+
+				+-----------+			+-----------+
+				| Group     |			| Group     |
+				+-----------+			+-----------+
+		+-----------------------+
+	+-----------+			+-----------+
+	| Device    |			| Device    |
+	+-----------+			+-----------+
+	
+			Figure x: Detail view of a set of master slaves
+
+6. RF Adaptation Layer and Frame Format
 
 The payload of nRF9E5 is constrained to 32 bytes. However to reduce transmission power, we limit the maximum payload size to 16 bytes in this version.
 
 			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+ 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |   Dispatch 	|	Type Header	|								+
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+							   -+
@@ -40,7 +73,7 @@ The payload of nRF9E5 is constrained to 32 bytes. However to reduce transmission
 |																|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-5.1.	Dispatch Type and Header
+6.1.	Dispatch Type and Header
 
 The dispatch type is defined by a zero bit as the first bit and a one bit as the second bit. The dispatch type and header are shown here:
 
@@ -53,60 +86,57 @@ The dispatch type is defined by a zero bit as the first bit and a one bit as the
 Dispatch 				6-bit selector. Identifies the type of header immediately following the Dispatch Header.
 Type-specific header	A header determined by the Dispatch Header
 
-			Figure 1: Dispatch Type and Header
+			Figure x: Dispatch Type and Header
 
   Pattern		Header type
-+-----------+-------------------------------------------------------+
-| 01 000000 | NULL 				- Not a nRF9E5 frame				|
-| 01 000001 | Traffic 			- Downlink traffic information		|
-| 01 000010 | Node Info Request	- Uplink Node Info Request			|
-| 01 000011 | Node Info Reply	- Uplink Node Info Reply			|
-| 01 000100 | Change ID			- Dynamically changing ID of node	|
-| 01 000101 | reserved			- Reserved for future use			|
-| 	...		| reserved			- Reserved for future use			|
-| 01 111111 | reserved			- Reserved for future use			|
-+-----------+-------------------------------------------------------+
++-----------+-----------------------------------------------------------+
+| 01 000000 | NULL 					- Not a nRF9E5 frame				|
+| 01 000001 | Traffic Info			- Downlink traffic information		|
+| 01 000010 | Node Info Solicit		- Uplink Node Info Request			|
+| 01 000011 | Node Info Response	- Uplink Node Info Response			|
+| 01 000100 | Change ID				- Dynamically changing ID of node	|
+| 01 000101 | reserved				- Reserved for future use			|
+| 	...		| reserved				- Reserved for future use			|
+| 01 111111 | reserved				- Reserved for future use			|
++-----------+-----------------------------------------------------------+
 
-5.2.1.	Traffic Info Header
+6.2.1.	Traffic Info Header
 
 The traffic header is defined by 
 
 			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+ 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |0 1 0 0 0 0 0 1|  size |										|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 size: 		The 4-bit field encodes the maximum number of group information able to be carried by each packet. Maximum is 2^4 = 16 groups.
 
+			Figure x: Traffic Info Header
 
-			Figure 2: Traffic Info Header
 
-One packet can deliver traffic information to a number of groups Gs where one G >= 1 master, denoted by the set Gs = {1,2,...,G}. For convenience, each group is assumed to be deployed with the same number of slaves.
-
-5.2.2	Traffic Info Payload
+6.2.2.	Traffic Info Payload
 
 			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+ 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|0 1 0 0 0 0 0 1|  size   |groupID| devID |	  	resv		    |
+|0 1 0 0 0 0 0 1|  size   | mastID|groupID| devID |	  	resv	|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 | LED[1]| LED[2]|												|
-+-+-+-+-+-+-+-+-+											   -+
-|							  									|
-+-														+-+-+-+-+
-|														| LED[G]|
++-+-+-+-+-+-+-+-+								+-+-+-+-+-+-+-+-+
+|												|LE[G-1]| LED[G]|
++												+-+-+-+-+-+-+-+-+			
+|																|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-groupID: 	The 4-bit field indicates group ID of source. Total 16 (2^4) groups available.
-devID:		The 4-bit field indicates packet label. Each packet will be paired with group ID and device ID (groupID devID).
-LED[G]: 	The 4-bit field indicates color of LED.
-reserved: 	The 4-bit field reserved for future use.
+mastID:		The 4-bit field indicates master ID. Total 16 (2^4) master supported.
+groupID: 	The 4-bit field indicates group ID of source. Total 16 (2^4) groups supported.
+devID:		The 4-bit field indicates packet label. Each packet will be paired with master ID, group ID and device ID {(masterID groupID devID)}.
+reserved: 	The 8-bit field reserved for future use.
+LED[G]: 	The 4-bit field indicates color of LED for group G.  Total 16 (2^4) groups supported.
 
-			Figure 3: Traffic Info Payload
-			
-Currently, the slaves will forward whatever he receives, including traffic info, heartbeat request and response. However, for the heartbeat response, it only requires uplink transmission. Hence the slaves will check through the group ID so that slave will not broadcast heartbeat response that have a larger group ID.
-Next, the slaves will note the tuple (groupID devID) in their buffer, and check if the similar tuple packets have been transmitted recently by checking the devID. For any type of packets, the similar packet will not be broadcast if it has been broadcasted recently.
+			Figure x: Traffic Info Payload
+
 The Figure 3 shows that maximum groups supported by each packet is 24 groups, calculated by
 
 				Maximum group 	= Total Payload Size * One traffic info costs 4 bits
@@ -114,6 +144,19 @@ The Figure 3 shows that maximum groups supported by each packet is 24 groups, ca
 								= [16B - 4B] * 2
 								= 12B * 2 = 24
 
+Slave receives the traffic info packet will read payload only from its group ID. Slave knows its group ID from its EEPROM. Each slave has knowledge of its master ID, group ID, and device ID. Therefore they examine every each message they received. After processing the packet, the slave broadcast again the same packet. The consequent slaves are also receiving and retransmitting The slave processes the Traffic Info messages based on pseudocode below
+
+If MasterID then
+	If GroupID then
+		#Identify corresponding LED
+		offset = groupID
+	Else
+		Broadcast packet
+	End If
+Else
+	Discard packet
+End If
+								
  Pattern	LED Color
 +-------+---------------------------------------+
 | 0000	|	NULL				  				|		
@@ -123,83 +166,112 @@ The Figure 3 shows that maximum groups supported by each packet is 24 groups, ca
 +-------+---------------------------------------+					
 	
 			Figure 4: LED Value Bit Pattern
-			
-Slave receives the traffic info packet will read payload only from its group ID. Slave knows its group ID from its EEPROM. After processing the packet, the slave broadcast again the same packet. The consequent slaves are also receiving and retransmitting 
 
+6.3.1.	Node Info Solicit Header (previously Node Info Request)
 
-M |------------------------------|
-			
-			
-			
-			
-
-5.3.1.	Node Info Request Header
-
-The node info request header is defined by 
+The node info solicit header is defined by 
 
 			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+ 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|0 1 0 0 0 0 1 0|  size   |resv |								|
+|0 1 0 0 0 0 1 0|  size   | mastID|groupID| devID |	  	resv	|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|																|
++																+
+|						padding									|
++																+
+|																|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+mastID:		The 4-bit field indicates master ID. Total 16 (2^4) master supported.
+groupID: 	The 4-bit field indicates group ID of source. Total 16 (2^4) groups supported.
+devID:		The 4-bit field indicates packet label. Each packet will be paired with master ID, group ID and device ID {(masterID groupID devID)}.
+reserved: 	The 8-bit field reserved for future use.
+			
+Currently, the slaves will forward whatever he receives, including traffic info, heartbeat solicit and response. However, for the heartbeat response, it only requires uplink transmission. Hence the slaves will check through the group ID so that slave will not broadcast heartbeat response that have a larger group ID.
+Next, the slaves will note the tuple (groupID devID) in their buffer, and check if the similar tuple packets have been transmitted recently by checking the devID. For any type of packets, the similar packet will not be broadcast if it has been broadcasted recently.
+
+If MasterID then
+	If GroupID then
+		If DeviceID then
+			Process packet
+		Else
+			Discard packet
+		End If
+	Else
+		Discard packet
+	End If
+Else
+	Discard packet
+End If
+
+6.3.2.	Node Info Response Header
+
+The node info response header is defined by 
+
+			   1			   2			   3			   4
+ 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|0 1 0 0 0 0 1 0|  size   | mastID|groupID| devID |	  	resv	|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|																|
++																+
+|						padding									|
++																+
+|																|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+mastID:		The 4-bit field indicates master ID. Total 16 (2^4) master supported.
+groupID: 	The 4-bit field indicates group ID of source. Total 16 (2^4) groups supported.
+devID:		The 4-bit field indicates packet label. Each packet will be paired with master ID, group ID and device ID {(masterID groupID devID)}.
+reserved: 	The 8-bit field reserved for future use.
+
+If MasterID then
+	If smaller GroupID then
+		Broadcast packet
+	Else
+		Discard packet
+	End If
+Else
+	Discard packet
+End If
 
 
 
 
-do code for master receives info from the slaves
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|0 1 0 0 0 0 0 1|  size   |groupID| devID |	  	resv		    |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| LED[1]| LED[2]|												|
-+-+-+-+-+-+-+-+-+											   -+
-|							  									|
-+-														+-+-+-+-+
-|														| LED[G]|
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			   1			   2			   3			   4
- 0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+ 0 1 2 3 4 6.6 7 8 9 A B C D E F 0 1 2 3 4 6.6 7 8 9 A B C D E F
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
