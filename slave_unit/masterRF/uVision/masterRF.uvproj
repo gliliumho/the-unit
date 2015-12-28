@@ -45,11 +45,11 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>libnrf9e5</OutputName>
-          <CreateExecutable>0</CreateExecutable>
-          <CreateLib>1</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
-          <DebugInformation>1</DebugInformation>
+          <OutputName>masterRF</OutputName>
+          <CreateExecutable>1</CreateExecutable>
+          <CreateLib>0</CreateLib>
+          <CreateHexFile>1</CreateHexFile>
+          <DebugInformation>0</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
           <HexFormatSelection>0</HexFormatSelection>
@@ -363,44 +363,14 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>eeprom.c</FileName>
+              <FileName>main_master.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\eeprom.c</FilePath>
+              <FilePath>..\src\main_master.c</FilePath>
             </File>
             <File>
-              <FileName>misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\misc.c</FilePath>
-            </File>
-            <File>
-              <FileName>radio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\radio.c</FilePath>
-            </File>
-            <File>
-              <FileName>radio_extra.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\radio_extra.c</FilePath>
-            </File>
-            <File>
-              <FileName>radio_master.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\radio_master.c</FilePath>
-            </File>
-            <File>
-              <FileName>radio_slave.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\radio_slave.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>util.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\util.c</FilePath>
+              <FileName>libnrf9e5.LIB</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\library\uVision\Objects\libnrf9e5.LIB</FilePath>
             </File>
           </Files>
         </Group>
