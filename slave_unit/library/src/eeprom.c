@@ -1,7 +1,7 @@
 /*******************************************************************************
 ** eeprom.c
 **
-** This file contains all the functions for EEPROM operations
+** ALL FUNCTIONS COPIED FROM NORDIC'S SAMPLE CODES
 **
 *********************************************************************************/
 
@@ -12,7 +12,6 @@
 void InitEEPROM(void){
 //  P1_DIR &= ~0x1b;
     SPICLK = 5;                             // CLK/32 SPI clock
-
     EECSN = 1;
     SPI_CTRL = 0x01;                        // Connect internal SPI to P1
 }
