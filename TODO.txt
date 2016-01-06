@@ -1,0 +1,12 @@
+-Encryption for RC communication
+	-https://github.com/kokke/tiny-AES128-C/blob/master/aes.c
+	-https://gist.github.com/bricef/2436364#file-aes-c
+
+
+-Proper and lightweight firmware for masterRF to interface with RIoTboard
+	-http://www.teuniz.net/RS-232/
+	
+-Update master_unit to support data from multiple Recotraffic 
+-Update master_unit's serial programming part to properly interface with slave_unit
+
+-Implement ultrasonic sensor for slave_unit (probably need ADC)
