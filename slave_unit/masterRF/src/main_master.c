@@ -11,6 +11,7 @@
 #include "uart.h"
 #include "util.h"
 #include "misc.h"
+#include <string.h>
 
 
 void main(void){
@@ -18,23 +19,22 @@ void main(void){
 	packetID id_buffer[6] = {0};
  	unsigned char packet_count = 0;
  	unsigned char buffer_count = 0;
-	unsigned char input[0x10];
+	unsigned char input[0x09];
 
 	InitUART();
 	InitRF();
-	// PutString("\r\nMaster Started..");
 
 	while(1){
-		input = {0};
-		GetString(input)
+		//memset(input, 0, sizeof(input));
+		GetString(&input);
 
 		if(input[0] == TRAFFIC_INFO_HEADER){
 			//will receive all traffic info here
 
 		} else if(input[0] == HEARTBEAT_REQUEST_HEADER){
 			unsigned char i=0, ret=0;
-			unsigned char groupID = 0;
-			unsigned char uniqueID = 0;
+			unsigned char groupID = input[1];
+			unsigned char uniqueID = input[2];
 
 			RequestHeartbeat(groupID, uniqueID);
 
@@ -43,16 +43,22 @@ void main(void){
 				i++;
 			}
 
-			if(!ret){
-				PutString("Timeout\r\n");
-			}
+			input[3] = ret;
+			input[4] = 0x00;
 
-		} else if(input[0] == HEARTBEAT_REQUEST_FROM_ALL_HEADER){
-			//removed since it's only EXPERIMENTAL
+			PutString(&input);
 
-		} else if(input[0] == 0x04){
-			//RequestHeartbeatLoop();
+			// if(!ret){
+			// 	PutString("Timeout\r\n");
+			// }
+
 		}
+		// else if(input[0] == HEARTBEAT_REQUEST_FROM_ALL_HEADER){
+		// 	//removed since it's only EXPERIMENTAL
+		//
+		// } else if(input[0] == 0x04){
+		// 	//RequestHeartbeatLoop();
+		// }
 
 	}
 }
