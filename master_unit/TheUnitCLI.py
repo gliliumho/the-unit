@@ -68,6 +68,8 @@ while True:
         """
         get traffic from traffic server through TCP/IP and send to masterRF
         using serial
+
+        group LED from list[2] to list[14]
         """
         send_traffic()
 

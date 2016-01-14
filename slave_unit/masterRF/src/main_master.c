@@ -19,7 +19,7 @@ void main(void){
 	packetID id_buffer[6] = {0};
  	unsigned char packet_count = 0;
  	unsigned char buffer_count = 0;
-	unsigned char input[0x09];
+	unsigned char input[PACKET_SIZE];
 
 	InitUART();
 	InitRF();
@@ -30,6 +30,7 @@ void main(void){
 
 		if(input[0] == TRAFFIC_INFO_HEADER){
 			//will receive all traffic info here
+			SendTraffic(&input);
 
 		} else if(input[0] == HEARTBEAT_REQUEST_HEADER){
 			unsigned char i=0, ret=0;
