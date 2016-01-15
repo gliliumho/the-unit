@@ -43,8 +43,17 @@ def send_traffic(serialport, packet):
 
     serialport.write(packet)
 
-def request_heartbeat():
+def request_heartbeat(serialport, gid, uid):
+    """Sends a bytearray for masterRF to request heartbeat"""
+    pack = bytearray(5)
+    pack[0] = 2
+    pack[1] = gid
+    pack[2] = uid
+    pack[3] = '\n'
 
+    serialport.write(packet)
+
+    # add code to wait for heartbeat & status
 
 def request_heartbeat_broadcast():
 
@@ -59,10 +68,8 @@ print("====================")
 platform = sys.platform
 if platform == "win32":
     ser = serial.Serial('COM3', 9600)
-    # stuff for WINDOWS
 elif platform == "cygwin":
     ser = serial.Serial('/dev/ttyS2', 9600)
-    # stuff for Cygwin
 elif platform == "linux":
     ser = serial.Serial('/dev/ttymxc2', 9600)
 else:
@@ -82,20 +89,21 @@ while True:
         print("Exiting The Unit CLI...")
         break
     elif userinput == 1:    # send traffic indo
+        print("=====Send traffic info=====")
         pack = bytearray(16)
         for (i, value) in enumerate(pack):
             if 2 <= i <= 14:
                 value = input("Traffic info for group "+(i-1))
             elif i == 15:
-                value = 0
+                value = '\n'
 
         send_traffic(ser, pack)
 
     elif userinput == 2:    # request heartbeat
-        """
-        prompt input for gid & uid then request heartbeat from specified slave
-        """
-        request_heartbeat()
+        print("=====Request Heartbeat=====")
+        gid = input("Group ID: ")
+        uid = input("Unique ID: ")
+        request_heartbeat(ser, gid, uid)
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
