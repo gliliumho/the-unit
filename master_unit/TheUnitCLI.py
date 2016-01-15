@@ -36,8 +36,12 @@ def main_menu():
             print("ERROR: INPUT MUST BE FROM 0 TO 4", end="\n\n")
 
 
-def send_traffic():
+def send_traffic(serialport, packet):
+    """Formats the bytearray(packet) and write to serialport"""
+    packet[0] = 1
+    packet[1] = 0
 
+    serialport.write(packet)
 
 def request_heartbeat():
 
@@ -50,36 +54,50 @@ def request_heartbeat_loop():
 
 
 # ------------------------------------------------------------------------------
-
+print("\nStarting The Unit CLI")
+print("====================")
 platform = sys.platform
 if platform == "win32":
+    ser = serial.Serial('COM3', 9600)
     # stuff for WINDOWS
+elif platform == "cygwin":
+    ser = serial.Serial('/dev/ttyS2', 9600)
+    # stuff for Cygwin
+elif platform == "linux":
+    ser = serial.Serial('/dev/ttymxc2', 9600)
 else:
-    # stuff for Linux/Cygwin
+    print("Unknown platform...")
+    ser = serial.Serial('/dev/ttyS2', 9600)
+
+print("Serial port "+ser.name+" opened.")
 
 
 
+
+
+#Infinite loop for the CLI menu
 while True:
     userinput = main_menu()
-    if userinput == 0:
+    if userinput == 0:      # exit
         print("Exiting The Unit CLI...")
         break
-    elif userinput == 1:
-        """
-        get traffic from traffic server through TCP/IP and send to masterRF
-        using serial
+    elif userinput == 1:    # send traffic indo
+        pack = bytearray(16)
+        for (i, value) in enumerate(pack):
+            if 2 <= i <= 14:
+                value = input("Traffic info for group "+(i-1))
+            elif i == 15:
+                value = 0
 
-        group LED from list[2] to list[14]
-        """
-        send_traffic()
+        send_traffic(ser, pack)
 
-    elif userinput == 2:
+    elif userinput == 2:    # request heartbeat
         """
         prompt input for gid & uid then request heartbeat from specified slave
         """
         request_heartbeat()
 
-    elif userinput == 3:
+    elif userinput == 3:    # request all heartbeat (broadcast)
         """
         -serial code to request heartbeat broadcasting & log the slaves alive
         -may compare to idlist.txt to see which slave is alive/dead

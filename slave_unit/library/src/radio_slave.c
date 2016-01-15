@@ -5,7 +5,7 @@
 *********************************************************************************/
 
 #include <Nordic\reg9e5.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 #include "util.h"
 #include "uart.h"
 #include "radio.h"
