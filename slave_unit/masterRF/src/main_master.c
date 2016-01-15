@@ -25,7 +25,7 @@ void main(void){
 	InitRF();
 
 	while(1){
-		//memset(input, 0, sizeof(input));
+		memset(input, 0, sizeof(input));
 		GetString(&input);
 
 		if(input[0] == TRAFFIC_INFO_HEADER){
@@ -45,7 +45,7 @@ void main(void){
 			}
 
 			input[3] = ret;
-			input[4] = 0x00;
+			input[4] = 0x0A;
 
 			PutString(&input);
 

@@ -43,6 +43,7 @@ def send_traffic(serialport, packet):
 
     serialport.write(packet)
 
+
 def request_heartbeat(serialport, gid, uid):
     """Sends a bytearray for masterRF to request heartbeat"""
     pack = bytearray(5)
@@ -52,10 +53,15 @@ def request_heartbeat(serialport, gid, uid):
     pack[3] = '\n'
 
     serialport.write(packet)
+    line = serialport.readline()
+    if line[3] == 1:
+        return True
+    else:
+        return False
 
-    # add code to wait for heartbeat & status
 
 def request_heartbeat_broadcast():
+
 
 
 def request_heartbeat_loop():
@@ -78,10 +84,6 @@ else:
 
 print("Serial port "+ser.name+" opened.")
 
-
-
-
-
 #Infinite loop for the CLI menu
 while True:
     userinput = main_menu()
@@ -103,7 +105,14 @@ while True:
         print("=====Request Heartbeat=====")
         gid = input("Group ID: ")
         uid = input("Unique ID: ")
-        request_heartbeat(ser, gid, uid)
+
+        print("Requesting heartbeat from "+gid+'.'+uid)
+        ret = request_heartbeat(ser, gid, uid)
+
+        if ret:
+            print("Slave "+gid+'.'+uid+" is alive")
+        else:
+            print("No reply from slave "+gid+'.'+uid)
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
