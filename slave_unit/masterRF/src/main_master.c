@@ -39,7 +39,7 @@ void main(void){
 
 			RequestHeartbeat(groupID, uniqueID);
 
-			while(ret == 0 && i < 5){
+			while(ret == 0 && i < 15){
 				ret = WaitHeartbeat(groupID, uniqueID);
 				i++;
 			}

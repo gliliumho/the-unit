@@ -1,8 +1,4 @@
-
-import sys
-import serial
-from custom_unit_test import test
-
+#!/bin/python3
 
 def is_int(s):
     """Function to check  """
@@ -17,14 +13,14 @@ def main_menu():
     """Prints menu and returns user input (ranging from 0 to 4) """
 
     while True:
-        print("1. Send Traffic Info(manual)")
+        print("\n1. Send Traffic Info(manual)")
         print("2. Request Heartbeat")
         print("3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
         print("4. Request Heartbeat from All Slaves (loop)")
         print("0. Exit")
         input_char = input("Select: ")
 
-        if not isInt(input_char):
+        if not is_int(input_char):
             print("ERROR: INPUT MUST CONTAIN NUMBER ONLY", end="\n\n")
             continue
         else:
@@ -36,23 +32,23 @@ def main_menu():
             print("ERROR: INPUT MUST BE FROM 0 TO 4", end="\n\n")
 
 
-def send_traffic(serialport, packet):
+def send_traffic(serialport, pack):
     """Formats the bytearray(packet) and write to serialport"""
-    packet[0] = 1
-    packet[1] = 0
+    pack[0] = 0x01
+    pack[1] = 0xff
 
-    serialport.write(packet)
+    serialport.write(pack)
 
 
 def request_heartbeat(serialport, gid, uid):
     """Sends a bytearray for masterRF to request heartbeat"""
-    pack = bytearray(5)
+    pack = bytearray(4)
     pack[0] = 2
     pack[1] = gid
     pack[2] = uid
-    pack[3] = '\n'
+    pack[3] = 0x0a
 
-    serialport.write(packet)
+    serialport.write(pack)
     line = serialport.readline()
     if line[3] == 1:
         return True
@@ -61,32 +57,45 @@ def request_heartbeat(serialport, gid, uid):
 
 
 def request_heartbeat_broadcast():
-
+    return 0
 
 
 def request_heartbeat_loop():
+    """Request heartbeat from slaves in idlist.txt and logs status in
+    cli_slave_status.txt """
 
-
+    #idlist = open("idlist.txt",'r')
 
 # ------------------------------------------------------------------------------
+import sys
+import serial
+#from custom_unit_test import test
+
 print("\nStarting The Unit CLI")
 print("====================")
-platform = sys.platform
-if platform == "win32":
-    ser = serial.Serial('COM3', 9600)
-elif platform == "cygwin":
-    ser = serial.Serial('/dev/ttyS2', 9600)
-elif platform == "linux":
-    ser = serial.Serial('/dev/ttymxc2', 9600)
-else:
-    print("Unknown platform...")
-    ser = serial.Serial('/dev/ttyS2', 9600)
 
+if len(sys.argv) > 1:
+    port = "/dev/"+sys.argv[1]
+else:
+    platform = sys.platform
+    if platform == "win32":
+        port = 'COM3'
+    elif platform == "cygwin":
+        port = '/dev/ttyS4'
+    elif platform == "linux":
+        port = '/dev/ttymxc2'
+    else:
+        print("Unknown platform...")
+        port = '/dev/ttyS2'
+
+ser = serial.Serial(port, 9600)
 print("Serial port "+ser.name+" opened.")
 
 #Infinite loop for the CLI menu
 while True:
+    # Print main menu
     userinput = main_menu()
+
     if userinput == 0:      # exit
         print("Exiting The Unit CLI...")
         break
@@ -94,25 +103,27 @@ while True:
         print("=====Send traffic info=====")
         pack = bytearray(16)
         for (i, value) in enumerate(pack):
-            if 2 <= i <= 14:
-                value = input("Traffic info for group "+(i-1))
+            if 2 <= i <= 5:
+                value = bytes(input("Traffic info for group "+str(i-1)+": "), 'utf-8')
             elif i == 15:
-                value = '\n'
-
+                value = 0x0a
+            else:
+                value = 4
+        print(pack)
         send_traffic(ser, pack)
 
     elif userinput == 2:    # request heartbeat
         print("=====Request Heartbeat=====")
-        gid = input("Group ID: ")
-        uid = input("Unique ID: ")
+        gid = int(input("Group ID: "))
+        uid = int(input("Unique ID: "))
 
-        print("Requesting heartbeat from "+gid+'.'+uid)
+        print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
         ret = request_heartbeat(ser, gid, uid)
 
         if ret:
-            print("Slave "+gid+'.'+uid+" is alive")
+            print("Slave "+str(gid)+'.'+str(uid)+" is alive")
         else:
-            print("No reply from slave "+gid+'.'+uid)
+            print("No reply from slave "+str(gid)+'.'+str(uid))
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
