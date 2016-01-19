@@ -39,13 +39,14 @@ void main(void){
 
 			RequestHeartbeat(groupID, uniqueID);
 
-			while(ret == 0 && i < 15){
+			while(ret == 0 && i < 5){
 				ret = WaitHeartbeat(groupID, uniqueID);
 				i++;
 			}
 
 			input[3] = ret;
 			input[4] = 0x0A;
+			input[5] = 0x00;
 
 			PutString(&input);
 

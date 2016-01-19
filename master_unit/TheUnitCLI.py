@@ -1,5 +1,25 @@
 #!/bin/python3
 
+def init_serial():
+    if len(sys.argv) > 1:
+        port = "/dev/"+sys.argv[1]
+    else:
+        platform = sys.platform
+        if platform == "win32":
+            port = 'COM3'
+        elif platform == "cygwin":
+            port = '/dev/ttyS4'
+        elif platform == "linux":
+            port = '/dev/ttymxc2'
+        else:
+            print("Unknown platform...")
+            port = '/dev/ttyS2'
+
+    ser_port = serial.Serial(port, 9600)
+    print("Serial port "+ser_port.name+" opened.")
+    return ser_port
+
+
 def is_int(s):
     """Function to check  """
     try:
@@ -11,7 +31,6 @@ def is_int(s):
 
 def main_menu():
     """Prints menu and returns user input (ranging from 0 to 4) """
-
     while True:
         print("\n1. Send Traffic Info(manual)")
         print("2. Request Heartbeat")
@@ -35,8 +54,8 @@ def main_menu():
 def send_traffic(serialport, pack):
     """Formats the bytearray(packet) and write to serialport"""
     pack[0] = 0x01
-    pack[1] = 0xff
-
+    pack[1] = 0x00
+    print(pack)
     serialport.write(pack)
 
 
@@ -49,7 +68,9 @@ def request_heartbeat(serialport, gid, uid):
     pack[3] = 0x0a
 
     serialport.write(pack)
-    line = serialport.readline()
+    print("written to UART")
+    print("waiting response")
+    line = serialport.read(5)
     if line[3] == 1:
         return True
     else:
@@ -74,22 +95,7 @@ import serial
 print("\nStarting The Unit CLI")
 print("====================")
 
-if len(sys.argv) > 1:
-    port = "/dev/"+sys.argv[1]
-else:
-    platform = sys.platform
-    if platform == "win32":
-        port = 'COM3'
-    elif platform == "cygwin":
-        port = '/dev/ttyS4'
-    elif platform == "linux":
-        port = '/dev/ttymxc2'
-    else:
-        print("Unknown platform...")
-        port = '/dev/ttyS2'
-
-ser = serial.Serial(port, 9600)
-print("Serial port "+ser.name+" opened.")
+ser = init_serial()
 
 #Infinite loop for the CLI menu
 while True:
@@ -102,14 +108,14 @@ while True:
     elif userinput == 1:    # send traffic indo
         print("=====Send traffic info=====")
         pack = bytearray(16)
-        for (i, value) in enumerate(pack):
+        for i in range(len(pack)):
             if 2 <= i <= 5:
-                value = bytes(input("Traffic info for group "+str(i-1)+": "), 'utf-8')
+                pack[i] = int(input("Traffic info for group "+str(i-1)+": "))
             elif i == 15:
-                value = 0x0a
+                pack[i] = 0x0a
             else:
-                value = 4
-        print(pack)
+                pack[i] = 4
+
         send_traffic(ser, pack)
 
     elif userinput == 2:    # request heartbeat
@@ -121,15 +127,14 @@ while True:
         ret = 0
         for i in range(5):
             ret = request_heartbeat(ser, gid, uid)
-            if ret == 0:
+            if ret == True:
+                    print("Slave "+str(gid)+'.'+str(uid)+" is alive")
+                    break
+            else:
                 if i < 4:
-                    print("timeout..")
-                    continue
+                    print("timeout.."+str(i))
                 else:
                     print("No reply from slave "+str(gid)+'.'+str(uid))
-            else:
-                print("Slave "+str(gid)+'.'+str(uid)+" is alive")
-                break
 
 
     elif userinput == 3:    # request all heartbeat (broadcast)
