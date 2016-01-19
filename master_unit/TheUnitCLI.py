@@ -118,12 +118,19 @@ while True:
         uid = int(input("Unique ID: "))
 
         print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
-        ret = request_heartbeat(ser, gid, uid)
+        ret = 0
+        for i in range(5):
+            ret = request_heartbeat(ser, gid, uid)
+            if ret == 0:
+                if i < 4:
+                    print("timeout..")
+                    continue
+                else:
+                    print("No reply from slave "+str(gid)+'.'+str(uid))
+            else:
+                print("Slave "+str(gid)+'.'+str(uid)+" is alive")
+                break
 
-        if ret:
-            print("Slave "+str(gid)+'.'+str(uid)+" is alive")
-        else:
-            print("No reply from slave "+str(gid)+'.'+str(uid))
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
