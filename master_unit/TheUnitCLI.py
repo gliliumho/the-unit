@@ -69,25 +69,22 @@ def send_traffic(serialport, pack):
     serialport.write(pack)
 
 
-def get_heartbeat(serialport):
+def menu_get_heartbeat(serialport):
     line = input("Enter GroupID.UniqueID: ")
     ids = line.split('.')
     gid = int(ids[0])
-    uid = int(ids[0])
+    uid = int(ids[1])
 
     print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
-    ret = 0
-    for i in range(5):
-        ret = request_heartbeat(ser, gid, uid)
-        if ret == True:
-            print("Slave "+str(gid)+'.'+str(uid)+" is alive")
-            break
-        else:
-            if i == 4:
-                print("No reply from slave "+str(gid)+'.'+str(uid))
-            # else:
-            #     print("timeout.."+str(i))
-
+    ret = request_heartbeat(ser, gid, uid)
+    if ret == True:
+        print("Slave "+str(gid)+'.'+str(uid)+" is alive")
+        #return True
+    else:
+        print("No reply from slave "+str(gid)+'.'+str(uid))
+        #return False
+    # else:
+    #     print("timeout.."+str(i))
 
 
 def request_heartbeat(serialport, gid, uid):
@@ -98,24 +95,50 @@ def request_heartbeat(serialport, gid, uid):
     pack[2] = uid
     pack[3] = 0x00
 
-    serialport.write(pack)
-    # print("written to UART")
-    # print("waiting response")
-    line = serialport.read(16)
-    if line[3] == 1:
-        return True
-    else:
-        return False
+    for i in range(5):
+        serialport.write(pack)
+        line = serialport.read(16)
+        if line[3] == 1:
+            return True
+
+    return False
 
 
 def request_heartbeat_broadcast():
+    print("Feature not implemented yet. Please contact the developer.")
     return 0
 
 
-def request_heartbeat_loop():
+def request_heartbeat_loop(serialport):
     """Request heartbeat from slaves in idlist.txt and logs status
     in cli_slave_status.txt """
-    #idlist = open("idlist.txt",'r')
+    idfile = open("idlist.txt",'r')
+    idlist = []
+    while True:
+        idline = idfile.readline()
+        if len(idline) == 0:
+            break
+        idline_list = idline.split('.')
+        idline_list = list(map(int, idline_list))
+        idlist.append( idline_list )
+
+    idfile.close()
+
+    for i in range(len(idlist)):
+        ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
+        if ret == True:
+            idlist[i].append('Alive')
+        else:
+            idlist[i].append('Dead')
+
+    logfile = open("cli_slave_status.log", 'w')
+
+    for i in range(len(idlist)):
+        line = str(idlist[i][0])+'.'+str(idlist[i][1])+'\t'+idlist[i][2]+'\n'
+        logfile.write(line)
+
+    logfile.close()
+
 
 # ------------------------------------------------------------------------------
 import sys
@@ -143,7 +166,7 @@ while True:
 
     elif userinput == 2:    # request heartbeat
         print("=====Request Heartbeat=====")
-        get_heartbeat()
+        menu_get_heartbeat(ser)
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
@@ -154,8 +177,4 @@ while True:
 
     elif userinput == 4:
         print("=====Request Heartbeat (Loop)=====")
-        """
-        -request heartbeat from slaves is idlist.txt
-        -the looping part should be from....master
-        """
-        request_heartbeat_loop()
+        request_heartbeat_loop(ser)
