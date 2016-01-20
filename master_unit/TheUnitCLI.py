@@ -1,6 +1,17 @@
 #!/bin/python3
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 def init_serial():
+    """Initialize serial port according to platform and return the Serial object"""
     if len(sys.argv) > 1:
         port = "/dev/"+sys.argv[1]
     else:
@@ -8,7 +19,7 @@ def init_serial():
         if platform == "win32":
             port = 'COM3'
         elif platform == "cygwin":
-            port = '/dev/ttyS4'
+            port = '/dev/ttyS2'
         elif platform == "linux":
             port = '/dev/ttymxc2'
         else:
@@ -21,7 +32,7 @@ def init_serial():
 
 
 def is_int(s):
-    """Function to check  """
+    """Function to check if s can be converted to int"""
     try:
         int(s)
         return True
@@ -32,18 +43,19 @@ def is_int(s):
 def main_menu():
     """Prints menu and returns user input (ranging from 0 to 4) """
     while True:
-        print("\n1. Send Traffic Info(manual)")
+        print("\n====================")
+        print("1. Send Traffic Info(manual)")
         print("2. Request Heartbeat")
         print("3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
         print("4. Request Heartbeat from All Slaves (loop)")
         print("0. Exit")
         input_char = input("Select: ")
 
-        if not is_int(input_char):
+        if is_int(input_char):
+            input_char = int(input_char)
+        else:
             print("ERROR: INPUT MUST CONTAIN NUMBER ONLY", end="\n\n")
             continue
-        else:
-            input_char = int(input_char)
 
         if (0 <= input_char <= 4):
             return input_char
@@ -65,7 +77,7 @@ def send_traffic(serialport, pack):
     """Formats the bytearray(packet) and write to serialport"""
     pack[0] = 0x01
     pack[1] = 0x00
-    print(pack)
+    # print(pack)
     serialport.write(pack)
 
 
@@ -78,10 +90,10 @@ def menu_get_heartbeat(serialport):
     print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
     ret = request_heartbeat(ser, gid, uid)
     if ret == True:
-        print("Slave "+str(gid)+'.'+str(uid)+" is alive")
+        print(bcolors.OKGREEN+"Slave "+str(gid)+'.'+str(uid)+" is alive"+bcolors.ENDC)
         #return True
     else:
-        print("No reply from slave "+str(gid)+'.'+str(uid))
+        print(bcolors.WARNING+"No reply from slave "+str(gid)+'.'+str(uid)+bcolors.ENDC)
         #return False
     # else:
     #     print("timeout.."+str(i))
@@ -146,7 +158,6 @@ import serial
 #from custom_unit_test import test
 
 print("\nStarting The Unit CLI")
-print("====================")
 
 ser = init_serial()
 
