@@ -20,6 +20,8 @@ void SlaveOp_Buffer(unsigned char gid, unsigned char uid){
 			CheckTraffic(b, gid);
 			SlaveRelay(b);
 		} else if(b[0] == HEARTBEAT_REQUEST_HEADER){
+			// PutChar(b[1]+0x30);
+			// PutChar(b[2]+0x30);
 			PutString("Received HB Request!\r\n");
 			if(b[1]==gid && b[2]==uid){
 				// for(i=0; i<10; i++)

@@ -9,8 +9,8 @@
 #define POWER 3 	// 0=min power...3 = max power
 #define PACKET_SIZE 0x10
 #define TRAFFIC_INFO_HEADER 0x01
-#define HEARTBEAT_REQUEST_HEADER 0x02
-#define HEARTBEAT_REPLY_HEADER 0x03
+#define HEARTBEAT_REQUEST_HEADER 0x02	//from master
+#define HEARTBEAT_REPLY_HEADER 0x03		//from slave
 #define HEARTBEAT_REQUEST_FROM_ALL_HEADER 0x04
 
 typedef struct packetID{

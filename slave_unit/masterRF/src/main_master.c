@@ -26,7 +26,7 @@ void main(void){
 
 	while(1){
 		memset(input, 0, sizeof(input));
-		GetString(&input);
+		GetFixedString(&input, PACKET_SIZE);
 
 		if(input[0] == TRAFFIC_INFO_HEADER){
 			//will receive all traffic info here
@@ -46,9 +46,9 @@ void main(void){
 
 			input[3] = ret;
 			input[4] = 0x0A;
-			input[5] = 0x00;
+			input[5] = 0;
 
-			PutString(&input);
+			PutFixedString(&input, PACKET_SIZE);
 
 			// if(!ret){
 			// 	PutString("Timeout\r\n");

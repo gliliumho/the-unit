@@ -55,7 +55,7 @@ void PutString(unsigned char *s){
 void PrintChar(unsigned char n){
 	unsigned char i, bits[3];
 	unsigned char temp;
-	
+
 	for(i=2; i>0; i--){
 		switch(i){
 			case 2:
@@ -98,4 +98,19 @@ void GetString(unsigned char *s){
 		GetChar(s);
 	}
 	*s = 0x00; 						//0x00 to indicate end of string(EOS)
+}
+
+void GetFixedString(unsigned char *s, unsigned char n){
+	unsigned char i;
+	RI=0;
+	for (i=0; i<n; i++){
+		GetChar(s++);
+		//s++;
+	}
+}
+
+void PutFixedString(unsigned char *s, unsigned char n){
+	unsigned char i;
+	for(i=0; i<n; i++)
+		PutChar(*(s++));
 }

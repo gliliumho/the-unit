@@ -51,6 +51,16 @@ def main_menu():
             print("ERROR: INPUT MUST BE FROM 0 TO 4", end="\n\n")
 
 
+def get_traffic(pack):
+    for i in range(len(pack)):
+        if 2 <= i <= 5:
+            pack[i] = int(input("Traffic info for group "+str(i-1)+": "))
+        elif i == 15:
+            pack[i] = 0x0a
+        else:
+            pack[i] = 4
+
+
 def send_traffic(serialport, pack):
     """Formats the bytearray(packet) and write to serialport"""
     pack[0] = 0x01
@@ -59,18 +69,39 @@ def send_traffic(serialport, pack):
     serialport.write(pack)
 
 
+def get_heartbeat(serialport):
+    line = input("Enter GroupID.UniqueID: ")
+    ids = line.split('.')
+    gid = int(ids[0])
+    uid = int(ids[0])
+
+    print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
+    ret = 0
+    for i in range(5):
+        ret = request_heartbeat(ser, gid, uid)
+        if ret == True:
+            print("Slave "+str(gid)+'.'+str(uid)+" is alive")
+            break
+        else:
+            if i == 4:
+                print("No reply from slave "+str(gid)+'.'+str(uid))
+            # else:
+            #     print("timeout.."+str(i))
+
+
+
 def request_heartbeat(serialport, gid, uid):
     """Sends a bytearray for masterRF to request heartbeat"""
-    pack = bytearray(4)
-    pack[0] = 2
+    pack = bytearray(16)
+    pack[0] = 0x02
     pack[1] = gid
     pack[2] = uid
-    pack[3] = 0x0a
+    pack[3] = 0x00
 
     serialport.write(pack)
-    print("written to UART")
-    print("waiting response")
-    line = serialport.read(5)
+    # print("written to UART")
+    # print("waiting response")
+    line = serialport.read(16)
     if line[3] == 1:
         return True
     else:
@@ -82,9 +113,8 @@ def request_heartbeat_broadcast():
 
 
 def request_heartbeat_loop():
-    """Request heartbeat from slaves in idlist.txt and logs status in
-    cli_slave_status.txt """
-
+    """Request heartbeat from slaves in idlist.txt and logs status
+    in cli_slave_status.txt """
     #idlist = open("idlist.txt",'r')
 
 # ------------------------------------------------------------------------------
@@ -108,34 +138,12 @@ while True:
     elif userinput == 1:    # send traffic indo
         print("=====Send traffic info=====")
         pack = bytearray(16)
-        for i in range(len(pack)):
-            if 2 <= i <= 5:
-                pack[i] = int(input("Traffic info for group "+str(i-1)+": "))
-            elif i == 15:
-                pack[i] = 0x0a
-            else:
-                pack[i] = 4
-
+        get_traffic(pack)
         send_traffic(ser, pack)
 
     elif userinput == 2:    # request heartbeat
         print("=====Request Heartbeat=====")
-        gid = int(input("Group ID: "))
-        uid = int(input("Unique ID: "))
-
-        print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
-        ret = 0
-        for i in range(5):
-            ret = request_heartbeat(ser, gid, uid)
-            if ret == True:
-                    print("Slave "+str(gid)+'.'+str(uid)+" is alive")
-                    break
-            else:
-                if i < 4:
-                    print("timeout.."+str(i))
-                else:
-                    print("No reply from slave "+str(gid)+'.'+str(uid))
-
+        get_heartbeat()
 
     elif userinput == 3:    # request all heartbeat (broadcast)
         """
@@ -145,6 +153,7 @@ while True:
         request_heartbeat_broadcast()
 
     elif userinput == 4:
+        print("=====Request Heartbeat (Loop)=====")
         """
         -request heartbeat from slaves is idlist.txt
         -the looping part should be from....master
