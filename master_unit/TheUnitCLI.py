@@ -1,12 +1,13 @@
 #!/bin/python3
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    PINK = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    CYAN = '\033[36m'
+    RESET = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
@@ -45,7 +46,9 @@ def is_int(s):
 def main_menu():
     """ Prints menu and returns user input (ranging from 0 to 4) """
     while True:
-        print(bcolors.HEADER + "\n" + "="*30 + bcolors.ENDC)
+        print(bcolors.PINK + "\n" + "="*80 + bcolors.RESET)
+        print(" "*30 + "The Unit CLI Menu")
+        print(bcolors.PINK + "="*80 + bcolors.RESET)
         print("1. Send Traffic Info(manual)")
         print("2. Request Heartbeat")
         print("3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
@@ -56,17 +59,17 @@ def main_menu():
         if is_int(input_char):
             input_char = int(input_char)
         else:
-            print(bcolors.WARNING + \
+            print(bcolors.YELLOW + \
                 "ERROR: INPUT MUST CONTAIN NUMBER ONLY" + \
-                bcolors.ENDC, end="\n\n")
+                bcolors.RESET, end="\n\n")
             continue
 
         if (0 <= input_char <= 4):
             return input_char
         else:
-            print(bcolors.WARNING + \
+            print(bcolors.YELLOW + \
                 "ERROR: INPUT MUST BE FROM 0 TO 4" + \
-                bcolors.ENDC, end="\n\n")
+                bcolors.RESET, end="\n\n")
 
 
 def get_traffic(pack):
@@ -96,11 +99,11 @@ def menu_get_heartbeat(serialport):
     print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
     ret = request_heartbeat(ser, gid, uid)
     if ret == True:
-        print(bcolors.OKGREEN + \
-            "Slave " + str(gid) + '.' + str(uid) + " is alive" + bcolors.ENDC)
+        print(bcolors.GREEN + \
+            "Slave " + str(gid) + '.' + str(uid) + " is alive" + bcolors.RESET)
     else:
-        print(bcolors.WARNING + \
-            "No reply from slave " + str(gid) + '.' + str(uid) + bcolors.ENDC)
+        print(bcolors.YELLOW + \
+            "No reply from slave " + str(gid) + '.' + str(uid) + bcolors.RESET)
         #return False
     # else:
     #     print("timeout.."+str(i))
@@ -124,9 +127,9 @@ def request_heartbeat(serialport, gid, uid):
 
 
 def request_heartbeat_broadcast():
-    print(bcolors.FAIL + \
+    print(bcolors.RED + \
         "Feature not implemented yet. Please contact the developer." + \
-        bcolors.ENDC)
+        bcolors.RESET)
     return 0
 
 
@@ -150,18 +153,18 @@ def request_heartbeat_loop(serialport):
     for i in range(len(idlist)):
         total_slave += 1
         print("Slave " + str(idlist[i][0]) + '.' + str(idlist[i][1]) + \
-            ': ', end='')
+            '\t: ', end='')
         ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
         if ret == True:
             success_slave += 1
-            print(bcolors.OKGREEN + "Alive" + bcolors.ENDC)
+            print(bcolors.GREEN + "Alive" + bcolors.RESET)
             idlist[i].append('Alive')
         else:
-            print(bcolors.FAIL + "Dead" + bcolors.ENDC)
+            print(bcolors.RED + "Dead" + bcolors.RESET)
             idlist[i].append('Dead')
 
-    print(bcolors.OKBLUE + "Summary: " + \
-        str(success_slave) + '/' + str(total_slave) + " slaves alive" + bcolors.ENDC)
+    print(bcolors.BLUE + "Summary: " + \
+        str(success_slave) + '/' + str(total_slave) + " slaves alive" + bcolors.RESET)
 
     logfile = open("cli_slave_status.log", 'w')
 
@@ -177,7 +180,7 @@ import sys
 import serial
 #from custom_unit_test import test
 
-print("\nStarting The Unit CLI")
+print("\nStarting The Unit CLI..")
 
 ser = init_serial()
 
@@ -187,16 +190,16 @@ while True:
     userinput = main_menu()
 
     if userinput == 0:      # exit
-        print(bcolors.BOLD + "Exiting The Unit CLI..." + bcolors.ENDC)
+        print("Exiting The Unit CLI...")
         break
     elif userinput == 1:    # send traffic indo
-        print(bcolors.BOLD + "=====Send traffic info=====" + bcolors.ENDC)
+        print(bcolors.BOLD + "=====Send traffic info=====" + bcolors.RESET)
         pack = bytearray(16)
         get_traffic(pack)
         send_traffic(ser, pack)
 
     elif userinput == 2:    # request heartbeat
-        print(bcolors.BOLD + "=====Request Heartbeat=====" + bcolors.ENDC)
+        print(bcolors.BOLD + "=====Request Heartbeat=====" + bcolors.RESET)
         menu_get_heartbeat(ser)
 
     elif userinput == 3:    # request all heartbeat (broadcast)
@@ -208,5 +211,5 @@ while True:
 
     elif userinput == 4:
         print(bcolors.BOLD + \
-            "=====Request Heartbeat (Loop)=====" + bcolors.ENDC)
+            "=====Request Heartbeat (Loop)=====" + bcolors.RESET)
         request_heartbeat_loop(ser)
