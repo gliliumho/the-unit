@@ -43,33 +43,37 @@ def is_int(s):
         return False
 
 
-def main_menu():
+def menu_screen(stdscr):
+    stdscr.clear()
+    stdscr.addstr(0,0, "="*80 )
+    stdscr.addstr(1,0, "="*80 )
+    stdscr.addstr(2,30, "The Unit CLI Menu")
+    stdscr.addstr(3,0, "="*80 )
+    stdscr.addstr(4,0, "="*80 )
+    stdscr.addstr(6, 10, "1. Send Traffic Info(manual)")
+    stdscr.addstr(7, 10, "2. Request Heartbeat")
+    stdscr.addstr(8, 10, "3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
+    stdscr.addstr(9, 10, "4. Request Heartbeat from All Slaves (loop)")
+    stdscr.addstr(10,10, "q. Exit")
+    stdscr.addstr(12,10, "Select: ")
+    stdscr.refresh()
+
+
+def main_menu(stdscr):
     """ Prints menu and returns user input (ranging from 0 to 4) """
+
+    menu_screen(stdscr)
     while True:
-        print(bcolors.PINK + "\n" + "="*80 + bcolors.RESET)
-        print(" "*30 + "The Unit CLI Menu")
-        print(bcolors.PINK + "="*80 + bcolors.RESET)
-        print("1. Send Traffic Info(manual)")
-        print("2. Request Heartbeat")
-        print("3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
-        print("4. Request Heartbeat from All Slaves (loop)")
-        print("0. Exit")
-        input_char = input("Select: ")
-
-        if is_int(input_char):
-            input_char = int(input_char)
+        stdscr.move(12,18)
+        c = stdscr.getch()
+        c = chr(c)
+        if ('1' <= c <= '4') or (c == 'q'):
+            menu_screen(stdscr)
+            stdscr.refresh()
+            return c
         else:
-            print(bcolors.YELLOW + \
-                "ERROR: INPUT MUST CONTAIN NUMBER ONLY" + \
-                bcolors.RESET, end="\n\n")
-            continue
-
-        if (0 <= input_char <= 4):
-            return input_char
-        else:
-            print(bcolors.YELLOW + \
-                "ERROR: INPUT MUST BE FROM 0 TO 4" + \
-                bcolors.RESET, end="\n\n")
+            stdscr.addstr(11,9, "ERROR: INPUT MUST CONTAIN NUMBER ONLY")
+            stdscr.refresh()
 
 
 def get_traffic(pack):
@@ -178,38 +182,44 @@ def request_heartbeat_loop(serialport):
 # ------------------------------------------------------------------------------
 import sys
 import serial
+import curses
 #from custom_unit_test import test
 
 print("\nStarting The Unit CLI..")
 
 ser = init_serial()
+stdscr = curses.initscr()
+curses.cbreak()
 
 #Infinite loop for the CLI menu
 while True:
     # Print main menu
-    userinput = main_menu()
+    userinput = main_menu(stdscr)
 
-    if userinput == 0:      # exit
-        print("Exiting The Unit CLI...")
+    if userinput == 'q':      # exit
         break
-    elif userinput == 1:    # send traffic indo
-        print(bcolors.BOLD + "=====Send traffic info=====" + bcolors.RESET)
+    elif userinput == '1':    # send traffic info
+        stdscr.addstr(14,0, "-"*80 )
+        stdscr.addstr(15,31,"Send traffic info ")
+        stdscr.addstr(16,0, "-"*80 )
+        stdscr.refresh()
         pack = bytearray(16)
         get_traffic(pack)
         send_traffic(ser, pack)
 
-    elif userinput == 2:    # request heartbeat
+    elif userinput == '2':    # request heartbeat
         print(bcolors.BOLD + "=====Request Heartbeat=====" + bcolors.RESET)
         menu_get_heartbeat(ser)
 
-    elif userinput == 3:    # request all heartbeat (broadcast)
-        """
-        -serial code to request heartbeat broadcasting & log the slaves alive
-        -may compare to idlist.txt to see which slave is alive/dead
-        """
+    elif userinput == '3':    # request all heartbeat (broadcast)
         request_heartbeat_broadcast()
 
-    elif userinput == 4:
+    elif userinput == '4':
+        break
         print(bcolors.BOLD + \
             "=====Request Heartbeat (Loop)=====" + bcolors.RESET)
         request_heartbeat_loop(ser)
+
+curses.nocbreak()
+curses.endwin()
+print("Exiting The Unit CLI...")
