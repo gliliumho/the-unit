@@ -1,16 +1,7 @@
 #!/bin/python3
-
-class bcolors:
-    PINK = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    CYAN = '\033[36m'
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+import sys
+import serial
+import curses
 
 def init_serial():
     """ Initialize serial port according to platform and
@@ -110,7 +101,7 @@ def menu_get_heartbeat(infowin, serialport):
 
     infowin.addstr(1,0,"Requesting heartbeat from "+s+'\n')
     infowin.refresh()
-    ret = request_heartbeat(ser, gid, uid)
+    ret = request_heartbeat(serialport, gid, uid)
     if ret == True:
         infowin.addstr("Slave "+s+" is alive\n")
     else:
@@ -175,7 +166,6 @@ def request_heartbeat_loop(infowin, serialport):
             success_slave += 1
             infowin.addstr("Alive\n")
             infowin.refresh()
-            # print(bcolors.GREEN + "Alive" + bcolors.RESET)
             idlist[i].append('Alive')
         else:
             infowin.addstr("Dead\n")
@@ -195,62 +185,65 @@ def request_heartbeat_loop(infowin, serialport):
 
 
 # ------------------------------------------------------------------------------
-import sys
-import serial
-import curses
-#from custom_unit_test import test
 
-print("\nStarting The Unit CLI..")
+def __main__():
+    #from custom_unit_test import test
 
-ser = init_serial()
-stdscr = curses.initscr()
-curses.cbreak()
-menu = curses.newwin(7, 60, 6, 10)
-infowin = curses.newwin(15,60,17,10)
+    print("\nStarting The Unit CLI..")
 
-init_menuscreen(stdscr, menu,1,1)
+    ser = init_serial()
+    stdscr = curses.initscr()
+    curses.cbreak()
+    menu = curses.newwin(7, 60, 6, 10)
+    infowin = curses.newwin(15,60,17,10)
 
-#Infinite loop for the CLI menu
-while True:
-    # Print main menu
-    userinput = main_menu(stdscr, menu)
-    infowin.clear()
-    if userinput == 'q':      # exit
-        break
-    elif userinput == '1':    # send traffic info
-        stdscr.move(14,0)
-        stdscr.addstr("-"*80)
-        stdscr.addstr(15,31,"Send traffic info \n")
-        stdscr.addstr("-"*80)
-        stdscr.refresh()
-        pack = bytearray(16)
-        get_traffic(infowin, pack)
-        send_traffic(ser, pack)
+    init_menuscreen(stdscr, menu,1,1)
 
-    elif userinput == '2':    # request heartbeat
-        stdscr.move(14,0)
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.addstr(15,31,"Request Heartbeat \n")
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.refresh()
-        menu_get_heartbeat(infowin, ser)
+    #Infinite loop for the CLI menu
+    while True:
+        # Print main menu
+        userinput = main_menu(stdscr, menu)
+        infowin.clear()
+        if userinput == 'q':      # exit
+            break
 
-    elif userinput == '3':    # request all heartbeat (broadcast)
-        stdscr.move(14,0)
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.addstr(15,11,"Request All Heartbeats (broadcast) - EXPERIMENTAL\n")
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.refresh()
-        request_heartbeat_broadcast(infowin)
+        elif userinput == '1':    # send traffic info
+            stdscr.move(14,0)
+            stdscr.addstr("-"*80)
+            stdscr.addstr(15,31,"Send traffic info \n")
+            stdscr.addstr("-"*80)
+            stdscr.refresh()
+            pack = bytearray(16)
+            get_traffic(infowin, pack)
+            send_traffic(ser, pack)
 
-    elif userinput == '4':
-        stdscr.move(14,0)
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.addstr(15,31,"Request All Heartbeats (loop)\n")
-        stdscr.addstr("-"*80 + '\n' )
-        stdscr.refresh()
-        request_heartbeat_loop(infowin, ser)
+        elif userinput == '2':    # request heartbeat
+            stdscr.move(14,0)
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr(15,31,"Request Heartbeat \n")
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.refresh()
+            menu_get_heartbeat(infowin, ser)
 
-curses.nocbreak()
-curses.endwin()
-print("Exiting The Unit CLI...")
+        elif userinput == '3':    # request all heartbeat (broadcast)
+            stdscr.move(14,0)
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr(15,11,"Request All Heartbeats (broadcast) - EXPERIMENTAL\n")
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.refresh()
+            request_heartbeat_broadcast(infowin)
+
+        elif userinput == '4':
+            stdscr.move(14,0)
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr(15,31,"Request All Heartbeats (loop)\n")
+            stdscr.addstr("-"*80 + '\n' )
+            stdscr.refresh()
+            request_heartbeat_loop(infowin, ser)
+
+    curses.nocbreak()
+    curses.endwin()
+    print("Exiting The Unit CLI...")
+
+if __name__ == "__main__":
+    __main__()
