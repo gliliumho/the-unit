@@ -21,18 +21,18 @@ gonna know if their slaves are alive or not. Else who would be wiping their shoe
 relay method.
 
 Phase 2 of the project will include sensors(or cameras, even though unlikely) to collect data along the highway.
-At the time of typing this, we're still unclear of what sensor to be installed. 
+At the time of typing this, we're still unclear of what sensor to be installed.
 
 ## Hardware ##
 
 For the actual hardware schematics, you can ask Hakim or Ramesh for hardware design. However, since Recogine is
 mainly a software company and the fact that you're reading this, you're probably a software person. BUT! You'll
-still need some basic knowledge on computer hardware to understand what the registers are doing. 
+still need some basic knowledge on computer hardware to understand what the registers are doing.
 
 The hardware that we used in phase 1 is [Nordic Semiconductor NRF9E5](http://goo.gl/kr0hHA) for slave and
 [RIoTboard](http://riotboard.org/) for master. I'd suggest read the [NRF9E5 spec sheet](http://goo.gl/NSFea8),
 especially the NRF905(transceiver) part and also the registers part. For RIoTboard, just refer to the spec
-sheet/user manual for the GPIO pin mapping. 
+sheet/user manual for the GPIO pin mapping.
 
 
 ## Software ##
@@ -43,21 +43,17 @@ Programming of the slaves are done in Keil-C, Cx51. All the codes for slave will
 uVision4 or uVision5. You may read the sample codes from Nordic Semiconductor or some of the test codes that we
 previously wrote.  
 
-1. **testRange** - written for range test for evaluation kit.
+1. **masterRF** - *Dependencies: libnrf9e5.LIB*
 
-2. **testEEPROM** - test saving groupID & uniqueID in EEPROM.
-*Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
+2. **slaveRF** - *Dependencies: libnrf9e5.LIB*
 
-				 
-3. **testTwoWay** - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using
-delay. Will try using buffer to prevent "echo" problem and packet ID. 
-*Dependencies: libnrf9e5.LIB(/slave_unit/library/uVision)*
-
-4. **library** - source code for library of functions. 
-**Dependency for testEEPROM & testTwoWay.**
+3. **library** - source code for library of functions.
 
 
-Following codes are archived test codes:
+Following codes are archived/retired test codes:
++ _testRange_ - written for range test for evaluation kit.
++ _testEEPROM_ - test saving groupID & uniqueID in EEPROM. *Dependencies: libnrf9e5.LIB*
++ _testTwoWay_ - huge blob of mess. Used to test two-way communication such as traffic info & heartbeat using delay. Will try using buffer to prevent "echo" problem and packet ID. *Dependencies: libnrf9e5.LIB*
 + _testRFString_ - Written to test sending multiple bytes through RF.
 + _testMultiHop_ - PoC for The Unit hopping architecture. At the point when this was written, only
 one-way communication (master to slave) was supported. To learn about two-way communication, look at
@@ -66,10 +62,10 @@ testTwoWay.
 
 ### Master Unit ###
 
-_There is still quite a lot more work to do for master._ 
+_There is still quite a lot more work to do for master._
 
-We need to do the following things: 
-+ integrate it with traffic server 
+We need to do the following things:
++ integrate it with traffic server
 + write APIs so we can integrate it with 3rd party traffic servers
 + integrate with an RF transceiver using UART. This will require coding on both master & slave
 

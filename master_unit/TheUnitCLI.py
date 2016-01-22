@@ -43,43 +43,49 @@ def is_int(s):
         return False
 
 
-def menu_screen(stdscr):
-    stdscr.clear()
-    stdscr.addstr(0,0, "="*80 )
-    stdscr.addstr(1,0, "="*80 )
-    stdscr.addstr(2,30, "The Unit CLI Menu")
-    stdscr.addstr(3,0, "="*80 )
-    stdscr.addstr(4,0, "="*80 )
-    stdscr.addstr(6, 10, "1. Send Traffic Info(manual)")
-    stdscr.addstr(7, 10, "2. Request Heartbeat")
-    stdscr.addstr(8, 10, "3. Request Heartbeat from All Slaves (broadcast) - EXPERIMENTAL")
-    stdscr.addstr(9, 10, "4. Request Heartbeat from All Slaves (loop)")
-    stdscr.addstr(10,10, "q. Exit")
-    stdscr.addstr(12,10, "Select: ")
-    stdscr.refresh()
+def init_menuscreen(stdscr, menuscr, clear_stdscr=0, clear_menu=0):
+    if clear_stdscr == 1:
+        stdscr.clear()
+        stdscr.move(0,0)
+        stdscr.addstr("="*160)
+        stdscr.addstr(2,30, "The Unit CLI Menu\n")
+        stdscr.addstr("="*160)
+        stdscr.refresh()
+
+    if clear_menu == 1:
+        menuscr.clear()
+        menuscr.move(0,0)
+        menuscr.addstr("1. Send Traffic Info(manual)\n")
+        menuscr.addstr("2. Request Heartbeat\n")
+        menuscr.addstr("3. Request All Heartbeat (broadcast) - EXPERIMENTAL\n")
+        menuscr.addstr("4. Request All Heartbeat (loop)\n")
+        menuscr.addstr("q. Exit\n\n")
+        menuscr.addstr("Select: ")
+        menuscr.refresh()
 
 
-def main_menu(stdscr):
+
+def main_menu(stdscr, menuscr):
     """ Prints menu and returns user input (ranging from 0 to 4) """
-
-    menu_screen(stdscr)
+    init_menuscreen(stdscr, menuscr, 0, 1)
     while True:
-        stdscr.move(12,18)
-        c = stdscr.getch()
+        menuscr.move(6,8)
+        c = menuscr.getch()
         c = chr(c)
         if ('1' <= c <= '4') or (c == 'q'):
-            menu_screen(stdscr)
-            stdscr.refresh()
+            init_menuscreen(stdscr, menuscr, 1, 1)
             return c
         else:
-            stdscr.addstr(11,9, "ERROR: INPUT MUST CONTAIN NUMBER ONLY")
-            stdscr.refresh()
+            menuscr.addstr(5,0, "ERROR: INPUT MUST CONTAIN NUMBER ONLY")
+            menuscr.refresh()
 
 
-def get_traffic(pack):
+def get_traffic(infowin, pack):
     for i in range(len(pack)):
         if 2 <= i <= 5:
-            pack[i] = int(input("Traffic info for group "+str(i-1)+": "))
+            infowin.addstr(i-2,0, "Traffic info for group "+str(i-1)+": ")
+            c = chr(infowin.getch())
+            pack[i] = int(c)
         elif i == 15:
             pack[i] = 0x0a
         else:
@@ -90,27 +96,26 @@ def send_traffic(serialport, pack):
     """ Formats the bytearray(packet) and write to serialport """
     pack[0] = 0x01
     pack[1] = 0x00
-    # print(pack)
     serialport.write(pack)
 
 
-def menu_get_heartbeat(serialport):
-    line = input("Enter GroupID.UniqueID: ")
-    ids = line.split('.')
-    gid = int(ids[0])
-    uid = int(ids[1])
+def menu_get_heartbeat(infowin, serialport):
+    infowin.addstr(0,0, "Enter GroupID.UniqueID (eg. 3.4): ")
+    infowin.refresh()
+    # s = infowin.getstr()
+    gid = int(infowin.getkey())
+    infowin.addch('.')
+    uid = int(infowin.getkey())
+    s = str(gid) + '.' + str(uid)
 
-    print("Requesting heartbeat from "+str(gid)+'.'+str(uid))
+    infowin.addstr(1,0,"Requesting heartbeat from "+s+'\n')
+    infowin.refresh()
     ret = request_heartbeat(ser, gid, uid)
     if ret == True:
-        print(bcolors.GREEN + \
-            "Slave " + str(gid) + '.' + str(uid) + " is alive" + bcolors.RESET)
+        infowin.addstr("Slave "+s+" is alive\n")
     else:
-        print(bcolors.YELLOW + \
-            "No reply from slave " + str(gid) + '.' + str(uid) + bcolors.RESET)
-        #return False
-    # else:
-    #     print("timeout.."+str(i))
+        infowin.addstr("No reply from slave "+s+"\n")
+    infowin.refresh()
 
 
 def request_heartbeat(serialport, gid, uid):
@@ -130,14 +135,13 @@ def request_heartbeat(serialport, gid, uid):
     return False
 
 
-def request_heartbeat_broadcast():
-    print(bcolors.RED + \
-        "Feature not implemented yet. Please contact the developer." + \
-        bcolors.RESET)
-    return 0
+def request_heartbeat_broadcast(infowin):
+    infowin.addstr(0,0, "Feature not implemented yet. Please contact dev.")
+    infowin.refresh()
+    return False
 
 
-def request_heartbeat_loop(serialport):
+def request_heartbeat_loop(infowin, serialport):
     """ Request heartbeat from slaves in idlist.txt and logs status
         in cli_slave_status.txt """
     idfile = open("idlist.txt",'r')
@@ -151,31 +155,42 @@ def request_heartbeat_loop(serialport):
         idlist.append( idline_list )
     idfile.close()
 
-    total_slave = 0
+    win_yx = infowin.getmaxyx()
     success_slave = 0
+    infowin.idlok(1)
+    infowin.scrollok(True)
 
     for i in range(len(idlist)):
-        total_slave += 1
-        print("Slave " + str(idlist[i][0]) + '.' + str(idlist[i][1]) + \
-            '\t: ', end='')
+        ids = str(idlist[i][0]) + '.' + str(idlist[i][1])
+        if i < win_yx[0]:
+            row = i
+        else:
+            row = win_yx[0]-1
+            # infowin.scroll()
+        infowin.addstr(row, 0, "Slave " + ids + '\t: ')
+        infowin.refresh()
+        # print("Slave " + ids + '\t: ', end='')
         ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
         if ret == True:
             success_slave += 1
-            print(bcolors.GREEN + "Alive" + bcolors.RESET)
+            infowin.addstr("Alive\n")
+            infowin.refresh()
+            # print(bcolors.GREEN + "Alive" + bcolors.RESET)
             idlist[i].append('Alive')
         else:
-            print(bcolors.RED + "Dead" + bcolors.RESET)
+            infowin.addstr("Dead\n")
+            infowin.refresh()
             idlist[i].append('Dead')
 
-    print(bcolors.BLUE + "Summary: " + \
-        str(success_slave) + '/' + str(total_slave) + " slaves alive" + bcolors.RESET)
-
+    # infowin.move(win_yx[0]-1,0)
+    infowin.scroll(2)
+    infowin.addstr("Summary: " + \
+        str(success_slave) + '/' + str(len(idlist)) + " slaves alive")
+    infowin.refresh()
     logfile = open("cli_slave_status.log", 'w')
-
     for i in range(len(idlist)):
         line = str(idlist[i][0])+'.'+str(idlist[i][1])+' \t'+idlist[i][2]+'\n'
         logfile.write(line)
-
     logfile.close()
 
 
@@ -190,35 +205,51 @@ print("\nStarting The Unit CLI..")
 ser = init_serial()
 stdscr = curses.initscr()
 curses.cbreak()
+menu = curses.newwin(7, 60, 6, 10)
+infowin = curses.newwin(15,60,17,10)
+
+init_menuscreen(stdscr, menu,1,1)
 
 #Infinite loop for the CLI menu
 while True:
     # Print main menu
-    userinput = main_menu(stdscr)
-
+    userinput = main_menu(stdscr, menu)
+    infowin.clear()
     if userinput == 'q':      # exit
         break
     elif userinput == '1':    # send traffic info
-        stdscr.addstr(14,0, "-"*80 )
-        stdscr.addstr(15,31,"Send traffic info ")
-        stdscr.addstr(16,0, "-"*80 )
+        stdscr.move(14,0)
+        stdscr.addstr("-"*80)
+        stdscr.addstr(15,31,"Send traffic info \n")
+        stdscr.addstr("-"*80)
         stdscr.refresh()
         pack = bytearray(16)
-        get_traffic(pack)
+        get_traffic(infowin, pack)
         send_traffic(ser, pack)
 
     elif userinput == '2':    # request heartbeat
-        print(bcolors.BOLD + "=====Request Heartbeat=====" + bcolors.RESET)
-        menu_get_heartbeat(ser)
+        stdscr.move(14,0)
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.addstr(15,31,"Request Heartbeat \n")
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.refresh()
+        menu_get_heartbeat(infowin, ser)
 
     elif userinput == '3':    # request all heartbeat (broadcast)
-        request_heartbeat_broadcast()
+        stdscr.move(14,0)
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.addstr(15,11,"Request All Heartbeats (broadcast) - EXPERIMENTAL\n")
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.refresh()
+        request_heartbeat_broadcast(infowin)
 
     elif userinput == '4':
-        break
-        print(bcolors.BOLD + \
-            "=====Request Heartbeat (Loop)=====" + bcolors.RESET)
-        request_heartbeat_loop(ser)
+        stdscr.move(14,0)
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.addstr(15,31,"Request All Heartbeats (loop)\n")
+        stdscr.addstr("-"*80 + '\n' )
+        stdscr.refresh()
+        request_heartbeat_loop(infowin, ser)
 
 curses.nocbreak()
 curses.endwin()
