@@ -24,9 +24,9 @@ void SlaveOp_Buffer(unsigned char gid, unsigned char uid){
 			if(b[1]==gid && b[2]==uid){
 				// for(i=0; i<10; i++)
 				SendHeartbeat(gid, uid);
-			} else if(b[1] <= gid){
-				PutString("Relaying HB Request!\r\n");
+			} else if(b[1] >= gid){
 				SlaveRelay(b);
+				PutString("Relaying HB Request!\r\n");
 			}
 		} else if(b[0] == HEARTBEAT_REPLY_HEADER && b[1] >= gid){
 			SlaveRelay(b);
@@ -175,7 +175,7 @@ void SendHeartbeat(unsigned char gid, unsigned char uid){
 
 //will decide if retransmit the payload or not. TX. Slave only
 void SlaveRelay(unsigned char b[PACKET_SIZE]){
-	unsigned char i;
+	// unsigned char i;
 	packetID temp_packet;
 
 	if(b[0] == 0x01 || b[0] == 0x04){
@@ -191,13 +191,14 @@ void SlaveRelay(unsigned char b[PACKET_SIZE]){
 	if( !CheckBuffer(temp_packet) ){
 		PacketIdCpy(&id_buffer[buffer_count], temp_packet); //id_buffer is global
 
+		TXEN =1;
+		// for(i=0;i<2;i++)
+		TransmitPacket(b);
+
 		buffer_count++;					//global
 		if(buffer_count > 5)			//global
 			buffer_count = 0;			//global
 
-		TXEN =1;
-		for(i=0;i<2;i++)
-			TransmitPacket(b);
 	}
 
 }
