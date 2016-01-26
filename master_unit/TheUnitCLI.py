@@ -20,7 +20,11 @@ def init_serial():
             print("Unknown platform...")
             port = '/dev/ttyS2'
 
-    ser_port = serial.Serial(port, 9600)
+    try:
+        ser_port = serial.Serial(port, 9600)
+    except:
+        print("Error opening ", str(port) )
+        return False
     print("Serial port "+ser_port.name+" opened.")
     return ser_port
 
@@ -192,6 +196,8 @@ def __main__():
     print("\nStarting The Unit CLI..")
 
     ser = init_serial()
+    if ser == False:
+        exit()
     stdscr = curses.initscr()
     curses.cbreak()
     menu = curses.newwin(7, 60, 6, 10)
@@ -219,25 +225,25 @@ def __main__():
 
         elif userinput == '2':    # request heartbeat
             stdscr.move(14,0)
-            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr("-"*80)
             stdscr.addstr(15,31,"Request Heartbeat \n")
-            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr("-"*80)
             stdscr.refresh()
             menu_get_heartbeat(infowin, ser)
 
         elif userinput == '3':    # request all heartbeat (broadcast)
             stdscr.move(14,0)
-            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr("-"*80)
             stdscr.addstr(15,11,"Request All Heartbeats (broadcast) - EXPERIMENTAL\n")
-            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr("-"*80)
             stdscr.refresh()
             request_heartbeat_broadcast(infowin)
 
         elif userinput == '4':
             stdscr.move(14,0)
-            stdscr.addstr("-"*80 + '\n' )
-            stdscr.addstr(15,31,"Request All Heartbeats (loop)\n")
-            stdscr.addstr("-"*80 + '\n' )
+            stdscr.addstr("-"*80)
+            stdscr.addstr(15,26,"Request All Heartbeats (loop)\n")
+            stdscr.addstr("-"*80)
             stdscr.refresh()
             request_heartbeat_loop(infowin, ser)
 
