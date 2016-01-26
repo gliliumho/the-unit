@@ -111,9 +111,9 @@ void SendHeartbeat(unsigned char gid, unsigned char uid){
 		b[i] = 0x00;
 
 	TXEN = 1;
-	for(i=0; i<3; i++){
+	for(i=0; i<5; i++){
 		TransmitPacket(b);
-		Delay400us(i);
+		Delay400us(i+1);
 	}
 
 	packet_count++;					//global variable

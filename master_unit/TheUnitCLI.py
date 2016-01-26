@@ -3,6 +3,7 @@ import sys
 import serial
 import curses
 
+
 def init_serial():
     """ Initialize serial port according to platform and
         return the Serial object"""
@@ -29,13 +30,8 @@ def init_serial():
     return ser_port
 
 
-def is_int(s):
-    """ Function to check if s can be converted to int """
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
+# def init_tcp_conn():
+#
 
 
 def init_menuscreen(stdscr, menuscr, clear_stdscr=0, clear_menu=0):
@@ -57,7 +53,6 @@ def init_menuscreen(stdscr, menuscr, clear_stdscr=0, clear_menu=0):
         menuscr.addstr("q. Exit\n\n")
         menuscr.addstr("Select: ")
         menuscr.refresh()
-
 
 
 def main_menu(stdscr, menuscr):
