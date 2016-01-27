@@ -1,10 +1,12 @@
+#!/bin/python3
+
+# Written to test TCP connection with RT server
 import socket
 
 # host = socket.gethostbyname(socket.getfqdn())
 # port = 20203
 host = '172.17.13.105'
 port = 9002
-
 
 s = socket.socket()
 s.connect((host, port))

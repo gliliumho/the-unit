@@ -185,7 +185,7 @@ def request_heartbeat_loop(infowin, serialport):
 
 # ------------------------------------------------------------------------------
 
-def __main__():
+def main():
     #from custom_unit_test import test
 
     print("\nStarting The Unit CLI..")
@@ -247,4 +247,4 @@ def __main__():
     print("Exiting The Unit CLI...")
 
 if __name__ == "__main__":
-    __main__()
+    main()

@@ -3,163 +3,168 @@ Message type with * didn't use by other application except RT Server & RT Engine
 RT Server Traffic Message
 	Prepopulate
 	<msg><?xml version="1.0" encoding="utf-8"?>
-	<VIDSTrafficInfoPrepopulateMessage>
-	<MessageID>20131025103417735106</MessageID>
-	<MessageType>Prepopulate</MessageType>
-	<SenderIP>127.0.0.1</SenderIP>
-	<CreatedDateTime>2013-10-25T10:34:17.735106</CreatedDateTime>
-	<CameraIP>172.17.13.100</CameraIP>
-	<VIDSTrafficInfo>
-	<UpdateDateTime>2013-10-25T10:34:17.735106</UpdateDateTime>
-	<LatestTrafficStatistic>
-	<VIDSName>TDC_002</VIDSName>
-	<VIDSLocation>VIDSLocation</VIDSLocation>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<TrafficDateTime>2013-10-25T10:34:17.735106</TrafficDateTime>
-	<DataRetrievalEndDateTime>2013-10-25T10:34:17.735106</DataRetrievalEndDateTime>
-	<DurationInMinutes>1</DurationInMinutes>
-	<CountTotal>0</CountTotal>
-	<CountClassA>0</CountClassA>
-	<CountClassB>0</CountClassB>
-	<CountClassC>0</CountClassC>
-	<CountClassD>0</CountClassD>
-	<CountClassE>0</CountClassE>
-	<CountClassF>0</CountClassF>
-	<AverageSpeed>0</AverageSpeed>
-	<AverageTimeOccupancy>0</AverageTimeOccupancy>
-	<AverageFlowRate>0</AverageFlowRate>
-	<AverageTimeHeadway>0</AverageTimeHeadway>
-	<LevelOfService>A</LevelOfService>
-	<CongestionLevel>0</CongestionLevel>
-	<AverageSpaceOccupancy>0</AverageSpaceOccupancy>
-	<Density>0</Density>
-	<SpaceMeanSpeed>0</SpaceMeanSpeed>
-	</LatestTrafficStatistic>
-	</VIDSTrafficInfo>
-	</VIDSTrafficInfoPrepopulateMessage>
+		<VIDSTrafficInfoPrepopulateMessage>
+		<MessageID>20131025103417735106</MessageID>
+		<MessageType>Prepopulate</MessageType>
+		<SenderIP>127.0.0.1</SenderIP>
+		<CreatedDateTime>2013-10-25T10:34:17.735106</CreatedDateTime>
+		<CameraIP>172.17.13.100</CameraIP>
+			<VIDSTrafficInfo>
+				<UpdateDateTime>2013-10-25T10:34:17.735106</UpdateDateTime>
+				<LatestTrafficStatistic>
+					<VIDSName>TDC_002</VIDSName>
+					<VIDSLocation>VIDSLocation</VIDSLocation>
+					<CameraPreset>1</CameraPreset>
+					<GroupID>1_N</GroupID>
+					<TrafficDateTime>2013-10-25T10:34:17.735106</TrafficDateTime>
+					<DataRetrievalEndDateTime>2013-10-25T10:34:17.735106</DataRetrievalEndDateTime>
+					<DurationInMinutes>1</DurationInMinutes>
+					<CountTotal>0</CountTotal>
+					<CountClassA>0</CountClassA>
+					<CountClassB>0</CountClassB>
+					<CountClassC>0</CountClassC>
+					<CountClassD>0</CountClassD>
+					<CountClassE>0</CountClassE>
+					<CountClassF>0</CountClassF>
+					<AverageSpeed>0</AverageSpeed>
+					<AverageTimeOccupancy>0</AverageTimeOccupancy>
+					<AverageFlowRate>0</AverageFlowRate>
+					<AverageTimeHeadway>0</AverageTimeHeadway>
+					<LevelOfService>A</LevelOfService>
+					<CongestionLevel>0</CongestionLevel>
+					<AverageSpaceOccupancy>0</AverageSpaceOccupancy>
+					<Density>0</Density>
+					<SpaceMeanSpeed>0</SpaceMeanSpeed>
+				</LatestTrafficStatistic>
+			</VIDSTrafficInfo>
+		</VIDSTrafficInfoPrepopulateMessage>
 	</msg>
 
 
 	Traffic Data
 	<msg><?xml version="1.0" encoding="utf-8"?>
-	<TrafficStatisticMessage>
-		<MessageID>20131025103419335707</MessageID>
-		<MessageType>TrafficStatistic</MessageType>
-		<SenderIP>127.0.0.1</SenderIP>
-		<CreatedDateTime>2013-10-25T10:34:19.335707</CreatedDateTime>
-		<TrafficStatistic>
-			<VIDSName>TDC_002</VIDSName>
-			<VIDSLocation>VIDSLocation</VIDSLocation>
-			<CameraPreset>1</CameraPreset>
-			<GroupID>1_N</GroupID>
-			<TrafficDateTime>2013-10-25T10:34:19.335707</TrafficDateTime>
-			<DataRetrievalEndDateTime>2013-10-25T10:34:19.335707</DataRetrievalEndDateTime>
-			<DurationInMinutes>1</DurationInMinutes>
-			<CountTotal>6</CountTotal>
-			<CountClassA>1</CountClassA>
-			<CountClassB>1</CountClassB>
-			<CountClassC>1</CountClassC>
-			<CountClassD>1</CountClassD>
-			<CountClassE>1</CountClassE>
-			<CountClassF>1</CountClassF>
-			<AverageSpeed>231</AverageSpeed>
-			<AverageTimeOccupancy>1.21</AverageTimeOccupancy>
-			<AverageFlowRate>3221</AverageFlowRate>
-			<AverageTimeHeadway>1.45</AverageTimeHeadway>
-			<LevelOfService>F</LevelOfService>
-			<CongestionLevel>2</CongestionLevel>
-			<AverageSpaceOccupancy>0.5600000000000001</AverageSpaceOccupancy>
-			<Density>0.474</Density>
-			<SpaceMeanSpeed>135</SpaceMeanSpeed>
-		</TrafficStatistic>
-	</TrafficStatisticMessage>
+		<TrafficStatisticMessage>
+			<MessageID>20131025103419335707</MessageID >
+			<MessageType>TrafficStatistic</MessageType>
+			<SenderIP>127.0.0.1</SenderIP>
+			<CreatedDateTime>2013-10-25T10:34:19.335707</CreatedDateTime>
+			<TrafficStatistic>
+				<VIDSName>TDC_002</VIDSName>
+				<VIDSLocation>VIDSLocation</VIDSLocation>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<TrafficDateTime>2013-10-25T10:34:19.335707</TrafficDateTime>
+				<DataRetrievalEndDateTime>2013-10-25T10:34:19.335707</DataRetrievalEndDateTime>
+				<DurationInMinutes>1</DurationInMinutes>
+				<CountTotal>6</CountTotal>
+				<CountClassA>1</CountClassA>
+				<CountClassB>1</CountClassB>
+				<CountClassC>1</CountClassC>
+				<CountClassD>1</CountClassD>
+				<CountClassE>1</CountClassE>
+				<CountClassF>1</CountClassF>
+				<AverageSpeed>231</AverageSpeed>
+				<AverageTimeOccupancy>1.21</AverageTimeOccupancy>
+				<AverageFlowRate>3221</AverageFlowRate>
+				<AverageTimeHeadway>1.45</AverageTimeHeadway>
+				<LevelOfService>F</LevelOfService>
+				<CongestionLevel>2</CongestionLevel>
+				<AverageSpaceOccupancy>0.5600000000000001</AverageSpaceOccupancy>
+				<Density>0.474</Density>
+				<SpaceMeanSpeed>135</SpaceMeanSpeed>
+			</TrafficStatistic>
+		</TrafficStatisticMessage>
 	</msg>
 
 
 
 
 	Incident - Stop Vehicle Alarm Start
-	<msg><IncidentMessage>
-	<MessageID>20131003171341190566</MessageID>
-	<MessageType>Incident</MessageType>
-	<SenderIP>172.17.11.7</SenderIP>
-	<CreatedDateTime>2013-10-03T17:13:41.190566</CreatedDateTime>
-	<Incident>
-	<VIDSName>TDC_001</VIDSName>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<IncidentType>StoppedVehicleStart</IncidentType>
-	<IncidentDateTime>2013-10-03T17:13:41.190566</IncidentDateTime>
-	<IncidentStartDateTime>2013-10-03T17:13:41.190566</IncidentStartDateTime>
-	<IncidentEndDateTime>2013-10-03T17:13:41.190566</IncidentEndDateTime>
-	</Incident>
-	</IncidentMessage>
+	<msg>
+		<IncidentMessage>
+			<MessageID>20131003171341190566</MessageID>
+			<MessageType>Incident</MessageType>
+			<SenderIP>172.17.11.7</SenderIP>
+			<CreatedDateTime>2013-10-03T17:13:41.190566</CreatedDateTime>
+			<Incident>
+				<VIDSName>TDC_001</VIDSName>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<IncidentType>StoppedVehicleStart</IncidentType>
+				<IncidentDateTime>2013-10-03T17:13:41.190566</IncidentDateTime>
+				<IncidentStartDateTime>2013-10-03T17:13:41.190566</IncidentStartDateTime>
+				<IncidentEndDateTime>2013-10-03T17:13:41.190566</IncidentEndDateTime>
+			</Incident>
+		</IncidentMessage>
 	</msg>
 
 
 
 	Incident - Stop Vehicle Alarm End
-	<msg><IncidentMessage>
-	<MessageID>20131003171342599262</MessageID>
-	<MessageType>Incident</MessageType>
-	<SenderIP>172.17.11.7</SenderIP>
-	<CreatedDateTime>2013-10-03T17:13:42.599262</CreatedDateTime>
-	<Incident>
-	<VIDSName>TDC_001</VIDSName>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<IncidentType>StoppedVehicleEnd</IncidentType>
-	<IncidentDateTime>2013-10-03T17:13:42.599262</IncidentDateTime>
-	<IncidentStartDateTime>2013-10-03T17:13:41.190566</IncidentStartDateTime>
-	<IncidentEndDateTime>2013-10-03T17:13:42.599262</IncidentEndDateTime>
-	</Incident>
-	</IncidentMessage>
+	<msg>
+		<IncidentMessage>
+			<MessageID>20131003171342599262</MessageID>
+			<MessageType>Incident</MessageType>
+			<SenderIP>172.17.11.7</SenderIP>
+			<CreatedDateTime>2013-10-03T17:13:42.599262</CreatedDateTime>
+			<Incident>
+				<VIDSName>TDC_001</VIDSName>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<IncidentType>StoppedVehicleEnd</IncidentType>
+				<IncidentDateTime>2013-10-03T17:13:42.599262</IncidentDateTime>
+				<IncidentStartDateTime>2013-10-03T17:13:41.190566</IncidentStartDateTime>
+				<IncidentEndDateTime>2013-10-03T17:13:42.599262</IncidentEndDateTime>
+			</Incident>
+		</IncidentMessage>
 	</msg>
 
 
 
 	Incident - Wrong Way Alarm Start
-	<msg><IncidentMessage>
-	<MessageID>20131003171748641467</MessageID>
-	<MessageType>Incident</MessageType>
-	<SenderIP>172.17.11.7</SenderIP>
-	<CreatedDateTime>2013-10-03T17:17:48.641467</CreatedDateTime>
-	<Incident>
-	<VIDSName>TDC_001</VIDSName>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<IncidentType>WrongWayVehicleStart</IncidentType>
-	<IncidentDateTime>2013-10-03T17:17:48.641467</IncidentDateTime>
-	<IncidentStartDateTime>2013-10-03T17:17:48.641467</IncidentStartDateTime>
-	<IncidentEndDateTime>2013-10-03T17:17:48.641467</IncidentEndDateTime>
-	</Incident>
-	</IncidentMessage>
+	<msg>
+		<IncidentMessage>
+			<MessageID>20131003171748641467</MessageID>
+			<MessageType>Incident</MessageType>
+			<SenderIP>172.17.11.7</SenderIP>
+			<CreatedDateTime>2013-10-03T17:17:48.641467</CreatedDateTime>
+			<Incident>
+				<VIDSName>TDC_001</VIDSName>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<IncidentType>WrongWayVehicleStart</IncidentType>
+				<IncidentDateTime>2013-10-03T17:17:48.641467</IncidentDateTime>
+				<IncidentStartDateTime>2013-10-03T17:17:48.641467</IncidentStartDateTime>
+				<IncidentEndDateTime>2013-10-03T17:17:48.641467</IncidentEndDateTime>
+			</Incident>
+		</IncidentMessage>
 	</msg>
 	
 
 	Incident - Wrong Way Vehicle End
-	<msg><IncidentMessage>
-	<MessageID>20131003171749445720</MessageID>
-	<MessageType>Incident</MessageType>
-	<SenderIP>172.17.11.7</SenderIP>
-	<CreatedDateTime>2013-10-03T17:17:49.445720</CreatedDateTime>
-	<Incident>
-	<VIDSName>TDC_001</VIDSName>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<IncidentType>WrongWayVehicleEnd</IncidentType>
-	<IncidentDateTime>2013-10-03T17:17:49.445720</IncidentDateTime>
-	<IncidentStartDateTime>2013-10-03T17:17:48.641467</IncidentStartDateTime>
-	<IncidentEndDateTime>2013-10-03T17:17:49.445720</IncidentEndDateTime>
-	</Incident>
-	</IncidentMessage>
+	<msg>
+		<IncidentMessage>
+			<MessageID>20131003171749445720</MessageID>
+			<MessageType>Incident</MessageType>
+			<SenderIP>172.17.11.7</SenderIP>
+			<CreatedDateTime>2013-10-03T17:17:49.445720</CreatedDateTime>
+			<Incident>
+				<VIDSName>TDC_001</VIDSName>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<IncidentType>WrongWayVehicleEnd</IncidentType>
+				<IncidentDateTime>2013-10-03T17:17:49.445720</IncidentDateTime>
+				<IncidentStartDateTime>2013-10-03T17:17:48.641467</IncidentStartDateTime>
+				<IncidentEndDateTime>2013-10-03T17:17:49.445720</IncidentEndDateTime>
+			</Incident>
+		</IncidentMessage>
 	</msg>
 	
 
 
 	Incident - Congested Alarm Start
-	<msg><IncidentMessage>
+<msg>
+	<IncidentMessage>
 		<MessageID>20131003172058941277</MessageID>
 		<MessageType>Incident</MessageType>
 		<SenderIP>172.17.11.7</SenderIP>
@@ -174,157 +179,169 @@ RT Server Traffic Message
 			<IncidentEndDateTime>2013-10-03T17:20:58.941277</IncidentEndDateTime>
 		</Incident>
 	</IncidentMessage>
-	</msg>
+</msg>
 
 
 	Incident - Congested Alarm End
-	<msg><IncidentMessage>
-	<MessageID>20131003172059190046</MessageID>
-	<MessageType>Incident</MessageType>
-	<SenderIP>172.17.11.7</SenderIP>
-	<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
-	<Incident>
-	<VIDSName>TDC_001</VIDSName>
-	<CameraPreset>1</CameraPreset>
-	<GroupID>1_N</GroupID>
-	<IncidentType>CongestionEnd</IncidentType>
-	<IncidentDateTime>2013-10-03T17:20:59.190046</IncidentDateTime>
-	<IncidentStartDateTime>2013-10-03T17:20:58.941277</IncidentStartDateTime>
-	<IncidentEndDateTime>2013-10-03T17:20:59.190046</IncidentEndDateTime>
-	</Incident>
-	</IncidentMessage>
+	<msg>
+		<IncidentMessage>
+			<MessageID>20131003172059190046</MessageID>
+			<MessageType>Incident</MessageType>
+			<SenderIP>172.17.11.7</SenderIP>
+			<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
+			<Incident>
+				<VIDSName>TDC_001</VIDSName>
+				<CameraPreset>1</CameraPreset>
+				<GroupID>1_N</GroupID>
+				<IncidentType>CongestionEnd</IncidentType>
+				<IncidentDateTime>2013-10-03T17:20:59.190046</IncidentDateTime>
+				<IncidentStartDateTime>2013-10-03T17:20:58.941277</IncidentStartDateTime>
+				<IncidentEndDateTime>2013-10-03T17:20:59.190046</IncidentEndDateTime>
+			</Incident>
+		</IncidentMessage>
 	</msg>
 	
 	Streaming Alarm - Stream OK
-	<msg><RecoTrafficStatus>
-	<VIDSName>TDC_001</VIDSName>
-	<SenderIP>172.17.11.7</SenderIP>
-	<MessageType>Streaming</MessageType>
-	<Status>1</Status>
-	<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
-	</RecoTrafficStatus>
+	<msg>
+		<RecoTrafficStatus>
+			<VIDSName>TDC_001</VIDSName>
+			<SenderIP>172.17.11.7</SenderIP>
+			<MessageType>Streaming</MessageType>
+			<Status>1</Status>
+			<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
+		</RecoTrafficStatus>
 	</msg>
 	
 	
 	Streaming Alarm - Fail To Stream
-	<msg><RecoTrafficStatus>
-	<VIDSName>TDC_001</VIDSName>
-	<SenderIP>172.17.11.7</SenderIP>
-	<MessageType>Streaming</MessageType>
-	<Status>0</Status>
-	<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
-	</RecoTrafficStatus>
+	<msg>
+		<RecoTrafficStatus>
+			<VIDSName>TDC_001</VIDSName>
+			<SenderIP>172.17.11.7</SenderIP>
+			<MessageType>Streaming</MessageType>
+			<Status>0</Status>
+			<CreatedDateTime>2013-10-03T17:20:59.190046</CreatedDateTime>
+		</RecoTrafficStatus>
 	</msg>
 
 	
 Alarm (Connection RT Server <–> RT Engine)
 	Connected TDC
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165530635163873307041886</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-	<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
-	<AlarmType>RecoTrafficConnected</AlarmType>
-	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165530635163873307041886</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
+			<AlarmType>RecoTrafficConnected</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 	Disconnected TDC
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003163400635163860408946336</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-	<CreatedDateTime>2013-10-03T16:34:00.8946336+08:00</CreatedDateTime>
-	<AlarmType>RecoTrafficDisconnected</AlarmType>
-	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003163400635163860408946336</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:34:00.8946336+08:00</CreatedDateTime>
+			<AlarmType>RecoTrafficDisconnected</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 	TDC Connection Closed At RT Server
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165350635163872306098235</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-	<CreatedDateTime>2013-10-03T16:53:50.6098235+08:00</CreatedDateTime>
-	<AlarmType>RecoTrafficConnectionClosed</AlarmType>
-	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165350635163872306098235</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:53:50.6098235+08:00</CreatedDateTime>
+			<AlarmType>RecoTrafficConnectionClosed</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 
 
 Alarm (RecoTraffic Engine Status)
 	RecoTraffic Engine Start
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165530635163873307041886</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-	<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
-	<AlarmType>RecoTrafficStarted-CameraFault</AlarmType>
-	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165530635163873307041886</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
+			<AlarmType>RecoTrafficStarted-CameraFault</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 	RecoTraffic Engine Stop
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165530635163873307041886</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-  	<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
- 	<AlarmType>RecoTrafficStopped-CameraFault</AlarmType>
- 	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165530635163873307041886</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
+			<AlarmType>RecoTrafficStopped-CameraFault</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 
 Alarm (CameraMoved)
 	RecoTraffic Engine Start
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165530635163873307041886</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-	<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
-	<AlarmType>CameraMoved - RecoTrafficStarted</AlarmType>
-	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165530635163873307041886</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
+			<AlarmType>CameraMoved - RecoTrafficStarted</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 	RecoTraffic Engine Stop
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165530635163873307041886</MessageID>
-	<MessageType>Alarm</MessageType>
-	<SenderIP>172.17.11.15</SenderIP>
-  	<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
- 	<AlarmType>CameraMoved - RecoTrafficStopped</AlarmType>
- 	<TargetIP>172.17.11.7</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165530635163873307041886</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:55:30.7041886+08:00</CreatedDateTime>
+			<AlarmType>CameraMoved - RecoTrafficStopped</AlarmType>
+			<TargetIP>172.17.11.7</TargetIP>
+		</Alarm>
+	</msg>
 
 
 
 Alarm (PTZ Camera Status)
 	Camera Disconnected
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165930635163875704332372</MessageID>
- 	<MessageType>Alarm</MessageType>
- 	<SenderIP>172.17.11.15</SenderIP>
- 	<CreatedDateTime>2013-10-03T16:59:30.4332372+08:00</CreatedDateTime>
- 	<AlarmType>CameraDisconnected</AlarmType>
- 	<TargetIP>172.17.13.100</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165930635163875704332372</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:59:30.4332372+08:00</CreatedDateTime>
+			<AlarmType>CameraDisconnected</AlarmType>
+			<TargetIP>172.17.13.100</TargetIP>
+		</Alarm>
+	</msg>
 	
 
 	Camera Reconnected
 	<msg><?xml version="1.0"?>
-	<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<MessageID>20131003165937635163875775776216</MessageID>
-	<MessageType>Alarm</MessageType>
- 	<SenderIP>172.17.11.15</SenderIP>
- 	<CreatedDateTime>2013-10-03T16:59:37.5766223+08:00</CreatedDateTime>
- 	<AlarmType>CameraReconnected</AlarmType>
-	<TargetIP>172.17.13.100</TargetIP>
-	</Alarm></msg>
+		<Alarm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003165937635163875775776216</MessageID>
+			<MessageType>Alarm</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T16:59:37.5766223+08:00</CreatedDateTime>
+			<AlarmType>CameraReconnected</AlarmType>
+			<TargetIP>172.17.13.100</TargetIP>
+		</Alarm>
+	</msg>
 
 	Camera Leave/Enter Preset*
 		Camera Leave Preset*
@@ -364,26 +381,26 @@ Alarm (PTZ Camera Status)
 RT Server – RT Engine (Command)*
 	Start Engine*
 	<msg><?xml version="1.0"?>
-	<IVAEngineCommandMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  	<MessageID>20131003173407635163896477529593</MessageID>
-  	<MessageType>IVAEngineCommand</MessageType>
-  	<SenderIP>172.17.11.15</SenderIP>
-  	<CreatedDateTime>2013-10-03T17:34:07.7529593+08:00</CreatedDateTime>
-  	<Command>StartEngine</Command>
-  	<IVAEngineID>1</IVAEngineID>
-	</IVAEngineCommandMessage>
+		<IVAEngineCommandMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003173407635163896477529593</MessageID>
+			<MessageType>IVAEngineCommand</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T17:34:07.7529593+08:00</CreatedDateTime>
+			<Command>StartEngine</Command>
+			<IVAEngineID>1</IVAEngineID>
+		</IVAEngineCommandMessage>
 	</msg>
 
 	Stop Engine*
 	<msg><?xml version="1.0"?>
-	<IVAEngineCommandMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  	<MessageID>20131003173734635163898542707560</MessageID>
-  	<MessageType>IVAEngineCommand</MessageType>
-  	<SenderIP>172.17.11.15</SenderIP>
-  	<CreatedDateTime>2013-10-03T17:37:34.270756+08:00</CreatedDateTime>
-  	<Command>StopEngine</Command>
-  	<IVAEngineID>-1</IVAEngineID>
-	</IVAEngineCommandMessage>
+		<IVAEngineCommandMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<MessageID>20131003173734635163898542707560</MessageID>
+			<MessageType>IVAEngineCommand</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-03T17:37:34.270756+08:00</CreatedDateTime>
+			<Command>StopEngine</Command>
+			<IVAEngineID>-1</IVAEngineID>
+		</IVAEngineCommandMessage>
 	</msg>
 
 
@@ -391,13 +408,14 @@ RT Server – RT Engine (Command)*
 Estimated Journey Time
 	Subscribe
 	<msg><?xml version="1.0"?>
-	<EJTSubscription xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">  	<MessageID>20131030124944635187053841236231</MessageID>  <MessageType>EJTSubscription</MessageType>
-  	<SenderIP>172.17.11.15</SenderIP>
-  	<CreatedDateTime>2013-10-30T12:49:44.1236231+08:00</CreatedDateTime>
-  	<EJTInterval>15</EJTInterval>
-  	<OriginPOI>KLCC</OriginPOI>
-  	<DestinationPOI>Lowyat</DestinationPOI>
-	</EJTSubscription></msg>
+		<EJTSubscription xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">  	<MessageID>20131030124944635187053841236231</MessageID>  <MessageType>EJTSubscription</MessageType>
+			<SenderIP>172.17.11.15</SenderIP>
+			<CreatedDateTime>2013-10-30T12:49:44.1236231+08:00</CreatedDateTime>
+			<EJTInterval>15</EJTInterval>
+			<OriginPOI>KLCC</OriginPOI>
+			<DestinationPOI>Lowyat</DestinationPOI>
+		</EJTSubscription>
+	</msg>
 
 	UnSubscribe
 	<msg><?xml version="1.0"?>

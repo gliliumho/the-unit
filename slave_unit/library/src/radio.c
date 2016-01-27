@@ -63,7 +63,7 @@ void InitRF(void){
 	RACSN = 1;
 }
 
-
+//Transmit a fixed array of PACKET_SIZE
 void TransmitPacket(unsigned char b[PACKET_SIZE] ){
 	unsigned char i;
 
