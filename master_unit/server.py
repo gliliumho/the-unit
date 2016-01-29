@@ -3,22 +3,22 @@
 # Written as TCP server for client.py and possibly RT Engine soon
 import socket
 
-values = root.items()
-for value in values:
-    print(value.text)
-
-
-
-s = socket.socket()
-host = socket.gethostbyname(socket.getfqdn())
-port = 20203
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# host = socket.gethostbyname(socket.getfqdn())
+host = '127.0.0.1'
+# host = ''
+port = 9001
 s.bind((host, port))
-s.listen(5)
+s.listen(1)
 
-data = bytes(traffic_data, 'utf-8')
+# data = bytes(traffic_data, 'utf-8')
+c, addr = s.accept()
+print("Got connection from " + str(addr))
 
 while True:
-    c, addr = s.accept()
-    print("Got connection from " + str(addr))
-    c.send(data)
-    c.close()
+    data = c.send(b'hello')
+    sleep(5000)
+    # print( data.decode('utf-8') )
+    # print('===='*20)
+
+c.close()
