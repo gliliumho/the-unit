@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import sys
 import serial
 import socket
@@ -32,7 +34,7 @@ def init_serial():
     return ser_port
 
 
-def connect_rt_engine(host='0', port=9001, max_connections=5):
+def connect_rt_engine(host='0', port=9001):
     s = socket.socket()
     if host == '0':
         host = socket.gethostbyname(socket.getfqdn())
@@ -47,7 +49,16 @@ def connect_rt_engine(host='0', port=9001, max_connections=5):
 
 #change to get TCP connection from RTEngines
 def get_traffic_data(socket):
-    data = socket.recv(2048)
+
+    try:
+        data = socket.recv(2048)
+    except ConnectionResetError:
+        print("Connection from server timed out.......")
+        return None
+    except:
+        print("Unknown error. Cannot receive data from RT Engine")
+        return None
+
     data = data.decode('utf-8')
 
     root = ET.fromstring(data)
