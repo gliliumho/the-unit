@@ -10,28 +10,40 @@
 #include "uart.h"
 #include "radio.h"
 
-/*
-0x01 for first byte. Master only
 
-*/
+// Sends traffic info to all slaves.
+// Traffic info:
+// 1 - free flow / little traffic
+// 2 - little congestion / slow traffic
+// 3 - very congested / very slow traffic
+//
+// b[2] to b[15] contains traffic info
+// 0x01 for first byte. Master only
 void SendTraffic( unsigned char b[] ){
 	unsigned char i;
 
+	//make sure the header is correct
 	b[0] = TRAFFIC_INFO_HEADER;		//MACRO
 	b[1] = packet_count;			//global
 
-	TXEN = 1;
+	TXEN = 1;				//make sure radio is set to TX
+	//transmit 5 times
 	for(i=0; i<5; i++)
 		TransmitPacket(b);
+
+	//track count of packets sent
 	packet_count++; 				//global
 }
 
 
+//Transmits heartbeat request packet to get heartbeat from
+// group=gid and uniqueID = uid
 //0x02 for first byte. Master only
 void RequestHeartbeat(unsigned char gid, unsigned char uid){
 	unsigned char i;
-	unsigned char b[PACKET_SIZE];
 
+	//Generate the heartbeat request packet
+	unsigned char b[PACKET_SIZE];
 	b[0] = HEARTBEAT_REQUEST_HEADER;
 	b[1] = gid;
 	b[2] = uid;
@@ -39,17 +51,23 @@ void RequestHeartbeat(unsigned char gid, unsigned char uid){
 	for(i=4; i<PACKET_SIZE; i++)
 		b[i] = 0x00;
 
-	TXEN = 1;
+	TXEN = 1;				//make sure radio is set to TX
+	//transmit 5 times to make sure slaves receive it
 	for(i=0; i<5; i++)
 		TransmitPacket(b);
+	//track count of packets sent
 	packet_count++;
 }
 
+//EXPERIMENTAL feature (not really successful)
+// Transmit heartbeat request packet but all slaves will
+// reply to it.
 //0x04 for first byte. Master only
 void RequestHeartbeatFromAll(void){
 	unsigned char i;
-	unsigned char b[PACKET_SIZE];
 
+	//Generate heartbeat request packet
+	unsigned char b[PACKET_SIZE];
 	b[0] = HEARTBEAT_REQUEST_FROM_ALL_HEADER;
 	b[1] = 0x00;
 	b[2] = 0x00;
@@ -57,46 +75,52 @@ void RequestHeartbeatFromAll(void){
 	for(i=4; i<PACKET_SIZE; i++)
 		b[i] = 0x00;
 
-	TXEN = 1;
+	TXEN = 1; 				//make sure radio is set to TX
 	for(i=0; i<5; i++)
 		TransmitPacket(b);
 	packet_count++;
 }
 
-//called by WaitHeartbeat() and WaitMultiHeartbeat(). Basically ReceivePacket()
-//with timeout
+//Basically ReceivePacket() with timeout.
+//Called by WaitHeartbeat() and WaitMultiHeartbeat().
 unsigned char ListenHeartbeat(unsigned char *gid, unsigned char *uid){
-	unsigned char b[PACKET_SIZE];
 	unsigned char i=0, j=0;
+	unsigned char b[PACKET_SIZE];
 
-	TXEN = 0;
-	TRX_CE = 1;
+	TXEN = 0;			//set radio to RX
+	TRX_CE = 1;			//enable RF transceiver
 
+	//limits number of loops instead of infinite loop in ReceivePacket()
 	while(DR == 0 && i < 50){
 		Delay400us(10);
 		i++;
 	}
 
-	if(DR != 1)
+	if(DR != 1)		//exit function if timed out
 		return 0;
 
+	//Reads packet from SPI
 	RACSN = 0;
 	SpiReadWrite(RRP);
 	for(i=0; i<PACKET_SIZE; i++)
 		b[i] = SpiReadWrite(0);
 	RACSN = 1;
-	TRX_CE = 0;
+	TRX_CE = 0;		//disable RF transceiver
 
+	//return 1 if it's heartbeat reply
 	if( b[0]==HEARTBEAT_REPLY_HEADER ){
 		*gid = b[1];
 		*uid = b[2];
 		return 1;
 	}
+	//return 0 if it's not heartbeat reply
 	return 0;
 }
 
 
-//called after RequestHeartbeat()
+//Called after RequestHeartbeat() to wait for heartbeat reply
+// Note: This function is fucking useless. gid and uid should be passed directly
+// to ListenHeartbeat() and checked there.
 unsigned char WaitHeartbeat(unsigned char gid, unsigned char uid){
 	unsigned char ret, a, b;
 
@@ -104,20 +128,15 @@ unsigned char WaitHeartbeat(unsigned char gid, unsigned char uid){
 	if( gid != a || uid != b )
 		ret = 0;
 
-	if(ret){
-		// PutString("Received heartbeat from slave ");
-		// PrintChar(gid);
-		// PutChar(0x20);
-		// PrintChar(uid);
-		// PutString("\r\n");
+	if(ret)
 		return 1;
-	} else {
+	else
 		return 0;
-	}
 
 }
 
-//called after RequestHeartbeatFromAll
+// EXPERIMENTAL feature
+// Called after RequestHeartbeatFromAll
 unsigned char WaitMultiHeartbeat( unsigned char id[][2], unsigned char id_len){
 	unsigned char ret, i=0;
 	unsigned char fails=0;
@@ -139,7 +158,9 @@ unsigned char WaitMultiHeartbeat( unsigned char id[][2], unsigned char id_len){
 	return i;
 }
 
-//request heartbeat from all slaves by looping
+//Request heartbeat from all slaves by looping
+//Calls RequestHeartbeat() repeated for certain range of groupID & uniqueID
+//Not used anymore because currently, the looping is done at master_unit
 void RequestHeartbeatLoop(void){
 	unsigned char i, ret;
 	unsigned char groupID = 0;

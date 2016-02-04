@@ -15,18 +15,19 @@
 
 
 void main(void){
-
+	//Initialize global variables. MUST DO THIS!!!!
 	packetID id_buffer[6] = {0};
- 	unsigned char packet_count = 0;
- 	unsigned char buffer_count = 0;
+	unsigned char packet_count = 0;
+	unsigned char buffer_count = 0;
 	unsigned char input[PACKET_SIZE];
 
+	//Initialize UART and RF transceiver
 	InitUART();
 	InitRF();
 
 	while(1){
-		memset(input, 0, sizeof(input));
-		GetFixedString(&input, PACKET_SIZE);
+		memset(input, 0, sizeof(input));		//clear input
+		GetFixedString(&input, PACKET_SIZE);	//Receive command from master_unit
 
 		if(input[0] == TRAFFIC_INFO_HEADER){
 			//will receive all traffic info here
@@ -49,11 +50,6 @@ void main(void){
 			input[5] = 0;
 
 			PutFixedString(&input, PACKET_SIZE);
-
-			// if(!ret){
-			// 	PutString("Timeout\r\n");
-			// }
-
 		}
 		// else if(input[0] == HEARTBEAT_REQUEST_FROM_ALL_HEADER){
 		// 	//removed since it's only EXPERIMENTAL

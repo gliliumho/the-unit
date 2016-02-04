@@ -1,7 +1,7 @@
 /********************************************************************
 ** 	radio.h
 **
-**	This file is the header file for radio.c
+**	This file is the header file for radio.c, radio_master.c and radio_slave.c
 **
 *********************************************************************/
 
@@ -13,6 +13,7 @@
 #define HEARTBEAT_REPLY_HEADER 0x03
 #define HEARTBEAT_REQUEST_FROM_ALL_HEADER 0x04
 
+//definition of packetID struct
 typedef struct packetID{
 	unsigned char groupid;
 	unsigned char uniqueid;
@@ -26,18 +27,21 @@ extern unsigned char buffer_count;
 extern unsigned char PacketIdEqual(packetID a, packetID b);
 extern void PacketIdCpy(packetID *a, packetID b);
 
+//declaration for radio.c
 extern void InitRF(void);
 extern void TransmitPacket(unsigned char b[PACKET_SIZE]);
 extern void ReceivePacket(unsigned char b[PACKET_SIZE]);
 
+//declaration for radio_master.c
 extern void SendTraffic(unsigned char b[PACKET_SIZE]);
 extern void RequestHeartbeat(unsigned char gid, unsigned char uid);
-extern void RequestHeartbeatFromAll(void);
+extern unsigned char ListenHeartbeat(unsigned char *gid, unsigned char *uid);
 extern unsigned char WaitHeartbeat(unsigned char gid, unsigned char uid);
-unsigned char ListenHeartbeat(unsigned char *gid, unsigned char *uid);
-unsigned char WaitMultiHeartbeat( unsigned char id[][2], unsigned char id_len);
-void RequestHeartbeatLoop(void);
+extern void RequestHeartbeatFromAll(void);
+extern unsigned char WaitMultiHeartbeat( unsigned char id[][2], unsigned char id_len);
+extern void RequestHeartbeatLoop(void);
 
+//declaration for radio_slave.c
 extern void SlaveOp_Buffer(unsigned char gid, unsigned char uid);
 extern unsigned char SlaveReceive(unsigned char b[PACKET_SIZE]);
 extern void CheckTraffic(unsigned char b[PACKET_SIZE], unsigned char gid);

@@ -1,5 +1,5 @@
 /********************************************************************
-** 	radio_master.h
+** 	radio_master.h (OUTDATED)
 **
 **	This file contains prototype for master's radio functions.
 **

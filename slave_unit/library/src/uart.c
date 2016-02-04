@@ -11,7 +11,7 @@
 #include "uart.h"
 //#include "radio.h"
 
-
+//Initialize UART/RS-232. Must call this function before any UART functions
 void InitUART(void){
 	unsigned char cklf;
 
@@ -39,6 +39,7 @@ void InitUART(void){
 	RACSN = 1;
 }
 
+//Prints a character through UART
 void PutChar(unsigned char c){
 	while(!TI) 	//TI=Transmit Interupt. TI=0 when UART TXD is busy
 		;
@@ -46,6 +47,7 @@ void PutChar(unsigned char c){
 	SBUF = c;	//SBUF will be transmitted through UART
 }
 
+//Prints a string through UART
 void PutString(unsigned char *s){
 	while(*s != 0)
 		PutChar(*s++);
@@ -82,7 +84,7 @@ void PrintChar(unsigned char n){
 	}
 }
 
-
+//Input a character from UART (PuTTY to board)
 void GetChar(unsigned char *c){
 	while(!RI)
 		;
@@ -91,6 +93,8 @@ void GetChar(unsigned char *c){
 	PutChar(*c);	//for internal echo
 }
 
+//Input a string and save to *s
+// input ends with '\n' while the string is 0x00/NULL-terminated
 void GetString(unsigned char *s){
 	GetChar(s);
 	while(*s!= 0x0D && *s!= 0x0A){	//GetChar as long as not ENTER.
@@ -100,6 +104,8 @@ void GetString(unsigned char *s){
 	*s = 0x00; 						//0x00 to indicate end of string(EOS)
 }
 
+//Input n bytes of character from UART and save to *s
+//Written to interface with master_unit's Python script
 void GetFixedString(unsigned char *s, unsigned char n){
 	unsigned char i;
 	RI=0;
@@ -109,6 +115,8 @@ void GetFixedString(unsigned char *s, unsigned char n){
 	}
 }
 
+//Print n bytes of character from UART, starting from *s
+//Written to interface with master_unit's Python script
 void PutFixedString(unsigned char *s, unsigned char n){
 	unsigned char i;
 	for(i=0; i<n; i++)

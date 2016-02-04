@@ -1,5 +1,5 @@
 /********************************************************************
-** 	radio_slave.h
+** 	radio_slave.h (OUTDATED)
 **
 **	This file contains prototype for slave's radio functions.
 **

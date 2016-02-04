@@ -10,24 +10,31 @@
 #include "uart.h"
 #include "radio.h"
 
+// global variables
+// IMPORTANT: Need to be initialized in main() during startup or you'll get
+// undefined behaviours
 packetID id_buffer[6] = {0};
 unsigned char packet_count = 0;
 unsigned char buffer_count = 0;
 
 //returns 1 if same. Returns 0 if not same.
 unsigned char PacketIdEqual(packetID a, packetID b){
-	if((a.groupid==b.groupid) && (a.uniqueid==b.uniqueid) && (a.packet_no==b.packet_no))
+	if( (a.groupid==b.groupid) &&
+		(a.uniqueid==b.uniqueid) &&
+		(a.packet_no==b.packet_no)	)
 		return 1;
 	else
 		return 0;
 }
 
+//copy the packetID from src to dest
 void PacketIdCpy(packetID *dest, packetID src){
 	dest->groupid = src.groupid;
 	dest->uniqueid = src.uniqueid;
 	dest->packet_no = src.packet_no;
 }
 
+// Initialize RF transceiver
 void InitRF(void){
 	unsigned char tmp, cklf;
 

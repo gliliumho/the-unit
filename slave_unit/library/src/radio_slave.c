@@ -10,7 +10,8 @@
 #include "uart.h"
 #include "radio.h"
 
-
+// Main looping function for slave_units
+// Receives packet and check the packet contents. Then decide what to do with it
 void SlaveOp_Buffer(unsigned char gid, unsigned char uid){
 	unsigned char b[PACKET_SIZE];
 
@@ -22,16 +23,16 @@ void SlaveOp_Buffer(unsigned char gid, unsigned char uid){
 		} else if(b[0] == HEARTBEAT_REQUEST_HEADER){
 			// PutChar(b[1]+0x30);
 			// PutChar(b[2]+0x30);
-			PutString("Received HB Request!\r\n");
+			PutString("Master Requests HB!\r\n");
 			if(b[1]==gid && b[2]==uid){
 				SendHeartbeat(gid, uid);
 			} else if(b[1] >= gid){
 				SlaveRelay(b);
-				PutString("Relaying HB Request!\r\n");
+				PutString("Not my heartbeat though..\r\n");
 			}
 		} else if(b[0] == HEARTBEAT_REPLY_HEADER && b[1] >= gid){
 			SlaveRelay(b);
-			PutString("Relaying HB!\r\n");
+			PutString("Pass his heartbeat!!\r\n");
 		} else if(b[0] == HEARTBEAT_REQUEST_FROM_ALL_HEADER){
 			PutString("Everyone send heartbeat!!\r\n");
 			// for(i=0; i<20; i++)
@@ -39,27 +40,29 @@ void SlaveOp_Buffer(unsigned char gid, unsigned char uid){
 			SlaveRelay(b);
 		}
 	}
-
 }
 
 
-//Basically a non-blocking ReceivePacket. Will timeout after not receiving for a while
+// Basically a non-blocking ReceivePacket but will timeout
+// after not receiving for a while
 unsigned char SlaveReceive(unsigned char b[PACKET_SIZE]){
 	unsigned char i=0;
 
 	TXEN = 0;				//RX mode
 	TRX_CE = 1;				//enable radio
 
+	//breaks loop if not receiving for too long
 	while(DR == 0 && i < 50){
 		Delay400us(10);
 		i++;
 	}
 
-	if ( DR != 1 ){
-		TRX_CE = 0;			//disable radio
+
+	if ( DR != 1 ){ 		//if receive nothing
 		//PutString("timeout\r\n");
+		TRX_CE = 0;			//disable radio
 		return 0;
-	} else {
+	} else {				//if receive something
 		RACSN = 0;
 		SpiReadWrite(RRP);
 		for(i=0;i<PACKET_SIZE;i++)
@@ -71,7 +74,7 @@ unsigned char SlaveReceive(unsigned char b[PACKET_SIZE]){
 	}
 }
 
-//Slave only
+//Checks for traffic info for gid then turn ON/OFF the LED accordingly
 void CheckTraffic(unsigned char b[PACKET_SIZE], unsigned char gid){
 	switch(b[gid+1]){
 		case 1:
@@ -89,20 +92,28 @@ void CheckTraffic(unsigned char b[PACKET_SIZE], unsigned char gid){
 			P04 = 1;
 			P06 = 0;
 			break;
-		default:
-			PutString("Unidentified groupID..\r\n");
+		case 4:
 			P00 = 0;
 			P04 = 0;
 			P06 = 0;
 			break;
+		default:
+			PutString("Unidentified groupID..\r\n");
+			P00 = 1;
+			P04 = 1;
+			P06 = 1;
+			break;
 	}
 }
 
+
+//Send heartbeat reply if requested for gid & uid
 //0x03 for first byte. Slave only
 void SendHeartbeat(unsigned char gid, unsigned char uid){
-	unsigned char b[PACKET_SIZE];
 	unsigned char i;
 
+	//Generate heartbeat reply packet
+	unsigned char b[PACKET_SIZE];
 	b[0] = HEARTBEAT_REPLY_HEADER;	//MACRO
 	b[1] = gid;
 	b[2] = uid;
@@ -110,6 +121,7 @@ void SendHeartbeat(unsigned char gid, unsigned char uid){
 	for(i=4;i<PACKET_SIZE;i++)
 		b[i] = 0x00;
 
+	//Transmit Heartbeat packet few times
 	TXEN = 1;
 	for(i=0; i<5; i++){
 		TransmitPacket(b);
@@ -122,6 +134,9 @@ void SendHeartbeat(unsigned char gid, unsigned char uid){
 
 
 
+//This function is replaces by SlaveOp_Buffer()
+// Works the same as SlaveOp_Buffer() but it delays instead of
+// checking the content to avoid retransmitting the same packets
 /* void SlaveOp_Delay(unsigned char groupID, unsigned char uniqueID){
 	unsigned char i;
 	unsigned char (*b)[PACKET_SIZE] = malloc(sizeof *b);
@@ -173,8 +188,9 @@ void SendHeartbeat(unsigned char gid, unsigned char uid){
 } */
 
 
-
-//will decide if retransmit the payload or not. TX. Slave only
+// Checks the id_buffer[] to see if packet has been transmitted or not
+// Used to prevent retransmission of old packets (eliminate echo)
+// TX. Slave only
 void SlaveRelay(unsigned char b[PACKET_SIZE]){
 	// unsigned char i;
 	packetID temp_packet;
@@ -190,18 +206,14 @@ void SlaveRelay(unsigned char b[PACKET_SIZE]){
 	}
 
 	if( !CheckBuffer(temp_packet) ){
-		PacketIdCpy(&id_buffer[buffer_count], temp_packet); //id_buffer is global
+		PacketIdCpy(&id_buffer[buffer_count], temp_packet); //id_buffer = global
 
 		TXEN =1;
-		// for(i=0;i<2;i++)
 		TransmitPacket(b);
-
 		buffer_count++;					//global
 		if(buffer_count > 5)			//global
 			buffer_count = 0;			//global
-
 	}
-
 }
 
 //returns 0 if not in buffer. returns 1 if found inside buffer.
@@ -210,6 +222,5 @@ unsigned char CheckBuffer(packetID a){
 	for(i=0; i<6; i++)
 		if( PacketIdEqual(a, id_buffer[i]) )
 			return 1;
-
 	return 0;
 }
