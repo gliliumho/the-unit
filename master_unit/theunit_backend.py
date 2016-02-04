@@ -50,17 +50,19 @@ def connect_rt_engine(host, port, queue):
     # sock_element = s
     queue.put(s)
 
-#change to get TCP connection from RTEngines
-def get_traffic_data(socket):
 
+#change to get TCP connection from RTEngines
+def get_traffic_data(socket, queue):
     try:
         data = socket.recv(2048)
     except ConnectionResetError:
         print("Connection from server timed out.......")
-        return None
+        # return None
+        queue.put(None)
     except:
         print("Unknown error. Cannot receive data from RT Engine")
-        return None
+        # return None
+        queue.put(None)
 
     data = data.decode('utf-8')
     root = ET.fromstring(data)
@@ -68,11 +70,14 @@ def get_traffic_data(socket):
     for value in root.iter():
         if value.tag == "IncidentType":
             if value.text == "CongestionStart":
-                return 3
+                # return 3
+                queue.put(3)
             elif value.text == "CongestionEnd":
-                return 2
+                # return 2
+                queue.put(2)
         elif value.tag == "CongestionLevel":
-            return int(value.text)+1
+            # return int(value.text)+1
+            queue.put(int(value.text)+1)
 
 
 #needs lock
@@ -129,19 +134,21 @@ def request_heartbeat_loop(serialport):
         else:
             idlist[i].append('Dead')
 
-    logfile = open("cli_slave_status.log", 'a')
+    datetoday = str(datetime.date.today().strftime("%y%m%d"))
+
+    logfile = open(datetoday+'.log', 'a')
     logfile.write('\n'+datetime.datetime.now().isoformat(' '))
     for i in range(len(idlist)):
         line = str(idlist[i][0])+'.'+str(idlist[i][1])+' \t'+idlist[i][2]+'\n'
         logfile.write(line)
     logfile.close()
 
-
 # -----------------------------------------------------------------------------
 
 ser = init_serial()
 if ser == False:
     exit()
+
 ipfile = open("rtengine_iplist.txt", 'r')
 rt_iplist = []
 while True:
@@ -151,9 +158,6 @@ while True:
     line = line.split()
     rt_iplist.append(line)
 
-socket_list = []
-for i in range(len(rt_iplist)):
-    socket_list.append( [None, rt_iplist[i][1]] )
 
 queue = queue.Queue()
 for i, ip in enumerate(rt_iplist):
@@ -166,7 +170,6 @@ main_thread = threading.currentThread()
 for t in threading.enumerate():
     if t is not main_thread:
         t.join(10)
-# print("done")
 
 rt_iplist = [x for x in rt_iplist if x[0] != None]
 
