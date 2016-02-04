@@ -1,4 +1,4 @@
-#!/bin/python3
+#! /usr/bin/python3
 
 # Written as TCP server for client.py and possibly RT Engine soon
 import socket

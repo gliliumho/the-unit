@@ -1,4 +1,4 @@
-#!/bin/python3
+#! /usr/bin/python3
 
 # Written to test XML parsing in python
 import xml.etree.ElementTree as ET

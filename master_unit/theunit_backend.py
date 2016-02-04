@@ -6,6 +6,7 @@ import socket
 import xml.etree.ElementTree as ET
 import datetime
 import threading
+import queue
 
 
 def init_serial():
@@ -34,18 +35,20 @@ def init_serial():
     return ser_port
 
 
-def connect_rt_engine(host='0', port=9001):
+def connect_rt_engine(host, port, queue):
     s = socket.socket()
-    if host == '0':
-        host = socket.gethostbyname(socket.getfqdn())
+    # if host == '0':
+    #     host = socket.gethostbyname(socket.getfqdn())
     try:
         s.connect((host,port))
         print("Connected to "+host+":"+str(port))
-    except OSError:
+    except:
+        print("Connection error. Cannot connect to "+host)
         s.close()
         s = None
-    return s
-
+    # return s
+    # sock_element = s
+    queue.put(s)
 
 #change to get TCP connection from RTEngines
 def get_traffic_data(socket):
@@ -60,7 +63,6 @@ def get_traffic_data(socket):
         return None
 
     data = data.decode('utf-8')
-
     root = ET.fromstring(data)
 
     for value in root.iter():
@@ -136,3 +138,38 @@ def request_heartbeat_loop(serialport):
 
 
 # -----------------------------------------------------------------------------
+
+ser = init_serial()
+if ser == False:
+    exit()
+ipfile = open("rtengine_iplist.txt", 'r')
+rt_iplist = []
+while True:
+    line = ipfile.readline()
+    if len(line) == 0:
+        break
+    line = line.split()
+    rt_iplist.append(line)
+
+socket_list = []
+for i in range(len(rt_iplist)):
+    socket_list.append( [None, rt_iplist[i][1]] )
+
+queue = queue.Queue()
+for i, ip in enumerate(rt_iplist):
+    t = threading.Thread(target=connect_rt_engine, args=(ip[0], 9001, queue,))
+    t.start()
+    ip[0] = queue.get()
+
+
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t is not main_thread:
+        t.join(10)
+# print("done")
+
+rt_iplist = [x for x in rt_iplist if x[0] != None]
+
+for socket, group in rt_iplist:
+    host, port = socket.getpeername()
+    print(host + "  group = " + str(group))
