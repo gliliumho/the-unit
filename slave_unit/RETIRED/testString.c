@@ -260,25 +260,23 @@ void InitRF(void){
 
 void main(){
 	//insert stuff
-	unsigned char letter[20];
+	// unsigned char letter[20];
 	
-	InitPin(0,0);
-	InitPin(2,0);
+	InitPin(3,0);
 	InitPin(4,0);
-	InitPin(6,0);
+	InitPin(5,0);
 	
-	P00 = 0;
-	P02 = 0;
+	P03 = 0;
 	P04 = 0;
-	P06 = 0;
+	P05 = 0;
 	
 	InitUART();
 	//PutString("Testing. \n");
 	
 	while(1){
-		GetString(&letter[0]);
+		// GetString(&letter[0]);
 		PutString("You just typed.... '");
-		PutString(&letter[0]);
+		// PutString(&letter[0]);
 		PutString("'\r\n------------------------------");
 		
 //		if (letter[0] == '1'){

@@ -28,58 +28,66 @@ void main(void){
 	// unsigned char i, b[PACKET_SIZE];
 
 	//Init GPIO pins for LEDs
-	InitPin(0,0);
+	InitPin(3,0);
 	InitPin(4,0);
-	InitPin(6,0);
+	InitPin(5,0);
+
+	P03 = 0;
+	P04 = 0;
+	P05 = 0;
 
 	//Init GPIO pin for button
-	InitPin(3,1);
-	InitUART();
+	InitPin(2,1);
+	P02 = 1;
+	if(P02 == 0){
+		InitUART();
+		InitEEPROM();
 
-	//Read saved groupID and uniqueID from EEPROM
-	InitEEPROM();
-	groupID = EERead(3995);
-	uniqueID = EERead(3996);
+		//prompt for groupID
+		PutString("Please enter new groupID: ");
+		GetChar(&groupID);
+		groupID -= 0x30;
+		PutString("\r\n");
 
-	//Init the RF transceiver
+		//prompt for uniqueID
+		PutString("Please enter new uniqueID: ");
+		GetChar(&uniqueID);
+		uniqueID -= 0x30;
+		PutString("\r\n");
+
+		//save entered groupID & uniqueID into EEPROM
+		EEWrite(3995,groupID);
+		EEWrite(3996,uniqueID);
+
+		PutString("groupID: ");
+		PrintChar(EERead(3995));
+		PutChar(0x20);
+		PutString("uniqueID: ");
+		PrintChar(EERead(3996));
+		PutString("\r\n");
+
+		//change SPI and settings back to RF
+		// InitRF();
+	} else {
+		InitUART();
+		InitEEPROM();
+		groupID = EERead(3995);
+		uniqueID = EERead(3996);
+
+		//Init the RF transceiver
+	}
+
 	InitRF();
-
-	PutString("Hi! I'm slave from group ");
+	//Read saved groupID and uniqueID from EEPROM
+	PutString("Hi! I'm slave..");
+	PutString("groupID: ");
 	PrintChar(groupID);
+	PutChar(0x20);
+	PutString("uniqueID: ");
+	PrintChar(uniqueID);
 	PutString("\r\n");
 
 	while(1){
-		if(P03 == 0){				//if button is pressed
-			InitEEPROM();
-
-			//prompt for groupID
-			PutString("Please enter new groupID: ");
-			GetChar(&groupID);
-			groupID -= 0x30;
-			PutString("\r\n");
-
-			//prompt for uniqueID
-			PutString("Please enter new uniqueID: ");
-			GetChar(&uniqueID);
-			uniqueID -= 0x30;
-			PutString("\r\n");
-
-			//save entered groupID & uniqueID into EEPROM
-			EEWrite(3995,groupID);
-			EEWrite(3996,uniqueID);
-
-			PutString("groupID: ");
-			PrintChar(EERead(3995));
-			PutChar(0x20);
-			PutString("uniqueID: ");
-			PrintChar(EERead(3996));
-			PutString("\r\n");
-
-			//change SPI and settings back to RF
-			InitRF();
-		} else {
-			//do the intern things...coz interns are slaves. Geddit? Hehe.
-			SlaveOp_Buffer(groupID, uniqueID);
-		}
+		SlaveOp_Buffer(groupID, uniqueID);
 	}
 }

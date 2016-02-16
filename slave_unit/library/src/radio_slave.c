@@ -78,30 +78,30 @@ unsigned char SlaveReceive(unsigned char b[PACKET_SIZE]){
 void CheckTraffic(unsigned char b[PACKET_SIZE], unsigned char gid){
 	switch(b[gid+1]){
 		case 1:
-			P00 = 0;
+			P03 = 0;
 			P04 = 1;
-			P06 = 1;
+			P05 = 1;
 			break;
 		case 2:
-			P00 = 1;
+			P03 = 1;
 			P04 = 0;
-			P06 = 1;
+			P05 = 1;
 			break;
 		case 3:
-			P00 = 1;
+			P03 = 1;
 			P04 = 1;
-			P06 = 0;
+			P05 = 0;
 			break;
 		case 4:
-			P00 = 0;
+			P03 = 0;
 			P04 = 0;
-			P06 = 0;
+			P05 = 0;
 			break;
 		default:
 			PutString("Unidentified groupID..\r\n");
-			P00 = 1;
+			P03 = 1;
 			P04 = 1;
-			P06 = 1;
+			P05 = 1;
 			break;
 	}
 }
