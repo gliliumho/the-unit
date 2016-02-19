@@ -35,6 +35,7 @@ def init_serial():
     return ser_port
 
 
+
 def connect_rt_engine(host, port, queue):
     s = socket.socket()
     # if host == '0':
@@ -49,6 +50,7 @@ def connect_rt_engine(host, port, queue):
     # return s
     # sock_element = s
     queue.put(s)
+
 
 
 #change to get TCP connection from RTEngines
@@ -80,12 +82,35 @@ def get_traffic_data(socket, queue):
             queue.put(int(value.text)+1)
 
 
+
 #needs lock
 def send_traffic(serialport, pack):
     """ Formats the bytearray(packet) and write to serialport """
     pack[0] = 0x01
     pack[1] = 0x00
     serialport.write(pack)
+
+
+
+def traffic_info_thread(ip_grouplist, serialport, seriallock):
+    traffic_data = [0]*16
+    ti_queue = queue.Queue()
+    thread_list = []
+    for socket, group in ip_grouplist:
+        t = threading.Thread(target=get_traffic_data, args=(socket, ti_queue,))
+        t.start()
+        thread_list.append(t)
+        traffic_data[group] = ti_queue.get()
+
+    for t in thread_list:
+        t.join(180)
+
+    seriallock.acquire()
+    try:
+        send_traffic(serialport, traffic_data)
+    finally:
+        seriallock.release()
+
 
 
 #needs lock
@@ -104,6 +129,7 @@ def request_heartbeat(serialport, gid, uid):
             return True
 
     return False
+
 
 
 #call this periodically
@@ -143,12 +169,17 @@ def request_heartbeat_loop(serialport):
         logfile.write(line)
     logfile.close()
 
+
+
 # -----------------------------------------------------------------------------
 
 ser = init_serial()
+serial_lock = threading.Lock()
+
 if ser == False:
     exit()
 
+# Get RT server IP addresses and group number from rtengine_iplist.txt
 ipfile = open("rtengine_iplist.txt", 'r')
 rt_iplist = []
 while True:
@@ -158,21 +189,23 @@ while True:
     line = line.split()
     rt_iplist.append(line)
 
-
+# Connect to RT server sockets
 queue = queue.Queue()
 for i, ip in enumerate(rt_iplist):
     t = threading.Thread(target=connect_rt_engine, args=(ip[0], 9001, queue,))
     t.start()
     ip[0] = queue.get()
 
-
+# Set timeout for threads
 main_thread = threading.currentThread()
 for t in threading.enumerate():
     if t is not main_thread:
         t.join(10)
 
+# Remove elements without socket from list
 rt_iplist = [x for x in rt_iplist if x[0] != None]
 
+# Print socket info
 for socket, group in rt_iplist:
     host, port = socket.getpeername()
     print(host + "  group = " + str(group))

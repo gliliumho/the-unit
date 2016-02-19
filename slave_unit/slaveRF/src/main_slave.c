@@ -15,8 +15,6 @@
 
 
 
-// unsigned char malloc_pool[0x10];
-
 void main(void){
 	//Initialize global variables. FUCKING IMPORTANT. DON'T REMOVE
 	packetID id_buffer[6] = {0};
@@ -38,7 +36,7 @@ void main(void){
 
 	//Init GPIO pin for button
 	InitPin(2,1);
-	P02 = 1;
+	//P07 = 1;
 	if(P02 == 0){
 		InitUART();
 		InitEEPROM();
@@ -65,16 +63,11 @@ void main(void){
 		PutString("uniqueID: ");
 		PrintChar(EERead(3996));
 		PutString("\r\n");
-
-		//change SPI and settings back to RF
-		// InitRF();
 	} else {
 		InitUART();
 		InitEEPROM();
 		groupID = EERead(3995);
 		uniqueID = EERead(3996);
-
-		//Init the RF transceiver
 	}
 
 	InitRF();
