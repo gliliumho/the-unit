@@ -1,0 +1,23 @@
+
+
+# Ignore files without extension
+*
+!/**/
+!*.*
+
+# Ignore directories like /__pycache__
+**__*__**
+
+# uVision generated files
+*.LST
+*.OBJ
+*.M51
+*.build_log.htm
+*.lnp
+*.__i
+*.__b
+*.REG-LPT-*
+*.bak
+*.uvopt
+
+

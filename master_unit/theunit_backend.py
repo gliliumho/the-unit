@@ -4,7 +4,7 @@ import sys
 import serial
 import socket
 import xml.etree.ElementTree as ET
-import datetime
+import datetime, time
 import threading
 import queue
 
@@ -52,7 +52,6 @@ def connect_rt_engine(host, port, queue):
     queue.put(s)
 
 
-
 #change to get TCP connection from RTEngines
 def get_traffic_data(socket, queue):
     try:
@@ -83,21 +82,22 @@ def get_traffic_data(socket, queue):
 
 
 
-#needs lock
-def send_traffic(serialport, pack):
+def send_traffic_data(serialport, pack):
     """ Formats the bytearray(packet) and write to serialport """
     pack[0] = 0x01
     pack[1] = 0x00
     serialport.write(pack)
 
 
-
-def traffic_info_thread(ip_grouplist, serialport, seriallock):
+def getsend_traffic_data(ip_grouplist, serialport, seriallock):
     traffic_data = [0]*16
     ti_queue = queue.Queue()
     thread_list = []
     for socket, group in ip_grouplist:
-        t = threading.Thread(target=get_traffic_data, args=(socket, ti_queue,))
+        t = threading.Thread(
+            target=get_traffic_data,
+            args=(socket, ti_queue,))
+
         t.start()
         thread_list.append(t)
         traffic_data[group] = ti_queue.get()
@@ -107,13 +107,19 @@ def traffic_info_thread(ip_grouplist, serialport, seriallock):
 
     seriallock.acquire()
     try:
-        send_traffic(serialport, traffic_data)
+        send_traffic_data(serialport, traffic_data)
     finally:
         seriallock.release()
 
 
+def traffic_data_thread(ip_grouplist, serialport, seriallock, interval):
+    t = threading.Thread(
+        target=getsend_traffic_data,
+        args=(ip_grouplist, serialport, seriallock,))
 
-#needs lock
+    time.sleep(interval)
+
+
 def request_heartbeat(serialport, gid, uid):
     """ Sends a bytearray for masterRF to request heartbeat """
     pack = bytearray(16)
@@ -131,10 +137,7 @@ def request_heartbeat(serialport, gid, uid):
     return False
 
 
-
-#call this periodically
-#need lock
-def request_heartbeat_loop(serialport):
+def request_heartbeat_loop(serialport, seriallock):
     """ Request heartbeat from slaves in idlist.txt and logs status
         in cli_slave_status.txt """
     idfile = open("idlist.txt",'r')
@@ -147,18 +150,20 @@ def request_heartbeat_loop(serialport):
         idline_list = list(map(int, idline_list))
         idlist.append( idline_list )
     idfile.close()
-
     success_slave = 0
 
-    for i in range(len(idlist)):
-        ids = str(idlist[i][0]) + '.' + str(idlist[i][1])
-        # print("Slave " + ids + '\t: ', end='')
-        ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
-        if ret == True:
-            success_slave += 1
-            idlist[i].append('Alive')
-        else:
-            idlist[i].append('Dead')
+    seriallock.acquire()
+    try:
+        for i in range(len(idlist)):
+            ids = str(idlist[i][0]) + '.' + str(idlist[i][1])
+            ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
+            if ret == True:
+                success_slave += 1
+                idlist[i].append('Alive')
+            else:
+                idlist[i].append('Dead')
+    finally:
+        seriallock.release()
 
     datetoday = str(datetime.date.today().strftime("%y%m%d"))
 
@@ -170,6 +175,13 @@ def request_heartbeat_loop(serialport):
     logfile.close()
 
 
+
+def reqhb_thread(serialport, seriallock, interval):
+    t = threading.Thread(
+        target=request_heartbeat_loop,
+        args=(serialport, seriallock,))
+
+    time.sleep(interval)
 
 # -----------------------------------------------------------------------------
 
@@ -209,3 +221,8 @@ rt_iplist = [x for x in rt_iplist if x[0] != None]
 for socket, group in rt_iplist:
     host, port = socket.getpeername()
     print(host + "  group = " + str(group))
+
+
+while True:
+    traffic_data_thread(rt_iplist, ser, serial_lock, 600)
+    reqhb_thread(ser, serial_lock, 3600)
