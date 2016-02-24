@@ -89,9 +89,9 @@ void main(){
     while(1){
         PutString("Test no ");
         PrintChar(counter);
-        //GetChar(&input);
-        //PutChar(0x08);
-        input = 'f';
+        GetChar(&input);
+        PutChar(0x08);
+        //input = 'f';
         PutString("\r\n");
         if(input >= 'a' && input <= 'z'){
             RequestFeedback();
