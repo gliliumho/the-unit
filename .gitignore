@@ -8,6 +8,10 @@
 # Ignore directories like /__pycache__
 **__*__**
 
+# Ignore log files
+**log/
+
+
 # uVision generated files
 *.LST
 *.OBJ
@@ -19,5 +23,5 @@
 *.REG-LPT-*
 *.bak
 *.uvopt
-
-
+**Listings/
+**Objects/

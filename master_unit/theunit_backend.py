@@ -7,6 +7,11 @@ import xml.etree.ElementTree as ET
 import datetime, time
 import threading
 import queue
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',
+                    )
 
 
 def init_serial():
@@ -50,20 +55,26 @@ def connect_rt_engine(host, port, queue):
     # return s
     # sock_element = s
     queue.put(s)
+    queue.task_done()
 
 
 #change to get TCP connection from RTEngines
 def get_traffic_data(socket, queue):
     try:
+        logging.debug("Getting data from " + socket.getpeername())
         data = socket.recv(2048)
     except ConnectionResetError:
-        print("Connection from server timed out.......")
         # return None
-        queue.put(None)
+        logging.debug("Connection from server timed out.......")
+        queue.put(int(0))
+        queue.task_done()
+        return
     except:
-        print("Unknown error. Cannot receive data from RT Engine")
         # return None
-        queue.put(None)
+        logging.debug("Unknown error. Cannot receive data from RT Engine")
+        queue.put(int(0))
+        queue.task_done()
+        return
 
     data = data.decode('utf-8')
     root = ET.fromstring(data)
@@ -71,15 +82,21 @@ def get_traffic_data(socket, queue):
     for value in root.iter():
         if value.tag == "IncidentType":
             if value.text == "CongestionStart":
-                # return 3
-                queue.put(3)
+                logging.debug("Congested..")
+                queue.put(int(3))
+                queue.task_done()
+                return
             elif value.text == "CongestionEnd":
-                # return 2
-                queue.put(2)
+                logging.debug("End of congestion..")
+                queue.put(int(2))
+                queue.task_done()
+                return
         elif value.tag == "CongestionLevel":
             # return int(value.text)+1
+            logging.debug("Traffic level: " + str(int(value.text)+1))
             queue.put(int(value.text)+1)
-
+            queue.task_done()
+            return
 
 
 def send_traffic_data(serialport, pack):
@@ -89,34 +106,40 @@ def send_traffic_data(serialport, pack):
     serialport.write(pack)
 
 
-def getsend_traffic_data(ip_grouplist, serialport, seriallock):
+def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
     traffic_data = [0]*16
-    ti_queue = queue.Queue()
     thread_list = []
+    # q = queue.Queue()
     for socket, group in ip_grouplist:
+        group = int(group)
         t = threading.Thread(
             target=get_traffic_data,
-            args=(socket, ti_queue,))
-
+            args=(socket, queue,))
         t.start()
         thread_list.append(t)
-        traffic_data[group] = ti_queue.get()
+        traffic_data[group] = queue.get()
+        logging.debug("Group " + str(group) + ': ' + str(traffic_data[group]))
 
     for t in thread_list:
         t.join(180)
 
+    logging.debug("Traffic Data - Acquring lock..")
     seriallock.acquire()
     try:
+        logging.debug("Traffic Data - Lock Acquired.")
         send_traffic_data(serialport, traffic_data)
     finally:
         seriallock.release()
+        logging.debug("Traffic Data - Lock Released.")
+    logging.debug("Traffic Data - Done. Ending thread.")
 
 
-def traffic_data_thread(ip_grouplist, serialport, seriallock, interval):
+def traffic_data_thread(ip_grouplist, serialport, seriallock, interval, queue):
     t = threading.Thread(
         target=getsend_traffic_data,
-        args=(ip_grouplist, serialport, seriallock,))
-
+        args=(ip_grouplist, serialport, seriallock, queue))
+    t.start()
+    logging.debug("Started TD thread. Waiting and sleeping for " + str(interval))
     time.sleep(interval)
 
 
@@ -147,32 +170,44 @@ def request_heartbeat_loop(serialport, seriallock):
         if len(idline) == 0:
             break
         idline_list = idline.split('.')
+        if ('#' in idline_list[0]):
+            continue
         idline_list = list(map(int, idline_list))
         idlist.append( idline_list )
     idfile.close()
     success_slave = 0
 
+    logging.debug("Heartbeat - Acquiring lock..")
     seriallock.acquire()
     try:
+        logging.debug("Heartbeat - Lock Acquired..")
         for i in range(len(idlist)):
-            ids = str(idlist[i][0]) + '.' + str(idlist[i][1])
-            ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
+            group = idlist[i][0]
+            unique = idlist[i][1]
+            ids = str(group) + '.' + str(unique)
+            ret = request_heartbeat(serialport, group, unique)
             if ret == True:
                 success_slave += 1
                 idlist[i].append('Alive')
+                logging.debug(ids + " alive")
             else:
                 idlist[i].append('Dead')
+                logging.debug(ids + " dead")
     finally:
         seriallock.release()
+        logging.debug("Heartbeat - Released lock..")
 
     datetoday = str(datetime.date.today().strftime("%y%m%d"))
+    datetoday = datetoday + '.log'
+    logging.debug("Logging to " + datetoday)
 
-    logfile = open(datetoday+'.log', 'a')
-    logfile.write('\n'+datetime.datetime.now().isoformat(' '))
+    logfile = open('./log/'+ datetoday, 'a')
+    logfile.write('\n'+datetime.datetime.now().isoformat(' ') + '\n')
     for i in range(len(idlist)):
         line = str(idlist[i][0])+'.'+str(idlist[i][1])+' \t'+idlist[i][2]+'\n'
         logfile.write(line)
     logfile.close()
+    logging.debug("Heartbeat - Done. Ending thread.")
 
 
 
@@ -180,49 +215,71 @@ def reqhb_thread(serialport, seriallock, interval):
     t = threading.Thread(
         target=request_heartbeat_loop,
         args=(serialport, seriallock,))
-
+    t.start()
+    logging.debug("Started HB thread. Waiting and sleeping for " + str(interval))
     time.sleep(interval)
 
 # -----------------------------------------------------------------------------
 
-ser = init_serial()
-serial_lock = threading.Lock()
+if __name__ == "__main__":
+    ser = init_serial()
+    serial_lock = threading.Lock()
 
-if ser == False:
-    exit()
+    if ser == False:
+        exit()
 
-# Get RT server IP addresses and group number from rtengine_iplist.txt
-ipfile = open("rtengine_iplist.txt", 'r')
-rt_iplist = []
-while True:
-    line = ipfile.readline()
-    if len(line) == 0:
-        break
-    line = line.split()
-    rt_iplist.append(line)
+    # Get RT server IP addresses and group number from rtengine_iplist.txt
+    ipfile = open("rtengine_iplist.txt", 'r')
+    rt_iplist = []
+    while True:
+        line = ipfile.readline()
+        if len(line) == 0:
+            break
+        line = line.split()
+        if ('#' in line[0]):
+            continue
+        rt_iplist.append(line)
 
-# Connect to RT server sockets
-queue = queue.Queue()
-for i, ip in enumerate(rt_iplist):
-    t = threading.Thread(target=connect_rt_engine, args=(ip[0], 9001, queue,))
-    t.start()
-    ip[0] = queue.get()
+    # Connect to RT server sockets
+    q = queue.Queue()
+    for i, ip in enumerate(rt_iplist):
+        t = threading.Thread(target=connect_rt_engine, args=(ip[0], 9001, q,))
+        t.start()
+        ip[0] = q.get()
+    # del queue
 
-# Set timeout for threads
-main_thread = threading.currentThread()
-for t in threading.enumerate():
-    if t is not main_thread:
-        t.join(10)
+    # Set timeout for threads
+    main_thread = threading.currentThread()
+    for t in threading.enumerate():
+        if t is not main_thread:
+            t.join(10)
 
-# Remove elements without socket from list
-rt_iplist = [x for x in rt_iplist if x[0] != None]
+    # Remove elements without socket from list
+    rt_iplist = [x for x in rt_iplist if x[0] != None]
 
-# Print socket info
-for socket, group in rt_iplist:
-    host, port = socket.getpeername()
-    print(host + "  group = " + str(group))
+    # Print socket info
+    for socket, group in rt_iplist:
+        host, port = socket.getpeername()
+        print(host + "  group = " + str(group))
 
 
-while True:
-    traffic_data_thread(rt_iplist, ser, serial_lock, 600)
-    reqhb_thread(ser, serial_lock, 3600)
+    while True:
+        logging.debug("In loop now.")
+        t1 = threading.Thread(
+            target=traffic_data_thread,
+            args=(rt_iplist, ser, serial_lock, 300,q))
+
+        t2 = threading.Thread(
+            target=reqhb_thread,
+            args=(ser, serial_lock, 360,))
+
+        t1.start()
+        t2.start()
+        t1.join(300)
+        t2.join(360)
+
+
+# Configurations
+# + timeout for traffic_data
+# + interval for traffic_data
+# + interval for hearbeat
