@@ -169,11 +169,17 @@ def request_heartbeat_loop(serialport, seriallock):
         idline = idfile.readline()
         if len(idline) == 0:
             break
-        idline_list = idline.split('.')
-        if ('#' in idline_list[0]):
+        elif idline.isspace():
             continue
+
+        idline_list = idline.split('.')
+
+        if '#' in idline_list[0]:
+            continue
+
         idline_list = list(map(int, idline_list))
         idlist.append( idline_list )
+
     idfile.close()
     success_slave = 0
 
@@ -184,8 +190,9 @@ def request_heartbeat_loop(serialport, seriallock):
         for i in range(len(idlist)):
             group = idlist[i][0]
             unique = idlist[i][1]
-            ids = str(group) + '.' + str(unique)
             ret = request_heartbeat(serialport, group, unique)
+
+            ids = str(group) + '.' + str(unique)
             if ret == True:
                 success_slave += 1
                 idlist[i].append('Alive')
@@ -235,8 +242,10 @@ if __name__ == "__main__":
         line = ipfile.readline()
         if len(line) == 0:
             break
+        elif line.isspace():
+            continue
         line = line.split()
-        if ('#' in line[0]):
+        if '#' in line[0]:
             continue
         rt_iplist.append(line)
 
