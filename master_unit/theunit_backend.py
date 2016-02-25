@@ -135,12 +135,14 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
 
 
 def traffic_data_thread(ip_grouplist, serialport, seriallock, interval, queue):
-    t = threading.Thread(
-        target=getsend_traffic_data,
-        args=(ip_grouplist, serialport, seriallock, queue))
-    t.start()
-    logging.debug("Started TD thread. Waiting and sleeping for " + str(interval))
-    time.sleep(interval)
+    while True:
+        t = threading.Thread(
+            target=getsend_traffic_data,
+            args=(ip_grouplist, serialport, seriallock, queue))
+        t.start()
+        t.join(interval)
+        logging.debug("Started TD thread. Sleeping for " + str(interval))
+        time.sleep(interval)
 
 
 def request_heartbeat(serialport, gid, uid):
@@ -163,17 +165,20 @@ def request_heartbeat(serialport, gid, uid):
 def request_heartbeat_loop(serialport, seriallock):
     """ Request heartbeat from slaves in idlist.txt and logs status
         in cli_slave_status.txt """
+    #Read list of slave IDs to get heartbeat from
     idfile = open("idlist.txt",'r')
     idlist = []
     while True:
         idline = idfile.readline()
+        #if EOF
         if len(idline) == 0:
             break
+        #if line only contains whitespace
         elif idline.isspace():
             continue
 
         idline_list = idline.split('.')
-
+        #if line starts with '#'
         if '#' in idline_list[0]:
             continue
 
@@ -190,6 +195,7 @@ def request_heartbeat_loop(serialport, seriallock):
         for i in range(len(idlist)):
             group = idlist[i][0]
             unique = idlist[i][1]
+            #get heartbeat from slave
             ret = request_heartbeat(serialport, group, unique)
 
             ids = str(group) + '.' + str(unique)
@@ -204,6 +210,7 @@ def request_heartbeat_loop(serialport, seriallock):
         seriallock.release()
         logging.debug("Heartbeat - Released lock..")
 
+    #log slave status
     datetoday = str(datetime.date.today().strftime("%y%m%d"))
     datetoday = datetoday + '.log'
     logging.debug("Logging to " + datetoday)
@@ -219,12 +226,14 @@ def request_heartbeat_loop(serialport, seriallock):
 
 
 def reqhb_thread(serialport, seriallock, interval):
-    t = threading.Thread(
-        target=request_heartbeat_loop,
-        args=(serialport, seriallock,))
-    t.start()
-    logging.debug("Started HB thread. Waiting and sleeping for " + str(interval))
-    time.sleep(interval)
+    while True:
+        t = threading.Thread(
+            target=request_heartbeat_loop,
+            args=(serialport, seriallock,))
+        t.start()
+        t.join(interval)
+        logging.debug("Started HB thread. Waiting and sleeping for " + str(interval))
+        time.sleep(interval)
 
 # -----------------------------------------------------------------------------
 
@@ -272,23 +281,22 @@ if __name__ == "__main__":
         print(host + "  group = " + str(group))
 
 
-    while True:
-        logging.debug("In loop now.")
-        t1 = threading.Thread(
-            target=traffic_data_thread,
-            args=(rt_iplist, ser, serial_lock, 300,q))
+    t1 = threading.Thread(
+        target=traffic_data_thread,
+        args=(rt_iplist, ser, serial_lock, 180,q))
 
-        t2 = threading.Thread(
-            target=reqhb_thread,
-            args=(ser, serial_lock, 360,))
+    t2 = threading.Thread(
+        target=reqhb_thread,
+        args=(ser, serial_lock, 60,))
+    t1.start()
+    t2.start()
 
-        t1.start()
-        t2.start()
-        t1.join(300)
-        t2.join(360)
-
+    t1.join()
+    t2.join()
 
 # Configurations
 # + timeout for traffic_data
 # + interval for traffic_data
 # + interval for hearbeat
+# + default serial port
+# +
