@@ -1,14 +1,11 @@
 ## To Do List ##
 
-- Update the testRange to use more than 1 byte of RF transmission and UART only. No buttons on prototype.
+- XML serialization to save and load settings for master_unit
 
-- Use Queue to enable shared access to serial port
 - Enable flashing for slave_unit
 - Allow slave_unit configuration for UART
 (flashing interval, flashing when no traffic info, how long until start flashing) 
 
-
 - Web interface or GUI for master_unit 
-- XML serialization to save and load settings for master_unit
 
 - Implement ultrasonic sensor for slave_unit (probably need ADC)

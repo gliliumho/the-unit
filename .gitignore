@@ -25,3 +25,8 @@
 *.uvopt
 **Listings/
 **Objects/
+**testscripts/
+
+master_unit/rtengine_iplist.txt
+master_unit/idlist.txt
+

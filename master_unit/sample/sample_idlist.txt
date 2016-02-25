@@ -1,0 +1,15 @@
+# Sample idlist
+# '#' can be used to comment out the lines
+# IDs will be <groupID>.<uniqueID>
+
+
+#2.4
+2.7
+#2.9
+#3.3
+3.6
+# 4.1
+4.6
+4.7
+#5.2
+#5.6
