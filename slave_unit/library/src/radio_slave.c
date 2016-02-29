@@ -209,10 +209,20 @@ void SlaveRelay(unsigned char b[PACKET_SIZE]){
 		PacketIdCpy(&id_buffer[buffer_count], temp_packet); //id_buffer = global
 
 		TXEN =1;
+<<<<<<< HEAD
 		TransmitPacket(b);
 		buffer_count++;					//global
 		if(buffer_count > 5)			//global
 			buffer_count = 0;			//global
+=======
+		// for(i=0;i<2;i++)
+		TransmitPacket(b);
+
+		buffer_count++;					//global
+		if(buffer_count > 5)			//global
+			buffer_count = 0;			//global
+
+>>>>>>> slave_to_slave
 	}
 }
 

@@ -5,6 +5,16 @@
 **
 *********************************************************************/
 
+/*
++ enable/disable blinking
++ blinking interval
++ relay to higher groupID or not
++ sleep interval between SlaveOp_Buffer
+
+
+*/
+
+
 
 #include <Nordic/reg9e5.H>
 #include "radio.h"
