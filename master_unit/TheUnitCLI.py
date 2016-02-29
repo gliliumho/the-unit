@@ -140,6 +140,15 @@ def request_heartbeat_loop(infowin, serialport):
         idline = idfile.readline()
         if len(idline) == 0:
             break
+        #if line only contains whitespace
+        elif idline.isspace():
+            continue
+
+        idline_list = idline.split('.')
+        #if line starts with '#'
+        if '#' in idline_list[0]:
+            continue
+
         idline_list = idline.split('.')
         idline_list = list(map(int, idline_list))
         idlist.append( idline_list )
@@ -172,11 +181,11 @@ def request_heartbeat_loop(infowin, serialport):
             idlist[i].append('Dead')
 
     # infowin.move(win_yx[0]-1,0)
-    infowin.scroll(2)
+    # infowin.scroll(2)
     infowin.addstr("Summary: " + \
         str(success_slave) + '/' + str(len(idlist)) + " slaves alive")
     infowin.refresh()
-    logfile = open("cli_slave_status.log", 'w')
+    logfile = open("./log/cli_slave_status.log", 'w')
     for i in range(len(idlist)):
         line = str(idlist[i][0])+'.'+str(idlist[i][1])+' \t'+idlist[i][2]+'\n'
         logfile.write(line)

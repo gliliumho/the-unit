@@ -45,9 +45,9 @@ void main(void){
 	P05 = 0;
 
 	//Init GPIO pin for button
-	InitPin(2,1);
+	InitPin(7,1);
 	//P07 = 1;
-	if(P02 == 0){
+	if(P07 == 0){
 		InitUART();
 		InitEEPROM();
 

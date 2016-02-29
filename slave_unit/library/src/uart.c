@@ -129,8 +129,10 @@ unsigned char GetNumber(void){
 	while(i < 3){
 		GetChar(&input);
 		if(input >= 0x30 && input <= 0x39){
-			value *= 10;
-			value += input;
+			if(i>0)
+				value *= 10;
+			value += (input - 0x30);
+			i++;
 		} else if(input == 0x0D){
 			break;
 		} else {
