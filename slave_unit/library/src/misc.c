@@ -104,20 +104,20 @@ void PrintInt(unsigned int n){
 }
 
 //Prompt user for (n or less) digits from UART then populate array *b
-void GetNumber(unsigned char b[], unsigned char n){
-	unsigned char i=0;
-	while(i<=n){
-		GetChar(&b[i]);
-		if(b[i] >= 0x30 && b[i] <= 0x39){
-			i++;
-		} else if(b[i] == 0x0D){
-			b[i] = 0x00;
-			break;
-		} else{
-			PutString("\r\nerror.");
-		}
-	}
-}
+// void GetNumber(unsigned char b[], unsigned char n){
+// 	unsigned char i=0;
+// 	while(i<=n){
+// 		GetChar(&b[i]);
+// 		if(b[i] >= 0x30 && b[i] <= 0x39){
+// 			i++;
+// 		} else if(b[i] == 0x0D){
+// 			b[i] = 0x00;
+// 			break;
+// 		} else{
+// 			PutString("\r\nerror.");
+// 		}
+// 	}
+// }
 
 //Prompt user for (n or less) digits then return the value in unsigned int
 unsigned int GetIntNumber(unsigned char n){

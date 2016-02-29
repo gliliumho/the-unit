@@ -12,3 +12,6 @@ extern void PutString(unsigned char *s);
 extern void GetChar(unsigned char *c);
 extern void GetString(unsigned char *s);
 extern void PrintChar(unsigned char n);
+extern void GetFixedString(unsigned char *s, unsigned char n);
+extern void PutFixedString(unsigned char *s, unsigned char n);
+extern unsigned char GetNumber(void);

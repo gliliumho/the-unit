@@ -53,14 +53,14 @@ void main(void){
 
 		//prompt for groupID
 		PutString("Please enter new groupID: ");
-		GetChar(&groupID);
-		groupID -= 0x30;
+		groupID = GetNumber();
+		// groupID -= 0x30;
 		PutString("\r\n");
 
 		//prompt for uniqueID
 		PutString("Please enter new uniqueID: ");
-		GetChar(&uniqueID);
-		uniqueID -= 0x30;
+		uniqueID = GetNumber();
+		// uniqueID -= 0x30;
 		PutString("\r\n");
 
 		//save entered groupID & uniqueID into EEPROM

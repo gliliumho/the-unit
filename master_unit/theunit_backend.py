@@ -117,7 +117,19 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
             args=(socket, queue,))
         t.start()
         thread_list.append(t)
-        traffic_data[group] = queue.get()
+        if group % 2:
+            index = ((group + 1) // 2) + 1
+            data = queue.get()
+            data = (data << 4)
+            traffic_data[index] = ((traffic_data[index] & 0x0F) | data)
+
+        else:
+            index = (group // 2) + 1
+            data = queue.get()
+            traffic_data[index] = ((traffic_data[index] & 0xF0) | data)
+
+        data = queue.get()
+        traffic_data[index]
         logging.debug("Group " + str(group) + ': ' + str(traffic_data[group]))
 
     for t in thread_list:
@@ -299,4 +311,4 @@ if __name__ == "__main__":
 # + interval for traffic_data
 # + interval for hearbeat
 # + default serial port
-# + 
+# +

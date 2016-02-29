@@ -122,3 +122,20 @@ void PutFixedString(unsigned char *s, unsigned char n){
 	for(i=0; i<n; i++)
 		PutChar(*(s++));
 }
+
+unsigned char GetNumber(void){
+	unsigned char i=0, input=0, value=0;
+
+	while(i < 3){
+		GetChar(&input);
+		if(input >= 0x30 && input <= 0x39){
+			value *= 10;
+			value += input;
+		} else if(input == 0x0D){
+			break;
+		} else {
+			PutString("\r\nerror.");
+		}
+	}
+	return value;
+}

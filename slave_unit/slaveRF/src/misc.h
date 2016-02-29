@@ -18,7 +18,7 @@ extern void ReloadTimer0(unsigned char high, unsigned char low);
 extern void GetStringLimit(unsigned char s[], unsigned char n);
 extern void PrintInt(unsigned int n);
 extern void PutString_Pointer(unsigned char s[0x10] );
-extern void GetNumber(unsigned char *b, unsigned char n);
+// extern void GetNumber(unsigned char *b, unsigned char n);
 extern unsigned int GetIntNumber(unsigned char n);
 extern unsigned int Ascii2Int (unsigned char s[], unsigned char n);
 extern void ConsoleComment(void);

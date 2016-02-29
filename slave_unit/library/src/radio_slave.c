@@ -76,7 +76,19 @@ unsigned char SlaveReceive(unsigned char b[PACKET_SIZE]){
 
 //Checks for traffic info for gid then turn ON/OFF the LED accordingly
 void CheckTraffic(unsigned char b[PACKET_SIZE], unsigned char gid){
-	switch(b[gid+1]){
+	unsigned char index, tinfo;
+	if(gid % 2){
+		index = (gid+1) / 2;
+		index++;
+		tinfo = b[index];
+		tinfo = tinfo >> 4;
+	} else {
+		index = gid / 2;
+		index++;
+		tinfo = b[index];
+		tinfo = tinfo & 0x0F;
+	}
+	switch(tinfo){
 		case 1:
 			P03 = 0;
 			P04 = 1;
@@ -209,20 +221,12 @@ void SlaveRelay(unsigned char b[PACKET_SIZE]){
 		PacketIdCpy(&id_buffer[buffer_count], temp_packet); //id_buffer = global
 
 		TXEN =1;
-<<<<<<< HEAD
+
 		TransmitPacket(b);
 		buffer_count++;					//global
 		if(buffer_count > 5)			//global
 			buffer_count = 0;			//global
-=======
-		// for(i=0;i<2;i++)
-		TransmitPacket(b);
 
-		buffer_count++;					//global
-		if(buffer_count > 5)			//global
-			buffer_count = 0;			//global
-
->>>>>>> slave_to_slave
 	}
 }
 
