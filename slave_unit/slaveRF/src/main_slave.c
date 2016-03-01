@@ -6,6 +6,7 @@
 *********************************************************************/
 
 /*
++ timeout to wait for slave heartbeat
 + enable/disable blinking
 + blinking interval
 + relay to higher groupID or not

@@ -60,43 +60,46 @@ def connect_rt_engine(host, port, queue):
 
 #change to get TCP connection from RTEngines
 def get_traffic_data(socket, queue):
-    try:
-        logging.debug("Getting data from " + socket.getpeername())
-        data = socket.recv(2048)
-    except ConnectionResetError:
-        # return None
-        logging.debug("Connection from server timed out.......")
-        queue.put(int(0))
-        queue.task_done()
-        return
-    except:
-        # return None
-        logging.debug("Unknown error. Cannot receive data from RT Engine")
-        queue.put(int(0))
-        queue.task_done()
-        return
 
-    data = data.decode('utf-8')
-    root = ET.fromstring(data)
-
-    for value in root.iter():
-        if value.tag == "IncidentType":
-            if value.text == "CongestionStart":
-                logging.debug("Congested..")
-                queue.put(int(3))
-                queue.task_done()
-                return
-            elif value.text == "CongestionEnd":
-                logging.debug("End of congestion..")
-                queue.put(int(2))
-                queue.task_done()
-                return
-        elif value.tag == "CongestionLevel":
-            # return int(value.text)+1
-            logging.debug("Traffic level: " + str(int(value.text)+1))
-            queue.put(int(value.text)+1)
-            queue.task_done()
-            return
+    queue.put(int(2))
+    return
+    # try:
+    #     logging.debug("Getting data from " + socket.getpeername())
+    #     data = socket.recv(2048)
+    # except ConnectionResetError:
+    #     # return None
+    #     logging.debug("Connection from server timed out.......")
+    #     queue.put(int(0))
+    #     queue.task_done()
+    #     return
+    # except:
+    #     # return None
+    #     logging.debug("Unknown error. Cannot receive data from RT Engine")
+    #     queue.put(int(0))
+    #     queue.task_done()
+    #     return
+    #
+    # data = data.decode('utf-8')
+    # root = ET.fromstring(data)
+    #
+    # for value in root.iter():
+    #     if value.tag == "IncidentType":
+    #         if value.text == "CongestionStart":
+    #             logging.debug("Congested..")
+    #             queue.put(int(3))
+    #             queue.task_done()
+    #             return
+    #         elif value.text == "CongestionEnd":
+    #             logging.debug("End of congestion..")
+    #             queue.put(int(2))
+    #             queue.task_done()
+    #             return
+    #     elif value.tag == "CongestionLevel":
+    #         # return int(value.text)+1
+    #         logging.debug("Traffic level: " + str(int(value.text)+1))
+    #         queue.put(int(value.text)+1)
+    #         queue.task_done()
+    #         return
 
 
 def send_traffic_data(serialport, pack):
@@ -104,6 +107,8 @@ def send_traffic_data(serialport, pack):
     pack[0] = 0x01
     pack[1] = 0x00
     serialport.write(pack)
+    logging.debug("Traffic Data - Sent.")
+    logging.debug(str(pack))
 
 
 def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
@@ -126,11 +131,10 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
         else:
             index = (group // 2) + 1
             data = queue.get()
+            logging.debug("Group " + str(group) + ': ' + str(data))
             traffic_data[index] = ((traffic_data[index] & 0xF0) | data)
 
-        data = queue.get()
-        traffic_data[index]
-        logging.debug("Group " + str(group) + ': ' + str(traffic_data[group]))
+        # logging.debug("Traffic Data - Getting traffic data.")
 
     for t in thread_list:
         t.join(180)
@@ -139,6 +143,7 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
     seriallock.acquire()
     try:
         logging.debug("Traffic Data - Lock Acquired.")
+        time.sleep(2)
         send_traffic_data(serialport, traffic_data)
     finally:
         seriallock.release()
@@ -204,6 +209,7 @@ def request_heartbeat_loop(serialport, seriallock):
     seriallock.acquire()
     try:
         logging.debug("Heartbeat - Lock Acquired..")
+        time.sleep(2)
         for i in range(len(idlist)):
             group = idlist[i][0]
             unique = idlist[i][1]
@@ -285,12 +291,12 @@ if __name__ == "__main__":
             t.join(10)
 
     # Remove elements without socket from list
-    rt_iplist = [x for x in rt_iplist if x[0] != None]
+    # rt_iplist = [x for x in rt_iplist if x[0] != None]
 
     # Print socket info
-    for socket, group in rt_iplist:
-        host, port = socket.getpeername()
-        print(host + "  group = " + str(group))
+    # for socket, group in rt_iplist:
+    #     host, port = socket.getpeername()
+    #     print(host + "  group = " + str(group))
 
 
     t1 = threading.Thread(
@@ -300,6 +306,7 @@ if __name__ == "__main__":
     t2 = threading.Thread(
         target=reqhb_thread,
         args=(ser, serial_lock, 60,))
+    
     t1.start()
     t2.start()
 
