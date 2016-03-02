@@ -1,4 +1,9 @@
 #!/bin/python3
+import sys
+import serial
+import configparser
+
+
 
 class bcolors:
     PINK = '\033[95m'
@@ -11,25 +16,58 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+class Config:
 
-def init_serial():
+    def __init__(self):
+        self.serialport = '/dev/ttyS4'
+        self.trafficservtimeout = 10 #seconds
+        self.trafficinterval = 10*60 #minutes
+        self.heartbeatinterval = 60*60 #minutes
+        self.slaveidlist_file = './idlist.txt'
+
+        conf = configparser.ConfigParser()
+        try:
+            conf.read('config.ini')
+
+            if 'CUSTOM' in conf:
+                customconf = conf['CUSTOM']
+
+                self.serialport = customconf['SerialPort']
+                self.trafficservtimeout = int(customconf['TrafficServerTimeout'])
+                self.trafficinterval = int(customconf['TrafficDataInterval'])*60
+                self.heartbeatinterval = int(customconf['HeartbeatInterval'])*60
+                self.slaveidlist_file = customconf['SlaveIDListFile']
+
+            elif 'DEFAULT' in conf:
+                customconf = conf['DEFAULT']
+
+                self.serialport = customconf['SerialPort']
+                self.trafficservtimeout = int(customconf['TrafficServerTimeout'])
+                self.trafficinterval = int(customconf['TrafficDataInterval'])*60
+                self.heartbeatinterval = int(customconf['HeartbeatInterval'])*60
+                self.slaveidlist_file = customconf['SlaveIDListFile']
+
+        except FileNotFoundError:
+
+            conf['DEFAULT'] = { \
+                'SerialPort': self.serialport,
+                'TrafficServerTimeout': str(self.trafficservtimeout),
+                'TrafficDataInterval': str(self.trafficinterval // 60),
+                'HeartbeatInterval': str(self.heartbeatinterval // 60),
+                'SlaveIDListFile': self.slaveidlist_file }
+
+            with open(configfilestring,'w') as configfile:
+                conf.write(configfile)
+
+
+def init_serial(port):
     """ Initialize serial port according to platform and
         return the Serial object"""
-    if len(sys.argv) > 1:
-        port = "/dev/"+sys.argv[1]
-    else:
-        platform = sys.platform
-        if platform == "win32":
-            port = 'COM3'
-        elif platform == "cygwin":
-            port = '/dev/ttyS2'
-        elif platform == "linux":
-            port = '/dev/ttymxc2'
-        else:
-            print("Unknown platform...")
-            port = '/dev/ttyS2'
+    try:
+        ser_port = serial.Serial(port, 9600)
+    except:
+        raise SerialPortError("Error opening " + port)
 
-    ser_port = serial.Serial(port, 9600)
     print("Serial port "+ser_port.name+" opened.")
     return ser_port
 
@@ -43,6 +81,7 @@ def is_int(s):
         return False
 
 
+# need change
 def main_menu():
     """ Prints menu and returns user input (ranging from 0 to 4) """
     while True:
@@ -71,7 +110,7 @@ def main_menu():
                 "ERROR: INPUT MUST BE FROM 0 TO 4" + \
                 bcolors.RESET, end="\n\n")
 
-
+# change to TCP or manual
 def get_traffic(pack):
     for i in range(len(pack)):
         if 2 <= i <= 5:
@@ -140,9 +179,18 @@ def request_heartbeat_loop(serialport):
     idlist = []
     while True:
         idline = idfile.readline()
+        #if EOF
         if len(idline) == 0:
             break
+        #if line only contains whitespace
+        elif idline.isspace():
+            continue
+
         idline_list = idline.split('.')
+        #if line starts with '#'
+        if '#' in idline_list[0]:
+            continue
+
         idline_list = list(map(int, idline_list))
         idlist.append( idline_list )
     idfile.close()
@@ -152,9 +200,13 @@ def request_heartbeat_loop(serialport):
 
     for i in range(len(idlist)):
         total_slave += 1
-        print("Slave " + str(idlist[i][0]) + '.' + str(idlist[i][1]) + \
-            '\t: ', end='')
-        ret = request_heartbeat(serialport, idlist[i][0], idlist[i][1])
+        group = idlist[i][0]
+        unique = idlist[i][1]
+
+        print("Slave " + str(group) + '.' + str(unique) + '\t: ', end='')
+        ret = request_heartbeat(serialport, group, unique)
+
+        ids = str(group) + '.' + str(unique)
         if ret == True:
             success_slave += 1
             print(bcolors.GREEN + "Alive" + bcolors.RESET)
@@ -176,11 +228,26 @@ def request_heartbeat_loop(serialport):
 
 
 # ------------------------------------------------------------------------------
-import sys
-import serial
-#from custom_unit_test import test
 
-print("\nStarting The Unit CLI..")
+
+# check for arguments
+# -h or --help will print help
+
+# config
+# --serial-port <port>
+# --traffic-server-timeout <timeout>
+# --restore-default
+# --traffic-data-interval
+# --heartbeat-interval
+# --slave-idlist
+# --print-config
+
+# --print-serial will display default/selected serial port
+# --heartbeart filename.output will log the heartbeat status into file
+
+
+print("Starting..")
+
 
 ser = init_serial()
 
