@@ -5,44 +5,97 @@ import serial
 import socket
 import xml.etree.ElementTree as ET
 import datetime, time
+
 import threading
 import queue
 import logging
 
+import configparser
+
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(levelname)s] (%(threadName)-10s) %(message)s',
                     )
+class Config:
+
+    def __init__(self):
+        self.serialport = '/dev/ttyS4'
+        self.trafficservtimeout = 10 #seconds
+        self.trafficinterval = 10*60 #minutes
+        self.heartbeatinterval = 60*60 #minutes
+        self.slaveidlist_file = './idlist.txt'
+
+        conf = configparser.ConfigParser()
+        try:
+            conf.read('config.ini')
+
+            if 'CUSTOM' in conf:
+                customconf = conf['CUSTOM']
+
+                self.serialport = customconf['SerialPort']
+                self.trafficservtimeout = int(customconf['TrafficServerTimeout'])
+                self.trafficinterval = int(customconf['TrafficDataInterval'])*60
+                self.heartbeatinterval = int(customconf['HeartbeatInterval'])*60
+                self.slaveidlist_file = customconf['SlaveIDListFile']
+
+            elif 'DEFAULT' in conf:
+                customconf = conf['DEFAULT']
+
+                self.serialport = customconf['SerialPort']
+                self.trafficservtimeout = int(customconf['TrafficServerTimeout'])
+                self.trafficinterval = int(customconf['TrafficDataInterval'])*60
+                self.heartbeatinterval = int(customconf['HeartbeatInterval'])*60
+                self.slaveidlist_file = customconf['SlaveIDListFile']
+
+        except FileNotFoundError:
+
+            conf['DEFAULT'] = { \
+                'SerialPort': self.serialport,
+                'TrafficServerTimeout': str(self.trafficservtimeout),
+                'TrafficDataInterval': str(self.trafficinterval // 60),
+                'HeartbeatInterval': str(self.heartbeatinterval // 60),
+                'SlaveIDListFile': self.slaveidlist_file }
+
+            with open(configfilestring,'w') as configfile:
+                conf.write(configfile)
 
 
-def init_serial():
+
+    def importconfig(self, configfilestring):
+        conf = configparser.ConfigParser()
+        try:
+            conf.read(configfilestring)
+
+            if 'CUSTOM' in conf:
+                customconf = conf['CUSTOM']
+                self.serialport = customconf['SerialPort']
+                self.trafficservtimeout = int(customconf['TrafficServerTimeout'])
+                self.trafficinterval = int(customconf['TrafficDataInterval'])*60
+                self.heartbeatinterval = int(customconf['HeartbeatInterval'])*60
+                self.slaveidlist_file = customconf['SlaveIDList']
+            else:
+                raise FileStructureError('Settings need to be in [CUSTOM] section.')
+
+        except FileNotFoundError:
+            print("Error: " + configfilestring + "does not exist.")
+            raise
+
+
+
+def init_serial(port):
     """ Initialize serial port according to platform and
         return the Serial object"""
-    if len(sys.argv) > 1:
-        port = "/dev/"+sys.argv[1]
-    else:
-        platform = sys.platform
-        if platform == "win32":
-            port = 'COM3'
-        elif platform == "cygwin":
-            port = '/dev/ttyS2'
-        elif platform == "linux":
-            port = '/dev/ttymxc2'
-        else:
-            print("Unknown platform...")
-            port = '/dev/ttyS2'
-
     try:
         ser_port = serial.Serial(port, 9600)
     except:
-        print("Error opening ", str(port) )
-        return False
+        raise SerialPortError("Error opening " + port)
+
     print("Serial port "+ser_port.name+" opened.")
     return ser_port
 
 
-
-def connect_rt_engine(host, port, queue):
+def connect_rt_engine(host, port, timeout, queue):
     s = socket.socket()
+    s.settimeout(timeout)
     # if host == '0':
     #     host = socket.gethostbyname(socket.getfqdn())
     try:
@@ -59,48 +112,59 @@ def connect_rt_engine(host, port, queue):
 
 
 #change to get TCP connection from RTEngines
-def get_traffic_data(socket, queue):
+def get_traffic_data(socket, timeout, queue):
 
-    queue.put(int(2))
+    # queue.put(int(2))
+    # return
+    try:
+        logging.debug("Getting data from " + str(socket.getpeername()))
+        socket.settimeout(timeout)
+        data = socket.recv(1536)
+    except ConnectionResetError:
+        # return None
+        logging.debug("Connection to RT engine broken")
+        queue.put(int(0))
+        queue.task_done()
+        return
+    except ConnectionRefusedError:
+        # return None
+        logging.debug("Connection refused by server.")
+        queue.put(int(0))
+        queue.task_done()
+        return
+
+    data = data.decode('utf-8')
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        # print(data)
+        # print("Double XML from RT engine")
+        queue.put(int(0))
+        return
+
+
+    for value in root.iter():
+        if value.tag == "IncidentType":
+            if value.text == "CongestionStart":
+                logging.debug("Congested..")
+                queue.put(int(3))
+                queue.task_done()
+                return
+            elif value.text == "CongestionEnd":
+                logging.debug("End of congestion..")
+                queue.put(int(2))
+                queue.task_done()
+                return
+        elif value.tag == "CongestionLevel":
+            # return int(value.text)+1
+            logging.debug("Traffic level: " + str(int(value.text)+1))
+            queue.put(int(value.text)+1)
+            queue.task_done()
+            return
+
+    queue.put(int(0))
+    queue.task_done()
     return
-    # try:
-    #     logging.debug("Getting data from " + socket.getpeername())
-    #     data = socket.recv(2048)
-    # except ConnectionResetError:
-    #     # return None
-    #     logging.debug("Connection from server timed out.......")
-    #     queue.put(int(0))
-    #     queue.task_done()
-    #     return
-    # except:
-    #     # return None
-    #     logging.debug("Unknown error. Cannot receive data from RT Engine")
-    #     queue.put(int(0))
-    #     queue.task_done()
-    #     return
-    #
-    # data = data.decode('utf-8')
-    # root = ET.fromstring(data)
-    #
-    # for value in root.iter():
-    #     if value.tag == "IncidentType":
-    #         if value.text == "CongestionStart":
-    #             logging.debug("Congested..")
-    #             queue.put(int(3))
-    #             queue.task_done()
-    #             return
-    #         elif value.text == "CongestionEnd":
-    #             logging.debug("End of congestion..")
-    #             queue.put(int(2))
-    #             queue.task_done()
-    #             return
-    #     elif value.tag == "CongestionLevel":
-    #         # return int(value.text)+1
-    #         logging.debug("Traffic level: " + str(int(value.text)+1))
-    #         queue.put(int(value.text)+1)
-    #         queue.task_done()
-    #         return
-
 
 def send_traffic_data(serialport, pack):
     """ Formats the bytearray(packet) and write to serialport """
@@ -111,7 +175,7 @@ def send_traffic_data(serialport, pack):
     logging.debug(str(pack))
 
 
-def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
+def getsend_traffic_data(ip_grouplist, serialport, seriallock, timeout, queue):
     traffic_data = [0]*16
     thread_list = []
     # q = queue.Queue()
@@ -119,7 +183,7 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
         group = int(group)
         t = threading.Thread(
             target=get_traffic_data,
-            args=(socket, queue,))
+            args=(socket, timeout, queue) )
         t.start()
         thread_list.append(t)
         if group % 2:
@@ -151,11 +215,11 @@ def getsend_traffic_data(ip_grouplist, serialport, seriallock, queue):
     logging.debug("Traffic Data - Done. Ending thread.")
 
 
-def traffic_data_thread(ip_grouplist, serialport, seriallock, interval, queue):
+def traffic_data_thread(ip_grouplist, serialport, seriallock, interval, timeout, queue):
     while True:
         t = threading.Thread(
             target=getsend_traffic_data,
-            args=(ip_grouplist, serialport, seriallock, queue))
+            args=(ip_grouplist, serialport, seriallock, timeout, queue))
         t.start()
         t.join(interval)
         logging.debug("Started TD thread. Sleeping for " + str(interval))
@@ -179,11 +243,15 @@ def request_heartbeat(serialport, gid, uid):
     return False
 
 
-def request_heartbeat_loop(serialport, seriallock):
-    """ Request heartbeat from slaves in idlist.txt and logs status
-        in cli_slave_status.txt """
+def request_heartbeat_loop(serialport, seriallock, idlist_file):
+    """ Request heartbeat from slaves in idlist.txt and logs status in
+        cli_slave_status.txt """
     #Read list of slave IDs to get heartbeat from
-    idfile = open("idlist.txt",'r')
+    try:
+        idfile = open(idlist_file,'r')
+    except FileNotFoundError:
+        raise
+
     idlist = []
     while True:
         idline = idfile.readline()
@@ -243,11 +311,11 @@ def request_heartbeat_loop(serialport, seriallock):
 
 
 
-def reqhb_thread(serialport, seriallock, interval):
+def reqhb_thread(serialport, seriallock, interval, idlist_file):
     while True:
         t = threading.Thread(
             target=request_heartbeat_loop,
-            args=(serialport, seriallock,))
+            args=(serialport, seriallock, idlist_file))
         t.start()
         t.join(interval)
         logging.debug("Started HB thread. Waiting and sleeping for " + str(interval))
@@ -256,11 +324,10 @@ def reqhb_thread(serialport, seriallock, interval):
 # -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    ser = init_serial()
-    serial_lock = threading.Lock()
+    config = Config()
 
-    if ser == False:
-        exit()
+    ser = init_serial(config.serialport)
+    serial_lock = threading.Lock()
 
     # Get RT server IP addresses and group number from rtengine_iplist.txt
     ipfile = open("rtengine_iplist.txt", 'r')
@@ -278,8 +345,11 @@ if __name__ == "__main__":
 
     # Connect to RT server sockets
     q = queue.Queue()
-    for i, ip in enumerate(rt_iplist):
-        t = threading.Thread(target=connect_rt_engine, args=(ip[0], 9001, q,))
+    for ip in rt_iplist:
+        t = threading.Thread(
+            target=connect_rt_engine,
+            args=(ip[0], 9001, config.trafficservtimeout, q) )
+
         t.start()
         ip[0] = q.get()
     # del queue
@@ -291,22 +361,23 @@ if __name__ == "__main__":
             t.join(10)
 
     # Remove elements without socket from list
-    # rt_iplist = [x for x in rt_iplist if x[0] != None]
+    rt_iplist = [x for x in rt_iplist if x[0] != None]
 
     # Print socket info
-    # for socket, group in rt_iplist:
-    #     host, port = socket.getpeername()
-    #     print(host + "  group = " + str(group))
+    for socket, group in rt_iplist:
+        host, port = socket.getpeername()
+        print(host + "  group = " + str(group))
 
 
     t1 = threading.Thread(
         target=traffic_data_thread,
-        args=(rt_iplist, ser, serial_lock, 180,q))
+        args=(rt_iplist, ser, serial_lock, config.trafficinterval,
+                config.trafficservtimeout, q) )
 
     t2 = threading.Thread(
         target=reqhb_thread,
-        args=(ser, serial_lock, 60,))
-    
+        args=(ser, serial_lock, config.heartbeatinterval, config.slaveidlist_file))
+
     t1.start()
     t2.start()
 
