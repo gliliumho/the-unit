@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>The Unit: Project: The Unit</title>
+<title>The Unit: README</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -41,52 +41,10 @@
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">Project: The Unit </div>  </div>
+<div class="title">README </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>Introduction</h1>
-<p>This is the repo for The Unit project. Initial plan/Phase 1 of the project is to make small IoT-like devices to be installed on the guard-rail. These devices will include RF transceiver for communication, and 3x LED strips (Red, Yellow, Green) to indicate the traffic of the road ahead. These devices are called "slaves".All these slaves get the traffic info from another device called "master", which will be more powerful and have Internet access. Master will control all the slaves through RF communications.</p>
-<p>Communication relies on the <a href="http://goo.gl/1BpNpe">node hopping</a> method. This architecture is designed to reduce the number of masters along the highway, mainly due to costs. Basically one slave will receive the packet and then retransmit it to the other slaves. If you look at <a href="http://goo.gl/WxzdMD">Great Wall of China</a>, they've towers along it. If the enemy attacks, the guards will light up the fire. Then the next tower will see it and light up the fire too. Thus, relaying the terrible news of invasion to the city, hundreds or thousands of miles away!!.....in ancient speed. Current protocol supports traffic info and heartbeat status from slaves(masters gonna know if their slaves are alive or not. Else who would be wiping their shoes?). All these done via the relay method.</p>
-<p>Phase 2 of the project will include sensors(or cameras, even though unlikely) to collect data along the highway. At the time of typing this, we're still unclear of what sensor to be installed.</p>
-<h1>Hardware</h1>
-<p>For the actual hardware schematics, you can ask Hakim or Ramesh for hardware design. However, since Recogine is mainly a software company and the fact that you're reading this, you're probably a software person. BUT! You'll still need some basic knowledge on computer hardware to understand what the registers are doing.</p>
-<p>The hardware that we used in phase 1 is <a href="http://goo.gl/kr0hHA">Nordic Semiconductor NRF9E5</a> for slave and <a href="http://riotboard.org/">RIoTboard</a> for master. I'd suggest read the <a href="http://goo.gl/NSFea8">NRF9E5 spec sheet</a>, especially the NRF905(transceiver) part and also the registers part. For RIoTboard, just refer to the spec sheet/user manual for the GPIO pin mapping.</p>
-<h1>Software</h1>
-<h2>Slave Unit</h2>
-<p>Programming of the slaves are done in Keil-C, Cx51. All the codes for slave will need to be compiled using uVision4 or uVision5. You may read the sample codes from Nordic Semiconductor or some of the test codes that we previously wrote.</p>
-<ol type="1">
-<li>**<code>masterRF</code>** - <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
-<li>**<code>slaveRF</code>** - <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
-<li>**<code>library</code>** - source code <code>libnrf9e5.LIB</code> library.</li>
-</ol>
-<p>Following codes are archived/retired test codes:</p><ul>
-<li><code>testRange</code> - written for range test for evaluation kit.</li>
-<li><code>testEEPROM</code> - test saving groupID &amp; uniqueID in EEPROM. <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
-<li><code>testTwoWay</code> - huge blob of mess. Used to test two-way communication such as traffic info &amp; heartbeat using delay. Will try using buffer to prevent "echo" problem and packet ID. <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
-<li><code>testRFString</code> - Written to test sending multiple bytes through RF.</li>
-<li><code>testMultiHop</code> - PoC for The Unit hopping architecture. At the point when this was written, only one-way communication (master to slave) was supported. To learn about two-way communication, look at testTwoWay.</li>
-<li><code>testChar</code> &amp; <code>testString</code> - Written to test character/string operation through UART.</li>
-</ul>
-<h2>Master Unit</h2>
-<p>We need to do the following things:</p><ul>
-<li>write APIs so we can integrate it with 3rd party traffic servers</li>
-</ul>
-<h1>Setup &amp; Installation</h1>
-<h2>Slave Unit</h2>
-<h3>To Compile &amp; Generate HEX file</h3>
-<ol type="1">
-<li>Download uVision IDE from www.keil.com. <em>Recommended: <b>uVision V5.11.2.0</b> and <b>C51 V9.53.0</b> or later</em></li>
-<li>Open <code>multi_proj.uvmpw</code> and click on <div class="image">
-<img src="../doc/assets/batchbuild_icon.jpg" />
-</div>
- <em>Batch Build...</em> button.</li>
-<li>Tick for <code>library</code>, <code>masterRF</code> and <code>slaveRF</code>.</li>
-<li><code>libnrf9e5.LIB</code> will be generated in <code>slave_unit/library/</code>.</li>
-<li><code>masterRF.hex</code> and <code>slaveRF.hex</code> will be generated in <code>slave_unit/masterRF/</code> and <code>slave_unit/slaveRF/</code> respectively.</li>
-</ol>
-<h2>Master Unit</h2>
-<p>Python scripts do not need to be compiled. Just run them in terminal using <code>python3 master_unit/theunit.py</code>. Set <code>master_unit/theunit_backend.py</code> to start running after boot. </p>
-</div></div><!-- contents -->
+<div class="textblock"></div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

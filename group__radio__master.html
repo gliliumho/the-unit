@@ -58,12 +58,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga67c52c8c179804ac0725e9d3b13df432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio__master.html#ga67c52c8c179804ac0725e9d3b13df432">RequestHeartbeat</a> (unsigned char gid, unsigned char uid)</td></tr>
 <tr class="memdesc:ga67c52c8c179804ac0725e9d3b13df432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a heartbeat request to specific slave unit.  <a href="#ga67c52c8c179804ac0725e9d3b13df432">More...</a><br /></td></tr>
 <tr class="separator:ga67c52c8c179804ac0725e9d3b13df432"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga976294fe8e957fa147bd9426c35826f0"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio__master.html#ga976294fe8e957fa147bd9426c35826f0">ListenHeartbeat</a> (unsigned char *gid, unsigned char *uid)</td></tr>
-<tr class="memdesc:ga976294fe8e957fa147bd9426c35826f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait to receive heartbeat.  <a href="#ga976294fe8e957fa147bd9426c35826f0">More...</a><br /></td></tr>
-<tr class="separator:ga976294fe8e957fa147bd9426c35826f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaec94496dea7e324018261340d13654c6"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio__master.html#gaec94496dea7e324018261340d13654c6">WaitHeartbeat</a> (unsigned char gid, unsigned char uid)</td></tr>
-<tr class="memdesc:gaec94496dea7e324018261340d13654c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait to receive heartbeat &amp; validate the content.  <a href="#gaec94496dea7e324018261340d13654c6">More...</a><br /></td></tr>
-<tr class="separator:gaec94496dea7e324018261340d13654c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4af1bc0ed9d626ef3d2414c8456a9fc7"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio__master.html#ga4af1bc0ed9d626ef3d2414c8456a9fc7">ListenHeartbeat</a> (unsigned char gid, unsigned char uid)</td></tr>
+<tr class="memdesc:ga4af1bc0ed9d626ef3d2414c8456a9fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait to receive heartbeat.  <a href="#ga4af1bc0ed9d626ef3d2414c8456a9fc7">More...</a><br /></td></tr>
+<tr class="separator:ga4af1bc0ed9d626ef3d2414c8456a9fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Function declarations for masterRF. </p>
@@ -130,20 +127,20 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ga976294fe8e957fa147bd9426c35826f0"></a>
+<a class="anchor" id="ga4af1bc0ed9d626ef3d2414c8456a9fc7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned char ListenHeartbeat </td>
           <td>(</td>
-          <td class="paramtype">unsigned char *&#160;</td>
+          <td class="paramtype">unsigned char&#160;</td>
           <td class="paramname"><em>gid</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
+          <td class="paramtype">unsigned char&#160;</td>
           <td class="paramname"><em>uid</em>&#160;</td>
         </tr>
         <tr>
@@ -155,52 +152,11 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Wait to receive heartbeat. </p>
-<p>Basically <a class="el" href="group__radio.html#gaa269a7aecf39f454d07ca60f7967a8f5" title="Receive packet through RF. ">ReceivePacket()</a> the times out. If no packet is received before it times out, then it skip the payload checking and exit the function right away. This function is called by <a class="el" href="group__radio__master.html#gaec94496dea7e324018261340d13654c6" title="Wait to receive heartbeat &amp; validate the content. ">WaitHeartbeat()</a> only.</p>
+<p>Basically <a class="el" href="group__radio.html#gaa269a7aecf39f454d07ca60f7967a8f5" title="Receive packet through RF. ">ReceivePacket()</a> the times out. If no packet is received before it times out, then it skip the payload checking and exit the function right away. This function is called by WaitHeartbeat() only.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">*gid</td><td>- pointer to groupID </td></tr>
     <tr><td class="paramname">*uid</td><td>- pointer to uniqueID</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><ul>
-<li>0 if no packet received or gid/uid doesn't match the values passed</li>
-<li>1 if packet received AND gid/uid matches the one provided </li>
-</ul>
-</dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="gaec94496dea7e324018261340d13654c6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned char WaitHeartbeat </td>
-          <td>(</td>
-          <td class="paramtype">unsigned char&#160;</td>
-          <td class="paramname"><em>gid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char&#160;</td>
-          <td class="paramname"><em>uid</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Wait to receive heartbeat &amp; validate the content. </p>
-<p>Call this function right after <a class="el" href="group__radio__master.html#ga67c52c8c179804ac0725e9d3b13df432" title="Send a heartbeat request to specific slave unit. ">RequestHeartbeat()</a>. This function calls <a class="el" href="group__radio__master.html#ga976294fe8e957fa147bd9426c35826f0" title="Wait to receive heartbeat. ">ListenHeartbeat()</a> and then checks if the returned gid/uid matches or not. You may call <a class="el" href="group__radio__master.html#ga976294fe8e957fa147bd9426c35826f0" title="Wait to receive heartbeat. ">ListenHeartbeat()</a> directly. The existence of this function proves that I wasn't always in my right mind when I'm writing this library.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">gid</td><td>- groupID of expected heartbeat </td></tr>
-    <tr><td class="paramname">uid</td><td>- uniqueID of expected heartbeat</td></tr>
   </table>
   </dd>
 </dl>
