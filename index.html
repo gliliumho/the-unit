@@ -19,7 +19,7 @@
   <td id="projectlogo"><img alt="Logo" src="theunit_68_logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">The Unit
-   &#160;<span id="projectnumber">v1.0</span>
+   &#160;<span id="projectnumber">v0.5</span>
    </div>
    <div id="projectbrief">Modern railway reflector</div>
   </td>
@@ -46,19 +46,26 @@
 <div class="contents">
 <div class="textblock"><h1>Project: The Unit</h1>
 <h1>Introduction</h1>
-<p>This is the repo for The Unit project. Initial plan/Phase 1 of the project is to make small IoT-like devices to be installed on the guard-rail. These devices will include RF transceiver for communication, and 3x LED strips (Red, Yellow, Green) to indicate the traffic of the road ahead. These devices are called "slaves".All these slaves get the traffic info from another device called "master", which will be more powerful and have Internet access. Master will control all the slaves through RF communications.</p>
-<p>Communication relies on the <a href="http://goo.gl/1BpNpe">node hopping</a> method. This architecture is designed to reduce the number of masters along the highway, mainly due to costs. Basically one slave will receive the packet and then retransmit it to the other slaves. If you look at <a href="http://goo.gl/WxzdMD">Great Wall of China</a>, they've towers along it. If the enemy attacks, the guards will light up the fire. Then the next tower will see it and light up the fire too. Thus, relaying the terrible news of invasion to the city, hundreds or thousands of miles away!!.....in ancient speed. Current protocol supports traffic info and heartbeat status from slaves(masters gonna know if their slaves are alive or not. Else who would be wiping their shoes?). All these done via the relay method.</p>
+<p>This is the repo for The Unit project. Initial plan/Phase 1 of the project is to make small IoT-like devices to be installed on the guard-rail. These devices will include RF transceiver for communication, and 3x LED strips (Red, Yellow, Green) to indicate the traffic of the road ahead. These devices are called "slaves". All these slaves get the traffic info from another device called "master", which will be more powerful and have Internet access. Master will control all the slaves through RF communications.</p>
+<p>Communication relies on the <a href="http://goo.gl/1BpNpe">node hopping</a> method. This architecture is designed to reduce the number of masters along the highway, mainly due to costs. Basically one slave will receive the packet and then retransmit it to the other slaves. If you look at <a href="http://goo.gl/WxzdMD">Great Wall of China</a>, they've towers along it. If the enemy attacks, the guards will light up the fire. Then the next tower will see it and light up the fire too. Thus, relaying the terrible news of invasion to the city, hundreds or thousands of miles away!!.....in ancient speed. Current protocol supports traffic info and heartbeat status from slaves (masters gonna know if their slaves are alive or not. Else who would be wiping their shoes?). All these done via the relay method.</p>
 <p>Phase 2 of the project will include sensors(or cameras, even though unlikely) to collect data along the highway. At the time of typing this, we're still unclear of what sensor to be installed.</p>
 <h1>Hardware</h1>
 <p>For the actual hardware schematics, you can ask Hakim or Ramesh for hardware design. However, since Recogine is mainly a software company and the fact that you're reading this, you're probably a software person. BUT! You'll still need some basic knowledge on computer hardware to understand what the registers are doing.</p>
 <p>The hardware that we used in phase 1 is <a href="http://goo.gl/kr0hHA">Nordic Semiconductor NRF9E5</a> for slave and <a href="http://riotboard.org/">RIoTboard</a> for master. I'd suggest read the <a href="http://goo.gl/NSFea8">NRF9E5 spec sheet</a>, especially the NRF905(transceiver) part and also the registers part. For RIoTboard, just refer to the spec sheet/user manual for the GPIO pin mapping.</p>
+<p>The master unit can be any PC or embedded board as long as the requirements below are fulfilled:</p><ul>
+<li>Python 3 (preferably 3.5 or newer)</li>
+<li>Pyserial - a Python package</li>
+<li>UART - can use 3-pin UART/TTL to USB cable for PC</li>
+<li>Network connection - Ethernet or Wi-Fi</li>
+</ul>
 <h1>Software</h1>
 <h2>Slave Unit</h2>
+<p>Reference to <a class="el" href="slave_unit.html">Slave Unit</a></p>
 <p>Programming of the slaves are done in Keil-C, Cx51. All the codes for slave will need to be compiled using uVision4 or uVision5. You may read the sample codes from Nordic Semiconductor or some of the test codes that we previously wrote.</p>
 <ol type="1">
 <li><code>masterRF</code> - <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
 <li><code>slaveRF</code> - <em>Dependencies: <code>libnrf9e5.LIB</code></em></li>
-<li><code>library</code> - source code <code>libnrf9e5.LIB</code> library.</li>
+<li><code>library</code> - source code <code>libnrf9e5.LIB</code> library. (For more info, check out <a class="el" href="library_intro_page.html">NRF9E5 Library</a>)</li>
 </ol>
 <p>Following codes are archived/retired test codes:</p><ul>
 <li><code>testRange</code> - written for range test for evaluation kit.</li>
@@ -69,7 +76,18 @@
 <li><code>testChar</code> &amp; <code>testString</code> - Written to test character/string operation through UART.</li>
 </ul>
 <h2>Master Unit</h2>
-<p>We need to do the following things:</p><ul>
+<p>Reference to <a class="el" href="master_unit.html">Master Unit</a></p>
+<p>Most of the codes so far are Python scripts. Most are meant to be run in the background.</p>
+<ol type="1">
+<li><code>theunit_backend.py</code> - Main deployment code that would run in background. Please set up a cronjob for it.</li>
+<li><code>theunit.py</code> - First prototype to test connections to masterRF.</li>
+<li><code>TheUnitCLI.py</code> - Testing tool to get heartbeat and send custom traffic info in command-line. Written in ncurses.</li>
+<li><code>theunit_module.py</code> - In-progress module/library for more consistent codes for all scripts.</li>
+<li><code>config.ini</code> - configuration file for which serial port to use for UART, time for intervals and file to get slave ID list from.</li>
+<li><code>myscript.py</code> - script to automatically generate a idlist file.</li>
+</ol>
+<p><code>sample</code> directory contains samples for the required configuration files. The files in <code>testscripts</code> directory are not important, just prototype scripts written for learning and testing purposes.</p>
+<p>The following feature still needs to be implemented:</p><ul>
 <li>write APIs so we can integrate it with 3rd party traffic servers</li>
 </ul>
 <h1>Setup &amp; Installation</h1>
